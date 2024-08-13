@@ -6,6 +6,7 @@ api_addresses.go
 api_assets.go
 api_contract_events.go
 api_external_addresses.go
+api_networks.go
 api_server_signers.go
 api_stake.go
 api_trades.go
@@ -43,11 +44,15 @@ docs/Error.md
 docs/EthereumValidatorMetadata.md
 docs/ExternalAddressesAPI.md
 docs/FaucetTransaction.md
-docs/Feature.md
+docs/FeatureSet.md
+docs/FetchHistoricalStakingBalances200Response.md
 docs/FetchStakingRewards200Response.md
 docs/FetchStakingRewardsRequest.md
 docs/GetStakingContextRequest.md
 docs/HistoricalBalance.md
+docs/Network.md
+docs/NetworkIdentifier.md
+docs/NetworksAPI.md
 docs/SeedCreationEvent.md
 docs/SeedCreationEventResult.md
 docs/ServerSigner.md
@@ -61,6 +66,7 @@ docs/SignatureCreationEventResult.md
 docs/SignedVoluntaryExitMessageMetadata.md
 docs/SponsoredSend.md
 docs/StakeAPI.md
+docs/StakingBalance.md
 docs/StakingContext.md
 docs/StakingContextContext.md
 docs/StakingOperation.md
@@ -115,11 +121,14 @@ model_create_webhook_request.go
 model_error.go
 model_ethereum_validator_metadata.go
 model_faucet_transaction.go
-model_feature.go
+model_feature_set.go
+model_fetch_historical_staking_balances_200_response.go
 model_fetch_staking_rewards_200_response.go
 model_fetch_staking_rewards_request.go
 model_get_staking_context_request.go
 model_historical_balance.go
+model_network.go
+model_network_identifier.go
 model_seed_creation_event.go
 model_seed_creation_event_result.go
 model_server_signer.go
@@ -131,6 +140,7 @@ model_signature_creation_event.go
 model_signature_creation_event_result.go
 model_signed_voluntary_exit_message_metadata.go
 model_sponsored_send.go
+model_staking_balance.go
 model_staking_context.go
 model_staking_context_context.go
 model_staking_operation.go

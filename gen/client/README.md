@@ -90,6 +90,7 @@ Class | Method | HTTP request | Description
 *ExternalAddressesAPI* | [**ListAddressHistoricalBalance**](docs/ExternalAddressesAPI.md#listaddresshistoricalbalance) | **Get** /v1/networks/{network_id}/addresses/{address_id}/balance_history/{asset_id} | Get address balance history for asset
 *ExternalAddressesAPI* | [**ListExternalAddressBalances**](docs/ExternalAddressesAPI.md#listexternaladdressbalances) | **Get** /v1/networks/{network_id}/addresses/{address_id}/balances | Get the balances of an external address
 *ExternalAddressesAPI* | [**RequestExternalFaucetFunds**](docs/ExternalAddressesAPI.md#requestexternalfaucetfunds) | **Post** /v1/networks/{network_id}/addresses/{address_id}/faucet | Request faucet funds for external address.
+*NetworksAPI* | [**GetNetwork**](docs/NetworksAPI.md#getnetwork) | **Get** /v1/networks/{network_id} | Get network by ID
 *ServerSignersAPI* | [**CreateServerSigner**](docs/ServerSignersAPI.md#createserversigner) | **Post** /v1/server_signers | Create a new Server-Signer
 *ServerSignersAPI* | [**GetServerSigner**](docs/ServerSignersAPI.md#getserversigner) | **Get** /v1/server_signers/{server_signer_id} | Get a server signer by ID
 *ServerSignersAPI* | [**ListServerSignerEvents**](docs/ServerSignersAPI.md#listserversignerevents) | **Get** /v1/server_signers/{server_signer_id}/events | List events for a server signer
@@ -99,6 +100,7 @@ Class | Method | HTTP request | Description
 *StakeAPI* | [**BroadcastStakingOperation**](docs/StakeAPI.md#broadcaststakingoperation) | **Post** /v1/wallets/{wallet_id}/addresses/{address_id}/staking_operations/{staking_operation_id}/broadcast | Broadcast a staking operation
 *StakeAPI* | [**BuildStakingOperation**](docs/StakeAPI.md#buildstakingoperation) | **Post** /v1/stake/build | Build a new staking operation
 *StakeAPI* | [**CreateStakingOperation**](docs/StakeAPI.md#createstakingoperation) | **Post** /v1/wallets/{wallet_id}/addresses/{address_id}/staking_operations | Create a new staking operation for an address
+*StakeAPI* | [**FetchHistoricalStakingBalances**](docs/StakeAPI.md#fetchhistoricalstakingbalances) | **Get** /v1/networks/{network_id}/addresses/{address_id}/stake/balances | Fetch historical staking balances
 *StakeAPI* | [**FetchStakingRewards**](docs/StakeAPI.md#fetchstakingrewards) | **Post** /v1/stake/rewards/search | Fetch staking rewards
 *StakeAPI* | [**GetExternalStakingOperation**](docs/StakeAPI.md#getexternalstakingoperation) | **Get** /v1/networks/{network_id}/addresses/{address_id}/staking_operations/{staking_operation_id} | Get the latest state of a staking operation
 *StakeAPI* | [**GetStakingContext**](docs/StakeAPI.md#getstakingcontext) | **Post** /v1/stake/context | Get staking context
@@ -150,11 +152,14 @@ Class | Method | HTTP request | Description
  - [Error](docs/Error.md)
  - [EthereumValidatorMetadata](docs/EthereumValidatorMetadata.md)
  - [FaucetTransaction](docs/FaucetTransaction.md)
- - [Feature](docs/Feature.md)
+ - [FeatureSet](docs/FeatureSet.md)
+ - [FetchHistoricalStakingBalances200Response](docs/FetchHistoricalStakingBalances200Response.md)
  - [FetchStakingRewards200Response](docs/FetchStakingRewards200Response.md)
  - [FetchStakingRewardsRequest](docs/FetchStakingRewardsRequest.md)
  - [GetStakingContextRequest](docs/GetStakingContextRequest.md)
  - [HistoricalBalance](docs/HistoricalBalance.md)
+ - [Network](docs/Network.md)
+ - [NetworkIdentifier](docs/NetworkIdentifier.md)
  - [SeedCreationEvent](docs/SeedCreationEvent.md)
  - [SeedCreationEventResult](docs/SeedCreationEventResult.md)
  - [ServerSigner](docs/ServerSigner.md)
@@ -166,6 +171,7 @@ Class | Method | HTTP request | Description
  - [SignatureCreationEventResult](docs/SignatureCreationEventResult.md)
  - [SignedVoluntaryExitMessageMetadata](docs/SignedVoluntaryExitMessageMetadata.md)
  - [SponsoredSend](docs/SponsoredSend.md)
+ - [StakingBalance](docs/StakingBalance.md)
  - [StakingContext](docs/StakingContext.md)
  - [StakingContextContext](docs/StakingContextContext.md)
  - [StakingOperation](docs/StakingOperation.md)

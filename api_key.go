@@ -7,7 +7,7 @@ import (
 
 type APIKey struct {
 	Name       string `json:"name"`
-	PrivateKey string `json:"private_key"`
+	PrivateKey string `json:"privateKey"`
 }
 
 func LoadAPIKeyFromFile(fileName string) (APIKey, error) {

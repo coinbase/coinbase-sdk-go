@@ -27,8 +27,7 @@ type Wallet struct {
 	// The ID of the blockchain network
 	NetworkId string `json:"network_id"`
 	DefaultAddress *Address `json:"default_address,omitempty"`
-	// The features enabled for the wallet
-	EnabledFeatures []Feature `json:"enabled_features"`
+	FeatureSet FeatureSet `json:"feature_set"`
 	// The status of the Server-Signer for the wallet if present.
 	ServerSignerStatus *string `json:"server_signer_status,omitempty"`
 }
@@ -39,11 +38,11 @@ type _Wallet Wallet
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewWallet(id string, networkId string, enabledFeatures []Feature) *Wallet {
+func NewWallet(id string, networkId string, featureSet FeatureSet) *Wallet {
 	this := Wallet{}
 	this.Id = id
 	this.NetworkId = networkId
-	this.EnabledFeatures = enabledFeatures
+	this.FeatureSet = featureSet
 	return &this
 }
 
@@ -135,28 +134,28 @@ func (o *Wallet) SetDefaultAddress(v Address) {
 	o.DefaultAddress = &v
 }
 
-// GetEnabledFeatures returns the EnabledFeatures field value
-func (o *Wallet) GetEnabledFeatures() []Feature {
+// GetFeatureSet returns the FeatureSet field value
+func (o *Wallet) GetFeatureSet() FeatureSet {
 	if o == nil {
-		var ret []Feature
+		var ret FeatureSet
 		return ret
 	}
 
-	return o.EnabledFeatures
+	return o.FeatureSet
 }
 
-// GetEnabledFeaturesOk returns a tuple with the EnabledFeatures field value
+// GetFeatureSetOk returns a tuple with the FeatureSet field value
 // and a boolean to check if the value has been set.
-func (o *Wallet) GetEnabledFeaturesOk() ([]Feature, bool) {
+func (o *Wallet) GetFeatureSetOk() (*FeatureSet, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return o.EnabledFeatures, true
+	return &o.FeatureSet, true
 }
 
-// SetEnabledFeatures sets field value
-func (o *Wallet) SetEnabledFeatures(v []Feature) {
-	o.EnabledFeatures = v
+// SetFeatureSet sets field value
+func (o *Wallet) SetFeatureSet(v FeatureSet) {
+	o.FeatureSet = v
 }
 
 // GetServerSignerStatus returns the ServerSignerStatus field value if set, zero value otherwise.
@@ -206,7 +205,7 @@ func (o Wallet) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.DefaultAddress) {
 		toSerialize["default_address"] = o.DefaultAddress
 	}
-	toSerialize["enabled_features"] = o.EnabledFeatures
+	toSerialize["feature_set"] = o.FeatureSet
 	if !IsNil(o.ServerSignerStatus) {
 		toSerialize["server_signer_status"] = o.ServerSignerStatus
 	}
@@ -220,7 +219,7 @@ func (o *Wallet) UnmarshalJSON(data []byte) (err error) {
 	requiredProperties := []string{
 		"id",
 		"network_id",
-		"enabled_features",
+		"feature_set",
 	}
 
 	allProperties := make(map[string]interface{})

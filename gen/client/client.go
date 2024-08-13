@@ -58,6 +58,8 @@ type APIClient struct {
 
 	ExternalAddressesAPI *ExternalAddressesAPIService
 
+	NetworksAPI *NetworksAPIService
+
 	ServerSignersAPI *ServerSignersAPIService
 
 	StakeAPI *StakeAPIService
@@ -95,6 +97,7 @@ func NewAPIClient(cfg *Configuration) *APIClient {
 	c.AssetsAPI = (*AssetsAPIService)(&c.common)
 	c.ContractEventsAPI = (*ContractEventsAPIService)(&c.common)
 	c.ExternalAddressesAPI = (*ExternalAddressesAPIService)(&c.common)
+	c.NetworksAPI = (*NetworksAPIService)(&c.common)
 	c.ServerSignersAPI = (*ServerSignersAPIService)(&c.common)
 	c.StakeAPI = (*StakeAPIService)(&c.common)
 	c.TradesAPI = (*TradesAPIService)(&c.common)

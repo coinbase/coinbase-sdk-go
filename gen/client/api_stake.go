@@ -18,6 +18,7 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 )
 
 
@@ -353,6 +354,183 @@ func (a *StakeAPIService) CreateStakingOperationExecute(r ApiCreateStakingOperat
 	}
 	// body params
 	localVarPostBody = r.createStakingOperationRequest
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+	localVarHTTPResponse.Body.Close()
+	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	if err != nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: localVarHTTPResponse.Status,
+		}
+			var v Error
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+					newErr.model = v
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	if err != nil {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: err.Error(),
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, nil
+}
+
+type ApiFetchHistoricalStakingBalancesRequest struct {
+	ctx context.Context
+	ApiService *StakeAPIService
+	networkId string
+	assetId *string
+	addressId string
+	startTime *time.Time
+	endTime *time.Time
+	limit *int32
+	page *string
+}
+
+// The ID of the asset for which the historical staking balances are being fetched.
+func (r ApiFetchHistoricalStakingBalancesRequest) AssetId(assetId string) ApiFetchHistoricalStakingBalancesRequest {
+	r.assetId = &assetId
+	return r
+}
+
+// The start time of this historical staking balance period.
+func (r ApiFetchHistoricalStakingBalancesRequest) StartTime(startTime time.Time) ApiFetchHistoricalStakingBalancesRequest {
+	r.startTime = &startTime
+	return r
+}
+
+// The end time of this historical staking balance period.
+func (r ApiFetchHistoricalStakingBalancesRequest) EndTime(endTime time.Time) ApiFetchHistoricalStakingBalancesRequest {
+	r.endTime = &endTime
+	return r
+}
+
+// A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default is 50.
+func (r ApiFetchHistoricalStakingBalancesRequest) Limit(limit int32) ApiFetchHistoricalStakingBalancesRequest {
+	r.limit = &limit
+	return r
+}
+
+// A cursor for pagination across multiple pages of results. Don&#39;t include this parameter on the first call. Use the next_page value returned in a previous response to request subsequent results.
+func (r ApiFetchHistoricalStakingBalancesRequest) Page(page string) ApiFetchHistoricalStakingBalancesRequest {
+	r.page = &page
+	return r
+}
+
+func (r ApiFetchHistoricalStakingBalancesRequest) Execute() (*FetchHistoricalStakingBalances200Response, *http.Response, error) {
+	return r.ApiService.FetchHistoricalStakingBalancesExecute(r)
+}
+
+/*
+FetchHistoricalStakingBalances Fetch historical staking balances
+
+Fetch historical staking balances for given address.
+
+ @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ @param networkId The ID of the blockchain network.
+ @param addressId The onchain address for which the historical staking balances are being fetched.
+ @return ApiFetchHistoricalStakingBalancesRequest
+*/
+func (a *StakeAPIService) FetchHistoricalStakingBalances(ctx context.Context, networkId string, addressId string) ApiFetchHistoricalStakingBalancesRequest {
+	return ApiFetchHistoricalStakingBalancesRequest{
+		ApiService: a,
+		ctx: ctx,
+		networkId: networkId,
+		addressId: addressId,
+	}
+}
+
+// Execute executes the request
+//  @return FetchHistoricalStakingBalances200Response
+func (a *StakeAPIService) FetchHistoricalStakingBalancesExecute(r ApiFetchHistoricalStakingBalancesRequest) (*FetchHistoricalStakingBalances200Response, *http.Response, error) {
+	var (
+		localVarHTTPMethod   = http.MethodGet
+		localVarPostBody     interface{}
+		formFiles            []formFile
+		localVarReturnValue  *FetchHistoricalStakingBalances200Response
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "StakeAPIService.FetchHistoricalStakingBalances")
+	if err != nil {
+		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/v1/networks/{network_id}/addresses/{address_id}/stake/balances"
+	localVarPath = strings.Replace(localVarPath, "{"+"network_id"+"}", url.PathEscape(parameterValueToString(r.networkId, "networkId")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"address_id"+"}", url.PathEscape(parameterValueToString(r.addressId, "addressId")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+	if strlen(r.networkId) > 5000 {
+		return localVarReturnValue, nil, reportError("networkId must have less than 5000 elements")
+	}
+	if r.assetId == nil {
+		return localVarReturnValue, nil, reportError("assetId is required and must be specified")
+	}
+	if strlen(*r.assetId) > 5000 {
+		return localVarReturnValue, nil, reportError("assetId must have less than 5000 elements")
+	}
+	if strlen(r.addressId) > 5000 {
+		return localVarReturnValue, nil, reportError("addressId must have less than 5000 elements")
+	}
+	if r.startTime == nil {
+		return localVarReturnValue, nil, reportError("startTime is required and must be specified")
+	}
+	if r.endTime == nil {
+		return localVarReturnValue, nil, reportError("endTime is required and must be specified")
+	}
+
+	if r.limit != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "limit", r.limit, "")
+	}
+	if r.page != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "page", r.page, "")
+	}
+	parameterAddToHeaderOrQuery(localVarQueryParams, "asset_id", r.assetId, "")
+	parameterAddToHeaderOrQuery(localVarQueryParams, "start_time", r.startTime, "")
+	parameterAddToHeaderOrQuery(localVarQueryParams, "end_time", r.endTime, "")
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
 	if err != nil {
 		return localVarReturnValue, nil, err

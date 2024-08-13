@@ -7,7 +7,8 @@ import (
 )
 
 type Client struct {
-	cfg *client.Configuration
+	cfg    *client.Configuration
+	client *client.APIClient
 
 	baseHTTPClient *http.Client
 	apiKey         APIKey
@@ -50,7 +51,14 @@ func NewClient(o ...ClientOption) (*Client, error) {
 			return nil, err
 		}
 	}
+	if c.baseHTTPClient == nil {
+		c.baseHTTPClient = http.DefaultClient
+	}
 	c.cfg.HTTPClient = c.baseHTTPClient
-	c.cfg.HTTPClient.Transport = NewAuthedTransport(c.apiKey, c.baseHTTPClient.Transport)
+	if c.cfg.HTTPClient.Transport == nil {
+		c.cfg.HTTPClient.Transport = http.DefaultTransport
+	}
+	c.cfg.HTTPClient.Transport = NewAuthedTransport(c.apiKey, c.cfg.HTTPClient.Transport)
+	c.client = client.NewAPIClient(c.cfg)
 	return c, nil
 }
