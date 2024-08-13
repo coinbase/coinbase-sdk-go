@@ -1,0 +1,4 @@
+withGoMod: false
+packageName: client
+isGoSubmodule: true
+enumClassPrefix: true
