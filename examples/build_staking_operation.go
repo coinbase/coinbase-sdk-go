@@ -10,7 +10,7 @@ import (
 
 func main() {
 	client, err := coinbase.NewClient(
-		coinbase.WithAPIKeyFromJSON("/Users/deangalvin/Downloads/cdp_api_key (3).json"),
+		coinbase.WithAPIKeyFromJSON("api_key.json"),
 	)
 	if err != nil {
 		log.Fatalf("error creating coinbase client: %v", err)
@@ -25,8 +25,6 @@ func main() {
 	log.Printf("staking operation Transactions: %+v\n", op.Transactions())
 	//
 	address := coinbase.NewAddress("ethereum-holesky", "0x57a063e1df096aaA6b2068C3C7FE6Ac4BC3c4F58")
-	//req := address
-//	.BuildStakeOperaitonRequest(context.Background(), "eth", big.NewFloat(0.0001))
 	op, err := client.BuildStakeOperation(
 		context.Background(),
 		&coinbase.BuildStakeOperationRequest{
