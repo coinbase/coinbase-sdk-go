@@ -39,35 +39,13 @@ func (a Asset) fromAtomicAmount(wholeAmount *big.Int) *big.Int {
 	return atomicAmount
 }
 
-func (a Asset) toAtomicAmount(wholeAmount *big.Float) *big.Int {
-	// Example condition: let's say we want to set the exponent dynamically
-	exponent := int64(a.decimals) // This could be set based on a condition
-
-	// Create a big.Int representing the base (10)
-	base := big.NewInt(10)
-
-	// Create a big.Int to hold the result
-	result := new(big.Int).Exp(base, big.NewInt(exponent), nil)
-
-	// Convert result to big.Float for multiplication
-	resultFloat := new(big.Float).SetInt(result)
-
-	// Multiply the big.Float value by 10^n
-	finalFloatResult := new(big.Float).Mul(wholeAmount, resultFloat)
-
-	finalIntResult := new(big.Int)
-	finalFloatResult.Int(finalIntResult)
-
-	return finalIntResult
-}
-
 func (a Asset) AssetId() string {
 	return a.assetId
 }
 
 func (a Asset) ToString() string {
 	return fmt.Sprintf(
-		"Asset { networkId: '%s' assetId: '%s' amount: '%s' contractAddress: '%s' decimals: '%s' }",
+		"Asset { networkId: '%s' assetId: '%s' contractAddress: '%s' decimals: '%s' }",
 		a.networkId,
 		a.assetId,
 		a.contractAddress,
@@ -90,12 +68,9 @@ func fromAssetModel(model *client.Asset, assetId string) (Asset, error) {
 		switch assetId {
 		case "gwei":
 			decimals = GweiDecimals
-			break
 		case "wei":
 			decimals = 0
-			break
 		case "eth":
-			break
 		default:
 			return Asset{}, fmt.Errorf("invalid asset ID: %s", assetId)
 		}
