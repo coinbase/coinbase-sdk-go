@@ -3,6 +3,7 @@ package coinbase
 import (
 	"context"
 	"crypto/ecdsa"
+	"fmt"
 	"math/big"
 
 	"github.com/coinbase/coinbase-sdk-go/gen/client"
@@ -37,9 +38,9 @@ func (c *Client) BuildStakingOperation(
 	o ...StakingOperationOption,
 ) (*StakingOperation, error) {
 	req := client.BuildStakingOperationRequest{
-		NetworkId: address.NetworkID,
+		NetworkId: address.NetworkID(),
 		AssetId:   assetID,
-		AddressId: address.ID,
+		AddressId: address.ID(),
 		Action:    action,
 		Options: map[string]string{
 			"mode":   "default",
@@ -54,7 +55,7 @@ func (c *Client) BuildStakingOperation(
 		return nil, err
 	}
 
-	return newStakingOperationFromModel(op), nil
+	return newStakingOperationFromModel(op)
 }
 
 // BuildStakeOperation will build an ephemeral staking operation using the
@@ -100,7 +101,7 @@ func (c *Client) FetchExternalStakingOperation(ctx context.Context, address *Add
 	if err != nil {
 		return nil, err
 	}
-	return newStakingOpertionFromModel(op), nil
+	return newStakingOperationFromModel(op)
 }
 
 // StakingOperation represents a staking operation for
@@ -132,30 +133,40 @@ func (o *StakingOperation) Status() string {
 
 // Transactions returns the transactions associated with
 // the StakingOperation
-func (o *StakingOperation) Transaction() []*Transaction {
+func (o *StakingOperation) Transactions() []*Transaction {
 	return o.transactions
 }
 
 // Sign will sign each transaction using the supplied key
+// This will halt and return an error if any of the transactions
+// fail to sign.
 func (o *StakingOperation) Sign(k *ecdsa.PrivateKey) error {
 	for _, tx := range o.Transactions() {
 		if !tx.IsSigned() {
-			tx.Sign(k)
+			err := tx.Sign(k)
+			if err != nil {
+				return err
+			}
 		}
 	}
+	return nil
 }
 
-func newStakingOperationFromModel(m *client.StakingOperation) *StakingOperation {
+func newStakingOperationFromModel(m *client.StakingOperation) (*StakingOperation, error) {
 	if m == nil {
-		return nil
+		return nil, fmt.Errorf("staking operation model is nil")
 	}
 
 	transactions := make([]*Transaction, len(m.Transactions))
 	for i, tx := range m.Transactions {
-		transactions[i] = newTransactionFromModel(&tx)
+		newTx, err := newTransactionFromModel(&tx)
+		if err != nil {
+			return nil, err
+		}
+		transactions[i] = newTx
 	}
 	return &StakingOperation{
 		model:        m,
 		transactions: transactions,
-	}
+	}, nil
 }
