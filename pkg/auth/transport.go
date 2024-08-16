@@ -1,18 +1,18 @@
-package coinbase
+package auth
 
 import (
 	"fmt"
 	"net/http"
 )
 
-type authedTransport struct {
+type transport struct {
 	transport http.RoundTripper
 	apiKey    APIKey
 }
 
-func NewAuthedTransport(apiKey APIKey, transport http.RoundTripper) http.RoundTripper {
-	return &authedTransport{
-		transport: transport,
+func NewTransport(apiKey APIKey, t http.RoundTripper) http.RoundTripper {
+	return &transport{
+		transport: t,
 		apiKey:    apiKey,
 	}
 }
@@ -20,7 +20,7 @@ func NewAuthedTransport(apiKey APIKey, transport http.RoundTripper) http.RoundTr
 // RoundTrip implements the http.RoundTripper interface and wraps
 // the base round tripper with logic to inject the API key auth-based HTTP headers
 // into the request. Reference: https://pkg.go.dev/net/http#RoundTripper
-func (t *authedTransport) RoundTrip(req *http.Request) (*http.Response, error) {
+func (t *transport) RoundTrip(req *http.Request) (*http.Response, error) {
 	jwt, err := BuildJWT(
 		t.apiKey,
 		"cdp_service",

@@ -1,4 +1,4 @@
-package coinbase
+package auth
 
 import (
 	"crypto/rand"

@@ -4,6 +4,7 @@ import (
 	"net/http"
 
 	"github.com/coinbase/coinbase-sdk-go/gen/client"
+	"github.com/coinbase/coinbase-sdk-go/pkg/auth"
 )
 
 type Client struct {
@@ -11,7 +12,7 @@ type Client struct {
 	client *client.APIClient
 
 	baseHTTPClient *http.Client
-	apiKey         APIKey
+	apiKey         auth.APIKey
 }
 
 type ClientOption func(*Client) error
@@ -25,7 +26,7 @@ func WithBaseURL(baseURL string) ClientOption {
 
 func WithAPIKeyFromJSON(fileName string) ClientOption {
 	return func(c *Client) error {
-		key, err := LoadAPIKeyFromFile(fileName)
+		key, err := auth.LoadAPIKeyFromFile(fileName)
 		if err != nil {
 			return err
 		}
@@ -58,7 +59,7 @@ func NewClient(o ...ClientOption) (*Client, error) {
 	if c.cfg.HTTPClient.Transport == nil {
 		c.cfg.HTTPClient.Transport = http.DefaultTransport
 	}
-	c.cfg.HTTPClient.Transport = NewAuthedTransport(c.apiKey, c.cfg.HTTPClient.Transport)
+	c.cfg.HTTPClient.Transport = auth.NewTransport(c.apiKey, c.cfg.HTTPClient.Transport)
 	c.client = client.NewAPIClient(c.cfg)
 	return c, nil
 }
