@@ -7,6 +7,7 @@ import (
 	"github.com/coinbase/coinbase-sdk-go/pkg/auth"
 )
 
+// Client is a coinbase client
 type Client struct {
 	cfg    *client.Configuration
 	client *client.APIClient
@@ -15,8 +16,10 @@ type Client struct {
 	apiKey         auth.APIKey
 }
 
+// ClientOption is a functional option for the client
 type ClientOption func(*Client) error
 
+// WithBaseURL sets the base URL for the client
 func WithBaseURL(baseURL string) ClientOption {
 	return func(c *Client) error {
 		c.cfg.Servers[0].URL = baseURL
@@ -24,6 +27,8 @@ func WithBaseURL(baseURL string) ClientOption {
 	}
 }
 
+// WithAPIKeyFromJSON sets the API key for the client loaded
+// from a supplied json file
 func WithAPIKeyFromJSON(fileName string) ClientOption {
 	return func(c *Client) error {
 		key, err := auth.LoadAPIKeyFromFile(fileName)
@@ -36,6 +41,7 @@ func WithAPIKeyFromJSON(fileName string) ClientOption {
 	}
 }
 
+// WithHTTPClient sets the http client for the client
 func WithHTTPClient(httpClient *http.Client) ClientOption {
 	return func(c *Client) error {
 		c.baseHTTPClient = httpClient
@@ -43,6 +49,8 @@ func WithHTTPClient(httpClient *http.Client) ClientOption {
 	}
 }
 
+// NewClient creates a new coinbase client with the
+// supplied options
 func NewClient(o ...ClientOption) (*Client, error) {
 	c := &Client{
 		cfg: client.NewConfiguration(),
