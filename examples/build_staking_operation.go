@@ -14,7 +14,7 @@ import (
 func main() {
 	ctx := context.Background()
 	client, err := coinbase.NewClient(
-		coinbase.WithAPIKeyFromJSON("/Users/marcin.lenczewski/.apikeys/prod.json"),
+		coinbase.WithAPIKeyFromJSON("api-key.json"),
 	)
 	if err != nil {
 		log.Fatalf("error creating coinbase client: %v", err)
