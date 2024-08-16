@@ -38,7 +38,7 @@ func (c *Client) ListStakingRewards(
 	var (
 		addressIds     = make([]string, 0, len(addresses))
 		stakingRewards = make([]StakingReward, 0)
-		page           = "first"
+		page           = ""
 	)
 
 	// No addresses to fetch rewards for.
@@ -69,12 +69,7 @@ func (c *Client) ListStakingRewards(
 		Format:     format,
 	}
 
-	for page != "" {
-
-		if page == "first" {
-			page = ""
-		}
-
+	for {
 		// Get the rewards for the address ids.
 		resp, err := c.getRewards(ctx, page, rewardsReq)
 		if err != nil {
@@ -85,12 +80,11 @@ func (c *Client) ListStakingRewards(
 			stakingRewards = append(stakingRewards, NewStakingReward(stakingReward, asset, format))
 		}
 
-		if resp.GetHasMore() {
-			if resp.GetNextPage() != "" {
-				page = resp.GetNextPage()
-			}
+		if resp.GetHasMore() && resp.GetNextPage() != "" {
+			page = resp.GetNextPage()
+		} else {
+			break
 		}
-
 	}
 
 	return stakingRewards, nil
