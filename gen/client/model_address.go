@@ -30,6 +30,8 @@ type Address struct {
 	PublicKey string `json:"public_key"`
 	// The onchain address derived on the server-side.
 	AddressId string `json:"address_id"`
+	// The index of the address in the wallet.
+	Index int32 `json:"index"`
 }
 
 type _Address Address
@@ -38,12 +40,13 @@ type _Address Address
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewAddress(walletId string, networkId string, publicKey string, addressId string) *Address {
+func NewAddress(walletId string, networkId string, publicKey string, addressId string, index int32) *Address {
 	this := Address{}
 	this.WalletId = walletId
 	this.NetworkId = networkId
 	this.PublicKey = publicKey
 	this.AddressId = addressId
+	this.Index = index
 	return &this
 }
 
@@ -151,6 +154,30 @@ func (o *Address) SetAddressId(v string) {
 	o.AddressId = v
 }
 
+// GetIndex returns the Index field value
+func (o *Address) GetIndex() int32 {
+	if o == nil {
+		var ret int32
+		return ret
+	}
+
+	return o.Index
+}
+
+// GetIndexOk returns a tuple with the Index field value
+// and a boolean to check if the value has been set.
+func (o *Address) GetIndexOk() (*int32, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.Index, true
+}
+
+// SetIndex sets field value
+func (o *Address) SetIndex(v int32) {
+	o.Index = v
+}
+
 func (o Address) MarshalJSON() ([]byte, error) {
 	toSerialize,err := o.ToMap()
 	if err != nil {
@@ -165,6 +192,7 @@ func (o Address) ToMap() (map[string]interface{}, error) {
 	toSerialize["network_id"] = o.NetworkId
 	toSerialize["public_key"] = o.PublicKey
 	toSerialize["address_id"] = o.AddressId
+	toSerialize["index"] = o.Index
 	return toSerialize, nil
 }
 
@@ -177,6 +205,7 @@ func (o *Address) UnmarshalJSON(data []byte) (err error) {
 		"network_id",
 		"public_key",
 		"address_id",
+		"index",
 	}
 
 	allProperties := make(map[string]interface{})
@@ -243,5 +272,3 @@ func (v *NullableAddress) UnmarshalJSON(src []byte) error {
 	v.isSet = true
 	return json.Unmarshal(src, &v.value)
 }
-
-

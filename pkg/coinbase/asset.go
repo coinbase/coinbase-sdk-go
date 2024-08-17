@@ -29,14 +29,38 @@ func NewAsset(
 	}
 }
 
-func (a Asset) fromAtomicAmount(wholeAmount *big.Int) *big.Int {
-	// Calculate 10^decimals.
-	pow := new(big.Int).Exp(big.NewInt(10), big.NewInt(int64(a.decimals)), nil)
+func (a Asset) fromAtomicAmount(wholeAmount *big.Int) *big.Float {
+	exponent := a.decimals
 
-	// Multiply wholeAmount by 10^decimals.
-	atomicAmount := wholeAmount.Div(wholeAmount, pow)
+	// Calculate the 10^exponent as *big.Int.
+	divisor := new(big.Int).Exp(big.NewInt(10), big.NewInt(int64(exponent)), nil)
 
-	return atomicAmount
+	// Convert the divisor to *big.Float for division.
+	divisorFloat := new(big.Float).SetInt(divisor)
+
+	// Convert the wholeAmount to *big.Float.
+	amountFloat := new(big.Float).SetInt(wholeAmount)
+
+	return new(big.Float).Quo(amountFloat, divisorFloat)
+}
+
+func (a Asset) toAtomicAmount(wholeAmount *big.Float) *big.Int {
+	exponent := a.decimals
+
+	// Calculate the 10^exponent as *big.Int.
+	multiplier := new(big.Int).Exp(big.NewInt(10), big.NewInt(int64(exponent)), nil)
+
+	// Convert the multiplier to *big.Float for multiplication.
+	multiplierFloat := new(big.Float).SetInt(multiplier)
+
+	// Perform the multiplication.
+	resultFloat := new(big.Float).Mul(wholeAmount, multiplierFloat)
+
+	// Converting the result to *big.Int which will truncate any fractional part.
+	resultInt := new(big.Int)
+	resultFloat.Int(resultInt)
+
+	return resultInt
 }
 
 func (a Asset) AssetId() string {

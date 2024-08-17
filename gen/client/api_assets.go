@@ -21,12 +21,31 @@ import (
 )
 
 
+type AssetsAPI interface {
+
+	/*
+	GetAsset Get the asset for the specified asset ID.
+
+	Get the asset for the specified asset ID.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@param networkId The ID of the blockchain network
+	@param assetId The ID of the asset to fetch. This could be a symbol or an ERC20 contract address.
+	@return ApiGetAssetRequest
+	*/
+	GetAsset(ctx context.Context, networkId string, assetId string) ApiGetAssetRequest
+
+	// GetAssetExecute executes the request
+	//  @return Asset
+	GetAssetExecute(r ApiGetAssetRequest) (*Asset, *http.Response, error)
+}
+
 // AssetsAPIService AssetsAPI service
 type AssetsAPIService service
 
 type ApiGetAssetRequest struct {
 	ctx context.Context
-	ApiService *AssetsAPIService
+	ApiService AssetsAPI
 	networkId string
 	assetId string
 }

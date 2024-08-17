@@ -14,6 +14,8 @@ package client
 import (
 	"encoding/json"
 	"time"
+	"bytes"
+	"fmt"
 )
 
 // checks if the ContractEvent type satisfies the MappedNullable interface at compile time
@@ -22,39 +24,54 @@ var _ MappedNullable = &ContractEvent{}
 // ContractEvent Represents a single decoded event emitted by a smart contract
 type ContractEvent struct {
 	// The name of the blockchain network
-	NetworkName *string `json:"network_name,omitempty"`
+	NetworkId string `json:"network_id"`
 	// The name of the blockchain project or protocol
-	ProtocolName *string `json:"protocol_name,omitempty"`
+	ProtocolName string `json:"protocol_name"`
 	// The name of the specific contract within the project
-	ContractName *string `json:"contract_name,omitempty"`
+	ContractName string `json:"contract_name"`
 	// The name of the event emitted by the contract
-	EventName *string `json:"event_name,omitempty"`
+	EventName string `json:"event_name"`
 	// The signature of the event, including parameter types
-	Sig *string `json:"sig,omitempty"`
+	Sig string `json:"sig"`
 	// The first four bytes of the Keccak hash of the event signature
-	FourBytes *string `json:"fourBytes,omitempty"`
+	FourBytes string `json:"four_bytes"`
 	// The EVM address of the smart contract
-	ContractAddress *string `json:"contract_address,omitempty"`
+	ContractAddress string `json:"contract_address"`
 	// The timestamp of the block in which the event was emitted
-	BlockTime *time.Time `json:"block_time,omitempty"`
+	BlockTime time.Time `json:"block_time"`
 	// The block number in which the event was emitted
-	BlockHeight *int32 `json:"block_height,omitempty"`
+	BlockHeight int32 `json:"block_height"`
 	// The transaction hash in which the event was emitted
-	TxHash *string `json:"tx_hash,omitempty"`
+	TxHash string `json:"tx_hash"`
 	// The index of the transaction within the block
-	TxIndex *int32 `json:"tx_index,omitempty"`
+	TxIndex int32 `json:"tx_index"`
 	// The index of the event within the transaction
-	EventIndex *int32 `json:"event_index,omitempty"`
+	EventIndex int32 `json:"event_index"`
 	// The event data in a stringified format
-	Data *string `json:"data,omitempty"`
+	Data string `json:"data"`
 }
+
+type _ContractEvent ContractEvent
 
 // NewContractEvent instantiates a new ContractEvent object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewContractEvent() *ContractEvent {
+func NewContractEvent(networkId string, protocolName string, contractName string, eventName string, sig string, fourBytes string, contractAddress string, blockTime time.Time, blockHeight int32, txHash string, txIndex int32, eventIndex int32, data string) *ContractEvent {
 	this := ContractEvent{}
+	this.NetworkId = networkId
+	this.ProtocolName = protocolName
+	this.ContractName = contractName
+	this.EventName = eventName
+	this.Sig = sig
+	this.FourBytes = fourBytes
+	this.ContractAddress = contractAddress
+	this.BlockTime = blockTime
+	this.BlockHeight = blockHeight
+	this.TxHash = txHash
+	this.TxIndex = txIndex
+	this.EventIndex = eventIndex
+	this.Data = data
 	return &this
 }
 
@@ -66,420 +83,316 @@ func NewContractEventWithDefaults() *ContractEvent {
 	return &this
 }
 
-// GetNetworkName returns the NetworkName field value if set, zero value otherwise.
-func (o *ContractEvent) GetNetworkName() string {
-	if o == nil || IsNil(o.NetworkName) {
+// GetNetworkId returns the NetworkId field value
+func (o *ContractEvent) GetNetworkId() string {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.NetworkName
+
+	return o.NetworkId
 }
 
-// GetNetworkNameOk returns a tuple with the NetworkName field value if set, nil otherwise
+// GetNetworkIdOk returns a tuple with the NetworkId field value
 // and a boolean to check if the value has been set.
-func (o *ContractEvent) GetNetworkNameOk() (*string, bool) {
-	if o == nil || IsNil(o.NetworkName) {
+func (o *ContractEvent) GetNetworkIdOk() (*string, bool) {
+	if o == nil {
 		return nil, false
 	}
-	return o.NetworkName, true
+	return &o.NetworkId, true
 }
 
-// HasNetworkName returns a boolean if a field has been set.
-func (o *ContractEvent) HasNetworkName() bool {
-	if o != nil && !IsNil(o.NetworkName) {
-		return true
-	}
-
-	return false
+// SetNetworkId sets field value
+func (o *ContractEvent) SetNetworkId(v string) {
+	o.NetworkId = v
 }
 
-// SetNetworkName gets a reference to the given string and assigns it to the NetworkName field.
-func (o *ContractEvent) SetNetworkName(v string) {
-	o.NetworkName = &v
-}
-
-// GetProtocolName returns the ProtocolName field value if set, zero value otherwise.
+// GetProtocolName returns the ProtocolName field value
 func (o *ContractEvent) GetProtocolName() string {
-	if o == nil || IsNil(o.ProtocolName) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.ProtocolName
+
+	return o.ProtocolName
 }
 
-// GetProtocolNameOk returns a tuple with the ProtocolName field value if set, nil otherwise
+// GetProtocolNameOk returns a tuple with the ProtocolName field value
 // and a boolean to check if the value has been set.
 func (o *ContractEvent) GetProtocolNameOk() (*string, bool) {
-	if o == nil || IsNil(o.ProtocolName) {
+	if o == nil {
 		return nil, false
 	}
-	return o.ProtocolName, true
+	return &o.ProtocolName, true
 }
 
-// HasProtocolName returns a boolean if a field has been set.
-func (o *ContractEvent) HasProtocolName() bool {
-	if o != nil && !IsNil(o.ProtocolName) {
-		return true
-	}
-
-	return false
-}
-
-// SetProtocolName gets a reference to the given string and assigns it to the ProtocolName field.
+// SetProtocolName sets field value
 func (o *ContractEvent) SetProtocolName(v string) {
-	o.ProtocolName = &v
+	o.ProtocolName = v
 }
 
-// GetContractName returns the ContractName field value if set, zero value otherwise.
+// GetContractName returns the ContractName field value
 func (o *ContractEvent) GetContractName() string {
-	if o == nil || IsNil(o.ContractName) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.ContractName
+
+	return o.ContractName
 }
 
-// GetContractNameOk returns a tuple with the ContractName field value if set, nil otherwise
+// GetContractNameOk returns a tuple with the ContractName field value
 // and a boolean to check if the value has been set.
 func (o *ContractEvent) GetContractNameOk() (*string, bool) {
-	if o == nil || IsNil(o.ContractName) {
+	if o == nil {
 		return nil, false
 	}
-	return o.ContractName, true
+	return &o.ContractName, true
 }
 
-// HasContractName returns a boolean if a field has been set.
-func (o *ContractEvent) HasContractName() bool {
-	if o != nil && !IsNil(o.ContractName) {
-		return true
-	}
-
-	return false
-}
-
-// SetContractName gets a reference to the given string and assigns it to the ContractName field.
+// SetContractName sets field value
 func (o *ContractEvent) SetContractName(v string) {
-	o.ContractName = &v
+	o.ContractName = v
 }
 
-// GetEventName returns the EventName field value if set, zero value otherwise.
+// GetEventName returns the EventName field value
 func (o *ContractEvent) GetEventName() string {
-	if o == nil || IsNil(o.EventName) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.EventName
+
+	return o.EventName
 }
 
-// GetEventNameOk returns a tuple with the EventName field value if set, nil otherwise
+// GetEventNameOk returns a tuple with the EventName field value
 // and a boolean to check if the value has been set.
 func (o *ContractEvent) GetEventNameOk() (*string, bool) {
-	if o == nil || IsNil(o.EventName) {
+	if o == nil {
 		return nil, false
 	}
-	return o.EventName, true
+	return &o.EventName, true
 }
 
-// HasEventName returns a boolean if a field has been set.
-func (o *ContractEvent) HasEventName() bool {
-	if o != nil && !IsNil(o.EventName) {
-		return true
-	}
-
-	return false
-}
-
-// SetEventName gets a reference to the given string and assigns it to the EventName field.
+// SetEventName sets field value
 func (o *ContractEvent) SetEventName(v string) {
-	o.EventName = &v
+	o.EventName = v
 }
 
-// GetSig returns the Sig field value if set, zero value otherwise.
+// GetSig returns the Sig field value
 func (o *ContractEvent) GetSig() string {
-	if o == nil || IsNil(o.Sig) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Sig
+
+	return o.Sig
 }
 
-// GetSigOk returns a tuple with the Sig field value if set, nil otherwise
+// GetSigOk returns a tuple with the Sig field value
 // and a boolean to check if the value has been set.
 func (o *ContractEvent) GetSigOk() (*string, bool) {
-	if o == nil || IsNil(o.Sig) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Sig, true
+	return &o.Sig, true
 }
 
-// HasSig returns a boolean if a field has been set.
-func (o *ContractEvent) HasSig() bool {
-	if o != nil && !IsNil(o.Sig) {
-		return true
-	}
-
-	return false
-}
-
-// SetSig gets a reference to the given string and assigns it to the Sig field.
+// SetSig sets field value
 func (o *ContractEvent) SetSig(v string) {
-	o.Sig = &v
+	o.Sig = v
 }
 
-// GetFourBytes returns the FourBytes field value if set, zero value otherwise.
+// GetFourBytes returns the FourBytes field value
 func (o *ContractEvent) GetFourBytes() string {
-	if o == nil || IsNil(o.FourBytes) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.FourBytes
+
+	return o.FourBytes
 }
 
-// GetFourBytesOk returns a tuple with the FourBytes field value if set, nil otherwise
+// GetFourBytesOk returns a tuple with the FourBytes field value
 // and a boolean to check if the value has been set.
 func (o *ContractEvent) GetFourBytesOk() (*string, bool) {
-	if o == nil || IsNil(o.FourBytes) {
+	if o == nil {
 		return nil, false
 	}
-	return o.FourBytes, true
+	return &o.FourBytes, true
 }
 
-// HasFourBytes returns a boolean if a field has been set.
-func (o *ContractEvent) HasFourBytes() bool {
-	if o != nil && !IsNil(o.FourBytes) {
-		return true
-	}
-
-	return false
-}
-
-// SetFourBytes gets a reference to the given string and assigns it to the FourBytes field.
+// SetFourBytes sets field value
 func (o *ContractEvent) SetFourBytes(v string) {
-	o.FourBytes = &v
+	o.FourBytes = v
 }
 
-// GetContractAddress returns the ContractAddress field value if set, zero value otherwise.
+// GetContractAddress returns the ContractAddress field value
 func (o *ContractEvent) GetContractAddress() string {
-	if o == nil || IsNil(o.ContractAddress) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.ContractAddress
+
+	return o.ContractAddress
 }
 
-// GetContractAddressOk returns a tuple with the ContractAddress field value if set, nil otherwise
+// GetContractAddressOk returns a tuple with the ContractAddress field value
 // and a boolean to check if the value has been set.
 func (o *ContractEvent) GetContractAddressOk() (*string, bool) {
-	if o == nil || IsNil(o.ContractAddress) {
+	if o == nil {
 		return nil, false
 	}
-	return o.ContractAddress, true
+	return &o.ContractAddress, true
 }
 
-// HasContractAddress returns a boolean if a field has been set.
-func (o *ContractEvent) HasContractAddress() bool {
-	if o != nil && !IsNil(o.ContractAddress) {
-		return true
-	}
-
-	return false
-}
-
-// SetContractAddress gets a reference to the given string and assigns it to the ContractAddress field.
+// SetContractAddress sets field value
 func (o *ContractEvent) SetContractAddress(v string) {
-	o.ContractAddress = &v
+	o.ContractAddress = v
 }
 
-// GetBlockTime returns the BlockTime field value if set, zero value otherwise.
+// GetBlockTime returns the BlockTime field value
 func (o *ContractEvent) GetBlockTime() time.Time {
-	if o == nil || IsNil(o.BlockTime) {
+	if o == nil {
 		var ret time.Time
 		return ret
 	}
-	return *o.BlockTime
+
+	return o.BlockTime
 }
 
-// GetBlockTimeOk returns a tuple with the BlockTime field value if set, nil otherwise
+// GetBlockTimeOk returns a tuple with the BlockTime field value
 // and a boolean to check if the value has been set.
 func (o *ContractEvent) GetBlockTimeOk() (*time.Time, bool) {
-	if o == nil || IsNil(o.BlockTime) {
+	if o == nil {
 		return nil, false
 	}
-	return o.BlockTime, true
+	return &o.BlockTime, true
 }
 
-// HasBlockTime returns a boolean if a field has been set.
-func (o *ContractEvent) HasBlockTime() bool {
-	if o != nil && !IsNil(o.BlockTime) {
-		return true
-	}
-
-	return false
-}
-
-// SetBlockTime gets a reference to the given time.Time and assigns it to the BlockTime field.
+// SetBlockTime sets field value
 func (o *ContractEvent) SetBlockTime(v time.Time) {
-	o.BlockTime = &v
+	o.BlockTime = v
 }
 
-// GetBlockHeight returns the BlockHeight field value if set, zero value otherwise.
+// GetBlockHeight returns the BlockHeight field value
 func (o *ContractEvent) GetBlockHeight() int32 {
-	if o == nil || IsNil(o.BlockHeight) {
+	if o == nil {
 		var ret int32
 		return ret
 	}
-	return *o.BlockHeight
+
+	return o.BlockHeight
 }
 
-// GetBlockHeightOk returns a tuple with the BlockHeight field value if set, nil otherwise
+// GetBlockHeightOk returns a tuple with the BlockHeight field value
 // and a boolean to check if the value has been set.
 func (o *ContractEvent) GetBlockHeightOk() (*int32, bool) {
-	if o == nil || IsNil(o.BlockHeight) {
+	if o == nil {
 		return nil, false
 	}
-	return o.BlockHeight, true
+	return &o.BlockHeight, true
 }
 
-// HasBlockHeight returns a boolean if a field has been set.
-func (o *ContractEvent) HasBlockHeight() bool {
-	if o != nil && !IsNil(o.BlockHeight) {
-		return true
-	}
-
-	return false
-}
-
-// SetBlockHeight gets a reference to the given int32 and assigns it to the BlockHeight field.
+// SetBlockHeight sets field value
 func (o *ContractEvent) SetBlockHeight(v int32) {
-	o.BlockHeight = &v
+	o.BlockHeight = v
 }
 
-// GetTxHash returns the TxHash field value if set, zero value otherwise.
+// GetTxHash returns the TxHash field value
 func (o *ContractEvent) GetTxHash() string {
-	if o == nil || IsNil(o.TxHash) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.TxHash
+
+	return o.TxHash
 }
 
-// GetTxHashOk returns a tuple with the TxHash field value if set, nil otherwise
+// GetTxHashOk returns a tuple with the TxHash field value
 // and a boolean to check if the value has been set.
 func (o *ContractEvent) GetTxHashOk() (*string, bool) {
-	if o == nil || IsNil(o.TxHash) {
+	if o == nil {
 		return nil, false
 	}
-	return o.TxHash, true
+	return &o.TxHash, true
 }
 
-// HasTxHash returns a boolean if a field has been set.
-func (o *ContractEvent) HasTxHash() bool {
-	if o != nil && !IsNil(o.TxHash) {
-		return true
-	}
-
-	return false
-}
-
-// SetTxHash gets a reference to the given string and assigns it to the TxHash field.
+// SetTxHash sets field value
 func (o *ContractEvent) SetTxHash(v string) {
-	o.TxHash = &v
+	o.TxHash = v
 }
 
-// GetTxIndex returns the TxIndex field value if set, zero value otherwise.
+// GetTxIndex returns the TxIndex field value
 func (o *ContractEvent) GetTxIndex() int32 {
-	if o == nil || IsNil(o.TxIndex) {
+	if o == nil {
 		var ret int32
 		return ret
 	}
-	return *o.TxIndex
+
+	return o.TxIndex
 }
 
-// GetTxIndexOk returns a tuple with the TxIndex field value if set, nil otherwise
+// GetTxIndexOk returns a tuple with the TxIndex field value
 // and a boolean to check if the value has been set.
 func (o *ContractEvent) GetTxIndexOk() (*int32, bool) {
-	if o == nil || IsNil(o.TxIndex) {
+	if o == nil {
 		return nil, false
 	}
-	return o.TxIndex, true
+	return &o.TxIndex, true
 }
 
-// HasTxIndex returns a boolean if a field has been set.
-func (o *ContractEvent) HasTxIndex() bool {
-	if o != nil && !IsNil(o.TxIndex) {
-		return true
-	}
-
-	return false
-}
-
-// SetTxIndex gets a reference to the given int32 and assigns it to the TxIndex field.
+// SetTxIndex sets field value
 func (o *ContractEvent) SetTxIndex(v int32) {
-	o.TxIndex = &v
+	o.TxIndex = v
 }
 
-// GetEventIndex returns the EventIndex field value if set, zero value otherwise.
+// GetEventIndex returns the EventIndex field value
 func (o *ContractEvent) GetEventIndex() int32 {
-	if o == nil || IsNil(o.EventIndex) {
+	if o == nil {
 		var ret int32
 		return ret
 	}
-	return *o.EventIndex
+
+	return o.EventIndex
 }
 
-// GetEventIndexOk returns a tuple with the EventIndex field value if set, nil otherwise
+// GetEventIndexOk returns a tuple with the EventIndex field value
 // and a boolean to check if the value has been set.
 func (o *ContractEvent) GetEventIndexOk() (*int32, bool) {
-	if o == nil || IsNil(o.EventIndex) {
+	if o == nil {
 		return nil, false
 	}
-	return o.EventIndex, true
+	return &o.EventIndex, true
 }
 
-// HasEventIndex returns a boolean if a field has been set.
-func (o *ContractEvent) HasEventIndex() bool {
-	if o != nil && !IsNil(o.EventIndex) {
-		return true
-	}
-
-	return false
-}
-
-// SetEventIndex gets a reference to the given int32 and assigns it to the EventIndex field.
+// SetEventIndex sets field value
 func (o *ContractEvent) SetEventIndex(v int32) {
-	o.EventIndex = &v
+	o.EventIndex = v
 }
 
-// GetData returns the Data field value if set, zero value otherwise.
+// GetData returns the Data field value
 func (o *ContractEvent) GetData() string {
-	if o == nil || IsNil(o.Data) {
+	if o == nil {
 		var ret string
 		return ret
 	}
-	return *o.Data
+
+	return o.Data
 }
 
-// GetDataOk returns a tuple with the Data field value if set, nil otherwise
+// GetDataOk returns a tuple with the Data field value
 // and a boolean to check if the value has been set.
 func (o *ContractEvent) GetDataOk() (*string, bool) {
-	if o == nil || IsNil(o.Data) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Data, true
+	return &o.Data, true
 }
 
-// HasData returns a boolean if a field has been set.
-func (o *ContractEvent) HasData() bool {
-	if o != nil && !IsNil(o.Data) {
-		return true
-	}
-
-	return false
-}
-
-// SetData gets a reference to the given string and assigns it to the Data field.
+// SetData sets field value
 func (o *ContractEvent) SetData(v string) {
-	o.Data = &v
+	o.Data = v
 }
 
 func (o ContractEvent) MarshalJSON() ([]byte, error) {
@@ -492,46 +405,69 @@ func (o ContractEvent) MarshalJSON() ([]byte, error) {
 
 func (o ContractEvent) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.NetworkName) {
-		toSerialize["network_name"] = o.NetworkName
-	}
-	if !IsNil(o.ProtocolName) {
-		toSerialize["protocol_name"] = o.ProtocolName
-	}
-	if !IsNil(o.ContractName) {
-		toSerialize["contract_name"] = o.ContractName
-	}
-	if !IsNil(o.EventName) {
-		toSerialize["event_name"] = o.EventName
-	}
-	if !IsNil(o.Sig) {
-		toSerialize["sig"] = o.Sig
-	}
-	if !IsNil(o.FourBytes) {
-		toSerialize["fourBytes"] = o.FourBytes
-	}
-	if !IsNil(o.ContractAddress) {
-		toSerialize["contract_address"] = o.ContractAddress
-	}
-	if !IsNil(o.BlockTime) {
-		toSerialize["block_time"] = o.BlockTime
-	}
-	if !IsNil(o.BlockHeight) {
-		toSerialize["block_height"] = o.BlockHeight
-	}
-	if !IsNil(o.TxHash) {
-		toSerialize["tx_hash"] = o.TxHash
-	}
-	if !IsNil(o.TxIndex) {
-		toSerialize["tx_index"] = o.TxIndex
-	}
-	if !IsNil(o.EventIndex) {
-		toSerialize["event_index"] = o.EventIndex
-	}
-	if !IsNil(o.Data) {
-		toSerialize["data"] = o.Data
-	}
+	toSerialize["network_id"] = o.NetworkId
+	toSerialize["protocol_name"] = o.ProtocolName
+	toSerialize["contract_name"] = o.ContractName
+	toSerialize["event_name"] = o.EventName
+	toSerialize["sig"] = o.Sig
+	toSerialize["four_bytes"] = o.FourBytes
+	toSerialize["contract_address"] = o.ContractAddress
+	toSerialize["block_time"] = o.BlockTime
+	toSerialize["block_height"] = o.BlockHeight
+	toSerialize["tx_hash"] = o.TxHash
+	toSerialize["tx_index"] = o.TxIndex
+	toSerialize["event_index"] = o.EventIndex
+	toSerialize["data"] = o.Data
 	return toSerialize, nil
+}
+
+func (o *ContractEvent) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"network_id",
+		"protocol_name",
+		"contract_name",
+		"event_name",
+		"sig",
+		"four_bytes",
+		"contract_address",
+		"block_time",
+		"block_height",
+		"tx_hash",
+		"tx_index",
+		"event_index",
+		"data",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varContractEvent := _ContractEvent{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	decoder.DisallowUnknownFields()
+	err = decoder.Decode(&varContractEvent)
+
+	if err != nil {
+		return err
+	}
+
+	*o = ContractEvent(varContractEvent)
+
+	return err
 }
 
 type NullableContractEvent struct {
@@ -569,5 +505,3 @@ func (v *NullableContractEvent) UnmarshalJSON(src []byte) error {
 	v.isSet = true
 	return json.Unmarshal(src, &v.value)
 }
-
-

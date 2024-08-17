@@ -96,7 +96,7 @@ func newTransactionFromModel(m *client.Transaction) (*Transaction, error) {
 	}
 
 	t := &types.Transaction{}
-	err = t.UnmarshalBinary(rawHex)
+	err = t.UnmarshalJSON(rawHex)
 	if err != nil {
 		return nil, err
 	}

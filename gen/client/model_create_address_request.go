@@ -24,6 +24,8 @@ type CreateAddressRequest struct {
 	PublicKey *string `json:"public_key,omitempty"`
 	// An attestation signed by the private key that is associated with the wallet. The attestation will be a hex-encoded signature of a json payload with fields `wallet_id` and `public_key`, signed by the private key associated with the public_key set in the request.
 	Attestation *string `json:"attestation,omitempty"`
+	// The index of the address within the wallet.
+	AddressIndex *int32 `json:"address_index,omitempty"`
 }
 
 // NewCreateAddressRequest instantiates a new CreateAddressRequest object
@@ -107,6 +109,38 @@ func (o *CreateAddressRequest) SetAttestation(v string) {
 	o.Attestation = &v
 }
 
+// GetAddressIndex returns the AddressIndex field value if set, zero value otherwise.
+func (o *CreateAddressRequest) GetAddressIndex() int32 {
+	if o == nil || IsNil(o.AddressIndex) {
+		var ret int32
+		return ret
+	}
+	return *o.AddressIndex
+}
+
+// GetAddressIndexOk returns a tuple with the AddressIndex field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *CreateAddressRequest) GetAddressIndexOk() (*int32, bool) {
+	if o == nil || IsNil(o.AddressIndex) {
+		return nil, false
+	}
+	return o.AddressIndex, true
+}
+
+// HasAddressIndex returns a boolean if a field has been set.
+func (o *CreateAddressRequest) HasAddressIndex() bool {
+	if o != nil && !IsNil(o.AddressIndex) {
+		return true
+	}
+
+	return false
+}
+
+// SetAddressIndex gets a reference to the given int32 and assigns it to the AddressIndex field.
+func (o *CreateAddressRequest) SetAddressIndex(v int32) {
+	o.AddressIndex = &v
+}
+
 func (o CreateAddressRequest) MarshalJSON() ([]byte, error) {
 	toSerialize,err := o.ToMap()
 	if err != nil {
@@ -122,6 +156,9 @@ func (o CreateAddressRequest) ToMap() (map[string]interface{}, error) {
 	}
 	if !IsNil(o.Attestation) {
 		toSerialize["attestation"] = o.Attestation
+	}
+	if !IsNil(o.AddressIndex) {
+		toSerialize["address_index"] = o.AddressIndex
 	}
 	return toSerialize, nil
 }
@@ -161,5 +198,3 @@ func (v *NullableCreateAddressRequest) UnmarshalJSON(src []byte) error {
 	v.isSet = true
 	return json.Unmarshal(src, &v.value)
 }
-
-

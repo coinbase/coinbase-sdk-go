@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"math/big"
 	"time"
@@ -22,8 +21,13 @@ func main() {
 
 	address := coinbase.NewAddress("ethereum-holesky", "0x57a063e1df096aaA6b2068C3C7FE6Ac4BC3c4F58")
 	op, err := client.BuildStakeOperation(ctx, address, "eth", big.NewFloat(0.0001))
+	if err != nil {
+		log.Fatalf("error building staking operation: %v", err)
+	}
 	log.Printf("staking operation ID: %s\n", op.ID())
-	log.Printf("staking operation Transactions: %+v\n", op.Transactions())
+	for _, transaction := range op.Transactions() {
+		log.Printf("staking operation Transaction: %+v\n", transaction)
+	}
 
 	address = coinbase.NewAddress(
 		"ethereum-mainnet",
@@ -43,7 +47,7 @@ func main() {
 	}
 
 	for _, reward := range rewards {
-		println(fmt.Sprintf("%+v", reward.ToString()))
+		println(reward.ToJSON())
 	}
 
 }

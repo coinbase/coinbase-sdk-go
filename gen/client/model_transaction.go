@@ -22,19 +22,21 @@ var _ MappedNullable = &Transaction{}
 
 // Transaction An onchain transaction.
 type Transaction struct {
-	// The ID of the blockchain network
+	// The ID of the blockchain network.
 	NetworkId string `json:"network_id"`
-	// The onchain address of the sender
+	// The onchain address of the sender.
 	FromAddressId string `json:"from_address_id"`
+	// The onchain address of the recipient.
+	ToAddressId *string `json:"to_address_id,omitempty"`
 	// The unsigned payload of the transaction. This is the payload that needs to be signed by the sender.
 	UnsignedPayload string `json:"unsigned_payload"`
 	// The signed payload of the transaction. This is the payload that has been signed by the sender.
 	SignedPayload *string `json:"signed_payload,omitempty"`
-	// The hash of the transaction
+	// The hash of the transaction.
 	TransactionHash *string `json:"transaction_hash,omitempty"`
 	// The link to view the transaction on a block explorer. This is optional and may not be present for all transactions.
 	TransactionLink *string `json:"transaction_link,omitempty"`
-	// The status of the transaction
+	// The status of the transaction.
 	Status string `json:"status"`
 }
 
@@ -107,6 +109,38 @@ func (o *Transaction) GetFromAddressIdOk() (*string, bool) {
 // SetFromAddressId sets field value
 func (o *Transaction) SetFromAddressId(v string) {
 	o.FromAddressId = v
+}
+
+// GetToAddressId returns the ToAddressId field value if set, zero value otherwise.
+func (o *Transaction) GetToAddressId() string {
+	if o == nil || IsNil(o.ToAddressId) {
+		var ret string
+		return ret
+	}
+	return *o.ToAddressId
+}
+
+// GetToAddressIdOk returns a tuple with the ToAddressId field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *Transaction) GetToAddressIdOk() (*string, bool) {
+	if o == nil || IsNil(o.ToAddressId) {
+		return nil, false
+	}
+	return o.ToAddressId, true
+}
+
+// HasToAddressId returns a boolean if a field has been set.
+func (o *Transaction) HasToAddressId() bool {
+	if o != nil && !IsNil(o.ToAddressId) {
+		return true
+	}
+
+	return false
+}
+
+// SetToAddressId gets a reference to the given string and assigns it to the ToAddressId field.
+func (o *Transaction) SetToAddressId(v string) {
+	o.ToAddressId = &v
 }
 
 // GetUnsignedPayload returns the UnsignedPayload field value
@@ -265,6 +299,9 @@ func (o Transaction) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["network_id"] = o.NetworkId
 	toSerialize["from_address_id"] = o.FromAddressId
+	if !IsNil(o.ToAddressId) {
+		toSerialize["to_address_id"] = o.ToAddressId
+	}
 	toSerialize["unsigned_payload"] = o.UnsignedPayload
 	if !IsNil(o.SignedPayload) {
 		toSerialize["signed_payload"] = o.SignedPayload
@@ -354,5 +391,3 @@ func (v *NullableTransaction) UnmarshalJSON(src []byte) error {
 	v.isSet = true
 	return json.Unmarshal(src, &v.value)
 }
-
-
