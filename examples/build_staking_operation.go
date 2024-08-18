@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"math/big"
+	"os"
 	"time"
 
 	api "github.com/coinbase/coinbase-sdk-go/gen/client"
@@ -13,7 +14,7 @@ import (
 func main() {
 	ctx := context.Background()
 	client, err := coinbase.NewClient(
-		coinbase.WithAPIKeyFromJSON("api-key.json"),
+		coinbase.WithAPIKeyFromJSON(os.Args[1]),
 	)
 	if err != nil {
 		log.Fatalf("error creating coinbase client: %v", err)

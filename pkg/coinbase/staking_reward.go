@@ -13,16 +13,16 @@ import (
 
 // StakingReward represents a struct that holds a staking reward data.
 type StakingReward struct {
-	model  client.StakingReward
-	asset  Asset
+	model  *client.StakingReward
+	asset  *Asset
 	format client.StakingRewardFormat
 }
 
 // NewStakingReward creates a new staking rewards object.
 func NewStakingReward(model client.StakingReward, asset Asset, format client.StakingRewardFormat) StakingReward {
 	return StakingReward{
-		model:  model,
-		asset:  asset,
+		model:  &model,
+		asset:  &asset,
 		format: format,
 	}
 }
@@ -78,7 +78,7 @@ func (c *Client) ListStakingRewards(
 		}
 
 		for _, stakingReward := range resp.GetData() {
-			stakingRewards = append(stakingRewards, NewStakingReward(stakingReward, asset, format))
+			stakingRewards = append(stakingRewards, NewStakingReward(stakingReward, *asset, format))
 		}
 
 		if resp.GetHasMore() && resp.GetNextPage() != "" {

@@ -20,8 +20,8 @@ func NewAsset(
 	assetId string,
 	contractAddress string,
 	decimals int32,
-) Asset {
-	return Asset{
+) *Asset {
+	return &Asset{
 		networkId:       networkId,
 		assetId:         assetId,
 		contractAddress: contractAddress,
@@ -63,11 +63,21 @@ func (a Asset) toAtomicAmount(wholeAmount *big.Float) *big.Int {
 	return resultInt
 }
 
-func (a Asset) AssetId() string {
+func (a *Asset) FromAtomicAmount(wholeAmount *big.Float) *big.Float {
+	// Calculate 10^decimals.
+	pow := new(big.Int).Exp(big.NewInt(10), big.NewInt(int64(a.decimals)), nil)
+
+	// Divide wholeAmount by 10^decimals.
+	atomicAmount := wholeAmount.Quo(wholeAmount, new(big.Float).SetInt(pow))
+
+	return atomicAmount
+}
+
+func (a *Asset) AssetId() string {
 	return a.assetId
 }
 
-func (a Asset) ToString() string {
+func (a *Asset) String() string {
 	return fmt.Sprintf(
 		"Asset { networkId: '%s' assetId: '%s' contractAddress: '%s' decimals: '%d' }",
 		a.networkId,
@@ -84,7 +94,7 @@ func primaryDenomination(assetId string) string {
 	return assetId
 }
 
-func fromAssetModel(model *client.Asset, assetId string) (Asset, error) {
+func newAssetFromModel(model *client.Asset, assetId string) (*Asset, error) {
 
 	decimals := model.GetDecimals()
 
@@ -96,11 +106,11 @@ func fromAssetModel(model *client.Asset, assetId string) (Asset, error) {
 			decimals = 0
 		case "eth":
 		default:
-			return Asset{}, fmt.Errorf("invalid asset ID: %s", assetId)
+			return nil, fmt.Errorf("invalid asset ID: %s", assetId)
 		}
 	}
 
-	return Asset{
+	return &Asset{
 		networkId:       model.GetNetworkId(),
 		assetId:         model.GetAssetId(),
 		contractAddress: model.GetContractAddress(),
@@ -108,15 +118,15 @@ func fromAssetModel(model *client.Asset, assetId string) (Asset, error) {
 	}, nil
 }
 
-func (c *Client) fetchAsset(ctx context.Context, networkId string, assetId string) (Asset, error) {
+func (c *Client) fetchAsset(ctx context.Context, networkId string, assetId string) (*Asset, error) {
 	// Get the Asset from the backend.
-	asset, httpRes, err := c.client.AssetsAPI.GetAsset(
+	asset, _, err := c.client.AssetsAPI.GetAsset(
 		ctx,
 		normalizeNetwork(networkId),
 		primaryDenomination(assetId),
 	).Execute()
 	if err != nil {
-		return Asset{}, err
+		return nil, err
 	}
 
 	if httpRes.StatusCode != 200 {
