@@ -21,103 +21,12 @@ import (
 )
 
 
-type ServerSignersAPI interface {
-
-	/*
-	CreateServerSigner Create a new Server-Signer
-
-	Create a new Server-Signer
-
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	@return ApiCreateServerSignerRequest
-	*/
-	CreateServerSigner(ctx context.Context) ApiCreateServerSignerRequest
-
-	// CreateServerSignerExecute executes the request
-	//  @return ServerSigner
-	CreateServerSignerExecute(r ApiCreateServerSignerRequest) (*ServerSigner, *http.Response, error)
-
-	/*
-	GetServerSigner Get a server signer by ID
-
-	Get a server signer by ID
-
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	@param serverSignerId The ID of the server signer to fetch
-	@return ApiGetServerSignerRequest
-	*/
-	GetServerSigner(ctx context.Context, serverSignerId string) ApiGetServerSignerRequest
-
-	// GetServerSignerExecute executes the request
-	//  @return ServerSigner
-	GetServerSignerExecute(r ApiGetServerSignerRequest) (*ServerSigner, *http.Response, error)
-
-	/*
-	ListServerSignerEvents List events for a server signer
-
-	List events for a server signer
-
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	@param serverSignerId The ID of the server signer to fetch events for
-	@return ApiListServerSignerEventsRequest
-	*/
-	ListServerSignerEvents(ctx context.Context, serverSignerId string) ApiListServerSignerEventsRequest
-
-	// ListServerSignerEventsExecute executes the request
-	//  @return ServerSignerEventList
-	ListServerSignerEventsExecute(r ApiListServerSignerEventsRequest) (*ServerSignerEventList, *http.Response, error)
-
-	/*
-	ListServerSigners List server signers for the current project
-
-	List server signers for the current project
-
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	@return ApiListServerSignersRequest
-	*/
-	ListServerSigners(ctx context.Context) ApiListServerSignersRequest
-
-	// ListServerSignersExecute executes the request
-	//  @return ServerSignerList
-	ListServerSignersExecute(r ApiListServerSignersRequest) (*ServerSignerList, *http.Response, error)
-
-	/*
-	SubmitServerSignerSeedEventResult Submit the result of a server signer event
-
-	Submit the result of a server signer event
-
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	@param serverSignerId The ID of the server signer to submit the event result for
-	@return ApiSubmitServerSignerSeedEventResultRequest
-	*/
-	SubmitServerSignerSeedEventResult(ctx context.Context, serverSignerId string) ApiSubmitServerSignerSeedEventResultRequest
-
-	// SubmitServerSignerSeedEventResultExecute executes the request
-	//  @return SeedCreationEventResult
-	SubmitServerSignerSeedEventResultExecute(r ApiSubmitServerSignerSeedEventResultRequest) (*SeedCreationEventResult, *http.Response, error)
-
-	/*
-	SubmitServerSignerSignatureEventResult Submit the result of a server signer event
-
-	Submit the result of a server signer event
-
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	@param serverSignerId The ID of the server signer to submit the event result for
-	@return ApiSubmitServerSignerSignatureEventResultRequest
-	*/
-	SubmitServerSignerSignatureEventResult(ctx context.Context, serverSignerId string) ApiSubmitServerSignerSignatureEventResultRequest
-
-	// SubmitServerSignerSignatureEventResultExecute executes the request
-	//  @return SignatureCreationEventResult
-	SubmitServerSignerSignatureEventResultExecute(r ApiSubmitServerSignerSignatureEventResultRequest) (*SignatureCreationEventResult, *http.Response, error)
-}
-
 // ServerSignersAPIService ServerSignersAPI service
 type ServerSignersAPIService service
 
 type ApiCreateServerSignerRequest struct {
 	ctx context.Context
-	ApiService ServerSignersAPI
+	ApiService *ServerSignersAPIService
 	createServerSignerRequest *CreateServerSignerRequest
 }
 
@@ -232,7 +141,7 @@ func (a *ServerSignersAPIService) CreateServerSignerExecute(r ApiCreateServerSig
 
 type ApiGetServerSignerRequest struct {
 	ctx context.Context
-	ApiService ServerSignersAPI
+	ApiService *ServerSignersAPIService
 	serverSignerId string
 }
 
@@ -343,7 +252,7 @@ func (a *ServerSignersAPIService) GetServerSignerExecute(r ApiGetServerSignerReq
 
 type ApiListServerSignerEventsRequest struct {
 	ctx context.Context
-	ApiService ServerSignersAPI
+	ApiService *ServerSignersAPIService
 	serverSignerId string
 	limit *int32
 	page *string
@@ -474,7 +383,7 @@ func (a *ServerSignersAPIService) ListServerSignerEventsExecute(r ApiListServerS
 
 type ApiListServerSignersRequest struct {
 	ctx context.Context
-	ApiService ServerSignersAPI
+	ApiService *ServerSignersAPIService
 	limit *int32
 	page *string
 }
@@ -601,7 +510,7 @@ func (a *ServerSignersAPIService) ListServerSignersExecute(r ApiListServerSigner
 
 type ApiSubmitServerSignerSeedEventResultRequest struct {
 	ctx context.Context
-	ApiService ServerSignersAPI
+	ApiService *ServerSignersAPIService
 	serverSignerId string
 	seedCreationEventResult *SeedCreationEventResult
 }
@@ -720,7 +629,7 @@ func (a *ServerSignersAPIService) SubmitServerSignerSeedEventResultExecute(r Api
 
 type ApiSubmitServerSignerSignatureEventResultRequest struct {
 	ctx context.Context
-	ApiService ServerSignersAPI
+	ApiService *ServerSignersAPIService
 	serverSignerId string
 	signatureCreationEventResult *SignatureCreationEventResult
 }

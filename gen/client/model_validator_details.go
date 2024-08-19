@@ -13,7 +13,6 @@ package client
 
 import (
 	"encoding/json"
-	"gopkg.in/validator.v2"
 	"fmt"
 )
 
@@ -41,11 +40,7 @@ func (dst *ValidatorDetails) UnmarshalJSON(data []byte) error {
 		if string(jsonEthereumValidatorMetadata) == "{}" { // empty struct
 			dst.EthereumValidatorMetadata = nil
 		} else {
-			if err = validator.Validate(dst.EthereumValidatorMetadata); err != nil {
-				dst.EthereumValidatorMetadata = nil
-			} else {
-				match++
-			}
+			match++
 		}
 	} else {
 		dst.EthereumValidatorMetadata = nil
@@ -120,3 +115,5 @@ func (v *NullableValidatorDetails) UnmarshalJSON(src []byte) error {
 	v.isSet = true
 	return json.Unmarshal(src, &v.value)
 }
+
+

@@ -21,81 +21,12 @@ import (
 )
 
 
-type TransfersAPI interface {
-
-	/*
-	BroadcastTransfer Broadcast a transfer
-
-	Broadcast a transfer
-
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	@param walletId The ID of the wallet the address belongs to
-	@param addressId The ID of the address the transfer belongs to
-	@param transferId The ID of the transfer to broadcast
-	@return ApiBroadcastTransferRequest
-	*/
-	BroadcastTransfer(ctx context.Context, walletId string, addressId string, transferId string) ApiBroadcastTransferRequest
-
-	// BroadcastTransferExecute executes the request
-	//  @return Transfer
-	BroadcastTransferExecute(r ApiBroadcastTransferRequest) (*Transfer, *http.Response, error)
-
-	/*
-	CreateTransfer Create a new transfer for an address
-
-	Create a new transfer
-
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	@param walletId The ID of the wallet the source address belongs to
-	@param addressId The ID of the address to transfer from
-	@return ApiCreateTransferRequest
-	*/
-	CreateTransfer(ctx context.Context, walletId string, addressId string) ApiCreateTransferRequest
-
-	// CreateTransferExecute executes the request
-	//  @return Transfer
-	CreateTransferExecute(r ApiCreateTransferRequest) (*Transfer, *http.Response, error)
-
-	/*
-	GetTransfer Get a transfer by ID
-
-	Get a transfer by ID
-
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	@param walletId The ID of the wallet the address belongs to
-	@param addressId The ID of the address the transfer belongs to
-	@param transferId The ID of the transfer to fetch
-	@return ApiGetTransferRequest
-	*/
-	GetTransfer(ctx context.Context, walletId string, addressId string, transferId string) ApiGetTransferRequest
-
-	// GetTransferExecute executes the request
-	//  @return Transfer
-	GetTransferExecute(r ApiGetTransferRequest) (*Transfer, *http.Response, error)
-
-	/*
-	ListTransfers List transfers for an address.
-
-	List transfers for an address.
-
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	@param walletId The ID of the wallet the address belongs to
-	@param addressId The ID of the address to list transfers for
-	@return ApiListTransfersRequest
-	*/
-	ListTransfers(ctx context.Context, walletId string, addressId string) ApiListTransfersRequest
-
-	// ListTransfersExecute executes the request
-	//  @return TransferList
-	ListTransfersExecute(r ApiListTransfersRequest) (*TransferList, *http.Response, error)
-}
-
 // TransfersAPIService TransfersAPI service
 type TransfersAPIService service
 
 type ApiBroadcastTransferRequest struct {
 	ctx context.Context
-	ApiService TransfersAPI
+	ApiService *TransfersAPIService
 	walletId string
 	addressId string
 	transferId string
@@ -225,7 +156,7 @@ func (a *TransfersAPIService) BroadcastTransferExecute(r ApiBroadcastTransferReq
 
 type ApiCreateTransferRequest struct {
 	ctx context.Context
-	ApiService TransfersAPI
+	ApiService *TransfersAPIService
 	walletId string
 	addressId string
 	createTransferRequest *CreateTransferRequest
@@ -351,7 +282,7 @@ func (a *TransfersAPIService) CreateTransferExecute(r ApiCreateTransferRequest) 
 
 type ApiGetTransferRequest struct {
 	ctx context.Context
-	ApiService TransfersAPI
+	ApiService *TransfersAPIService
 	walletId string
 	addressId string
 	transferId string
@@ -470,7 +401,7 @@ func (a *TransfersAPIService) GetTransferExecute(r ApiGetTransferRequest) (*Tran
 
 type ApiListTransfersRequest struct {
 	ctx context.Context
-	ApiService TransfersAPI
+	ApiService *TransfersAPIService
 	walletId string
 	addressId string
 	limit *int32

@@ -21,56 +21,25 @@ import (
 )
 
 
-type ContractEventsAPI interface {
-
-	/*
-	ListContractEvents Get contract events
-
-	Retrieve events for a specific contract
-
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	@param networkId Unique identifier for the blockchain network
-	@param contractAddress EVM address of the smart contract (42 characters, including '0x', in lowercase)
-	@return ApiListContractEventsRequest
-	*/
-	ListContractEvents(ctx context.Context, networkId string, contractAddress string) ApiListContractEventsRequest
-
-	// ListContractEventsExecute executes the request
-	//  @return ContractEventList
-	ListContractEventsExecute(r ApiListContractEventsRequest) (*ContractEventList, *http.Response, error)
-}
-
 // ContractEventsAPIService ContractEventsAPI service
 type ContractEventsAPIService service
 
 type ApiListContractEventsRequest struct {
 	ctx context.Context
-	ApiService ContractEventsAPI
+	ApiService *ContractEventsAPIService
 	networkId string
 	protocolName *string
 	contractAddress string
-	contractName *string
-	eventName *string
 	fromBlockHeight *int32
 	toBlockHeight *int32
+	contractName *string
+	eventName *string
 	nextPage *string
 }
 
 // Case-sensitive name of the blockchain protocol
 func (r ApiListContractEventsRequest) ProtocolName(protocolName string) ApiListContractEventsRequest {
 	r.protocolName = &protocolName
-	return r
-}
-
-// Case-sensitive name of the specific contract within the project
-func (r ApiListContractEventsRequest) ContractName(contractName string) ApiListContractEventsRequest {
-	r.contractName = &contractName
-	return r
-}
-
-// Case-sensitive name of the event to filter for in the contract&#39;s logs
-func (r ApiListContractEventsRequest) EventName(eventName string) ApiListContractEventsRequest {
-	r.eventName = &eventName
 	return r
 }
 
@@ -83,6 +52,18 @@ func (r ApiListContractEventsRequest) FromBlockHeight(fromBlockHeight int32) Api
 // Upper bound of the block range to query (inclusive)
 func (r ApiListContractEventsRequest) ToBlockHeight(toBlockHeight int32) ApiListContractEventsRequest {
 	r.toBlockHeight = &toBlockHeight
+	return r
+}
+
+// Case-sensitive name of the specific contract within the project
+func (r ApiListContractEventsRequest) ContractName(contractName string) ApiListContractEventsRequest {
+	r.contractName = &contractName
+	return r
+}
+
+// Case-sensitive name of the event to filter for in the contract&#39;s logs
+func (r ApiListContractEventsRequest) EventName(eventName string) ApiListContractEventsRequest {
+	r.eventName = &eventName
 	return r
 }
 
@@ -140,12 +121,6 @@ func (a *ContractEventsAPIService) ListContractEventsExecute(r ApiListContractEv
 	if r.protocolName == nil {
 		return localVarReturnValue, nil, reportError("protocolName is required and must be specified")
 	}
-	if r.contractName == nil {
-		return localVarReturnValue, nil, reportError("contractName is required and must be specified")
-	}
-	if r.eventName == nil {
-		return localVarReturnValue, nil, reportError("eventName is required and must be specified")
-	}
 	if r.fromBlockHeight == nil {
 		return localVarReturnValue, nil, reportError("fromBlockHeight is required and must be specified")
 	}
@@ -154,8 +129,12 @@ func (a *ContractEventsAPIService) ListContractEventsExecute(r ApiListContractEv
 	}
 
 	parameterAddToHeaderOrQuery(localVarQueryParams, "protocol_name", r.protocolName, "")
-	parameterAddToHeaderOrQuery(localVarQueryParams, "contract_name", r.contractName, "")
-	parameterAddToHeaderOrQuery(localVarQueryParams, "event_name", r.eventName, "")
+	if r.contractName != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "contract_name", r.contractName, "")
+	}
+	if r.eventName != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "event_name", r.eventName, "")
+	}
 	parameterAddToHeaderOrQuery(localVarQueryParams, "from_block_height", r.fromBlockHeight, "")
 	parameterAddToHeaderOrQuery(localVarQueryParams, "to_block_height", r.toBlockHeight, "")
 	if r.nextPage != nil {

@@ -21,72 +21,12 @@ import (
 )
 
 
-type WebhooksAPI interface {
-
-	/*
-	CreateWebhook Create a new webhook
-
-	Create a new webhook
-
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	@return ApiCreateWebhookRequest
-	*/
-	CreateWebhook(ctx context.Context) ApiCreateWebhookRequest
-
-	// CreateWebhookExecute executes the request
-	//  @return Webhook
-	CreateWebhookExecute(r ApiCreateWebhookRequest) (*Webhook, *http.Response, error)
-
-	/*
-	DeleteWebhook Delete a webhook
-
-	Delete a webhook
-
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	@param webhookId The Webhook uuid that needs to be deleted
-	@return ApiDeleteWebhookRequest
-	*/
-	DeleteWebhook(ctx context.Context, webhookId string) ApiDeleteWebhookRequest
-
-	// DeleteWebhookExecute executes the request
-	DeleteWebhookExecute(r ApiDeleteWebhookRequest) (*http.Response, error)
-
-	/*
-	ListWebhooks List webhooks
-
-	List webhooks, optionally filtered by event type.
-
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	@return ApiListWebhooksRequest
-	*/
-	ListWebhooks(ctx context.Context) ApiListWebhooksRequest
-
-	// ListWebhooksExecute executes the request
-	//  @return WebhookList
-	ListWebhooksExecute(r ApiListWebhooksRequest) (*WebhookList, *http.Response, error)
-
-	/*
-	UpdateWebhook Update a webhook
-
-	Update a webhook
-
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	@param webhookId The Webhook id that needs to be updated
-	@return ApiUpdateWebhookRequest
-	*/
-	UpdateWebhook(ctx context.Context, webhookId string) ApiUpdateWebhookRequest
-
-	// UpdateWebhookExecute executes the request
-	//  @return Webhook
-	UpdateWebhookExecute(r ApiUpdateWebhookRequest) (*Webhook, *http.Response, error)
-}
-
 // WebhooksAPIService WebhooksAPI service
 type WebhooksAPIService service
 
 type ApiCreateWebhookRequest struct {
 	ctx context.Context
-	ApiService WebhooksAPI
+	ApiService *WebhooksAPIService
 	createWebhookRequest *CreateWebhookRequest
 }
 
@@ -201,7 +141,7 @@ func (a *WebhooksAPIService) CreateWebhookExecute(r ApiCreateWebhookRequest) (*W
 
 type ApiDeleteWebhookRequest struct {
 	ctx context.Context
-	ApiService WebhooksAPI
+	ApiService *WebhooksAPIService
 	webhookId string
 }
 
@@ -301,7 +241,7 @@ func (a *WebhooksAPIService) DeleteWebhookExecute(r ApiDeleteWebhookRequest) (*h
 
 type ApiListWebhooksRequest struct {
 	ctx context.Context
-	ApiService WebhooksAPI
+	ApiService *WebhooksAPIService
 	limit *int32
 	page *string
 }
@@ -428,7 +368,7 @@ func (a *WebhooksAPIService) ListWebhooksExecute(r ApiListWebhooksRequest) (*Web
 
 type ApiUpdateWebhookRequest struct {
 	ctx context.Context
-	ApiService WebhooksAPI
+	ApiService *WebhooksAPIService
 	webhookId string
 	updateWebhookRequest *UpdateWebhookRequest
 }

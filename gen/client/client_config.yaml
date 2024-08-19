@@ -1,4 +1,4 @@
-packageName: coinbase_client
-packageVersion: 0.0.1
-generateInterfaces: true
+withGoMod: false
+packageName: client
+isGoSubmodule: true
 enumClassPrefix: true

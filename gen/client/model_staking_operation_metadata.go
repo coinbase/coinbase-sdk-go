@@ -13,7 +13,6 @@ package client
 
 import (
 	"encoding/json"
-	"gopkg.in/validator.v2"
 	"fmt"
 )
 
@@ -41,11 +40,7 @@ func (dst *StakingOperationMetadata) UnmarshalJSON(data []byte) error {
 		if string(jsonArrayOfSignedVoluntaryExitMessageMetadata) == "{}" { // empty struct
 			dst.ArrayOfSignedVoluntaryExitMessageMetadata = nil
 		} else {
-			if err = validator.Validate(dst.ArrayOfSignedVoluntaryExitMessageMetadata); err != nil {
-				dst.ArrayOfSignedVoluntaryExitMessageMetadata = nil
-			} else {
-				match++
-			}
+			match++
 		}
 	} else {
 		dst.ArrayOfSignedVoluntaryExitMessageMetadata = nil
@@ -120,3 +115,5 @@ func (v *NullableStakingOperationMetadata) UnmarshalJSON(src []byte) error {
 	v.isSet = true
 	return json.Unmarshal(src, &v.value)
 }
+
+

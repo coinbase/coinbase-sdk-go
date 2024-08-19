@@ -21,89 +21,12 @@ import (
 )
 
 
-type WalletsAPI interface {
-
-	/*
-	CreateWallet Create a new wallet
-
-	Create a new wallet scoped to the user.
-
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	@return ApiCreateWalletRequest
-	*/
-	CreateWallet(ctx context.Context) ApiCreateWalletRequest
-
-	// CreateWalletExecute executes the request
-	//  @return Wallet
-	CreateWalletExecute(r ApiCreateWalletRequest) (*Wallet, *http.Response, error)
-
-	/*
-	GetWallet Get wallet by ID
-
-	Get wallet
-
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	@param walletId The ID of the wallet to fetch
-	@return ApiGetWalletRequest
-	*/
-	GetWallet(ctx context.Context, walletId string) ApiGetWalletRequest
-
-	// GetWalletExecute executes the request
-	//  @return Wallet
-	GetWalletExecute(r ApiGetWalletRequest) (*Wallet, *http.Response, error)
-
-	/*
-	GetWalletBalance Get the balance of an asset in the wallet
-
-	Get the aggregated balance of an asset across all of the addresses in the wallet.
-
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	@param walletId The ID of the wallet to fetch the balance for
-	@param assetId The symbol of the asset to fetch the balance for
-	@return ApiGetWalletBalanceRequest
-	*/
-	GetWalletBalance(ctx context.Context, walletId string, assetId string) ApiGetWalletBalanceRequest
-
-	// GetWalletBalanceExecute executes the request
-	//  @return Balance
-	GetWalletBalanceExecute(r ApiGetWalletBalanceRequest) (*Balance, *http.Response, error)
-
-	/*
-	ListWalletBalances List wallet balances
-
-	List the balances of all of the addresses in the wallet aggregated by asset.
-
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	@param walletId The ID of the wallet to fetch the balances for
-	@return ApiListWalletBalancesRequest
-	*/
-	ListWalletBalances(ctx context.Context, walletId string) ApiListWalletBalancesRequest
-
-	// ListWalletBalancesExecute executes the request
-	//  @return AddressBalanceList
-	ListWalletBalancesExecute(r ApiListWalletBalancesRequest) (*AddressBalanceList, *http.Response, error)
-
-	/*
-	ListWallets List wallets
-
-	List wallets belonging to the user.
-
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	@return ApiListWalletsRequest
-	*/
-	ListWallets(ctx context.Context) ApiListWalletsRequest
-
-	// ListWalletsExecute executes the request
-	//  @return WalletList
-	ListWalletsExecute(r ApiListWalletsRequest) (*WalletList, *http.Response, error)
-}
-
 // WalletsAPIService WalletsAPI service
 type WalletsAPIService service
 
 type ApiCreateWalletRequest struct {
 	ctx context.Context
-	ApiService WalletsAPI
+	ApiService *WalletsAPIService
 	createWalletRequest *CreateWalletRequest
 }
 
@@ -218,7 +141,7 @@ func (a *WalletsAPIService) CreateWalletExecute(r ApiCreateWalletRequest) (*Wall
 
 type ApiGetWalletRequest struct {
 	ctx context.Context
-	ApiService WalletsAPI
+	ApiService *WalletsAPIService
 	walletId string
 }
 
@@ -329,7 +252,7 @@ func (a *WalletsAPIService) GetWalletExecute(r ApiGetWalletRequest) (*Wallet, *h
 
 type ApiGetWalletBalanceRequest struct {
 	ctx context.Context
-	ApiService WalletsAPI
+	ApiService *WalletsAPIService
 	walletId string
 	assetId string
 }
@@ -444,7 +367,7 @@ func (a *WalletsAPIService) GetWalletBalanceExecute(r ApiGetWalletBalanceRequest
 
 type ApiListWalletBalancesRequest struct {
 	ctx context.Context
-	ApiService WalletsAPI
+	ApiService *WalletsAPIService
 	walletId string
 }
 
@@ -555,7 +478,7 @@ func (a *WalletsAPIService) ListWalletBalancesExecute(r ApiListWalletBalancesReq
 
 type ApiListWalletsRequest struct {
 	ctx context.Context
-	ApiService WalletsAPI
+	ApiService *WalletsAPIService
 	limit *int32
 	page *string
 }
