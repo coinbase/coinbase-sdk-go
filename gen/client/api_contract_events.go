@@ -30,28 +30,16 @@ type ApiListContractEventsRequest struct {
 	networkId string
 	protocolName *string
 	contractAddress string
-	fromBlockHeight *int32
-	toBlockHeight *int32
 	contractName *string
 	eventName *string
+	fromBlockHeight *int32
+	toBlockHeight *int32
 	nextPage *string
 }
 
 // Case-sensitive name of the blockchain protocol
 func (r ApiListContractEventsRequest) ProtocolName(protocolName string) ApiListContractEventsRequest {
 	r.protocolName = &protocolName
-	return r
-}
-
-// Lower bound of the block range to query (inclusive)
-func (r ApiListContractEventsRequest) FromBlockHeight(fromBlockHeight int32) ApiListContractEventsRequest {
-	r.fromBlockHeight = &fromBlockHeight
-	return r
-}
-
-// Upper bound of the block range to query (inclusive)
-func (r ApiListContractEventsRequest) ToBlockHeight(toBlockHeight int32) ApiListContractEventsRequest {
-	r.toBlockHeight = &toBlockHeight
 	return r
 }
 
@@ -64,6 +52,18 @@ func (r ApiListContractEventsRequest) ContractName(contractName string) ApiListC
 // Case-sensitive name of the event to filter for in the contract&#39;s logs
 func (r ApiListContractEventsRequest) EventName(eventName string) ApiListContractEventsRequest {
 	r.eventName = &eventName
+	return r
+}
+
+// Lower bound of the block range to query (inclusive)
+func (r ApiListContractEventsRequest) FromBlockHeight(fromBlockHeight int32) ApiListContractEventsRequest {
+	r.fromBlockHeight = &fromBlockHeight
+	return r
+}
+
+// Upper bound of the block range to query (inclusive)
+func (r ApiListContractEventsRequest) ToBlockHeight(toBlockHeight int32) ApiListContractEventsRequest {
+	r.toBlockHeight = &toBlockHeight
 	return r
 }
 
@@ -121,6 +121,12 @@ func (a *ContractEventsAPIService) ListContractEventsExecute(r ApiListContractEv
 	if r.protocolName == nil {
 		return localVarReturnValue, nil, reportError("protocolName is required and must be specified")
 	}
+	if r.contractName == nil {
+		return localVarReturnValue, nil, reportError("contractName is required and must be specified")
+	}
+	if r.eventName == nil {
+		return localVarReturnValue, nil, reportError("eventName is required and must be specified")
+	}
 	if r.fromBlockHeight == nil {
 		return localVarReturnValue, nil, reportError("fromBlockHeight is required and must be specified")
 	}
@@ -129,12 +135,8 @@ func (a *ContractEventsAPIService) ListContractEventsExecute(r ApiListContractEv
 	}
 
 	parameterAddToHeaderOrQuery(localVarQueryParams, "protocol_name", r.protocolName, "")
-	if r.contractName != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "contract_name", r.contractName, "")
-	}
-	if r.eventName != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "event_name", r.eventName, "")
-	}
+	parameterAddToHeaderOrQuery(localVarQueryParams, "contract_name", r.contractName, "")
+	parameterAddToHeaderOrQuery(localVarQueryParams, "event_name", r.eventName, "")
 	parameterAddToHeaderOrQuery(localVarQueryParams, "from_block_height", r.fromBlockHeight, "")
 	parameterAddToHeaderOrQuery(localVarQueryParams, "to_block_height", r.toBlockHeight, "")
 	if r.nextPage != nil {
