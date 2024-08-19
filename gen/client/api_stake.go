@@ -22,12 +22,140 @@ import (
 )
 
 
+type StakeAPI interface {
+
+	/*
+	BroadcastStakingOperation Broadcast a staking operation
+
+	Broadcast a staking operation.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@param walletId The ID of the wallet the address belongs to.
+	@param addressId The ID of the address the staking operation belongs to.
+	@param stakingOperationId The ID of the staking operation to broadcast.
+	@return ApiBroadcastStakingOperationRequest
+	*/
+	BroadcastStakingOperation(ctx context.Context, walletId string, addressId string, stakingOperationId string) ApiBroadcastStakingOperationRequest
+
+	// BroadcastStakingOperationExecute executes the request
+	//  @return StakingOperation
+	BroadcastStakingOperationExecute(r ApiBroadcastStakingOperationRequest) (*StakingOperation, *http.Response, error)
+
+	/*
+	BuildStakingOperation Build a new staking operation
+
+	Build a new staking operation
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@return ApiBuildStakingOperationRequest
+	*/
+	BuildStakingOperation(ctx context.Context) ApiBuildStakingOperationRequest
+
+	// BuildStakingOperationExecute executes the request
+	//  @return StakingOperation
+	BuildStakingOperationExecute(r ApiBuildStakingOperationRequest) (*StakingOperation, *http.Response, error)
+
+	/*
+	CreateStakingOperation Create a new staking operation for an address
+
+	Create a new staking operation.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@param walletId The ID of the wallet the address belongs to.
+	@param addressId The ID of the address to create the staking operation for.
+	@return ApiCreateStakingOperationRequest
+	*/
+	CreateStakingOperation(ctx context.Context, walletId string, addressId string) ApiCreateStakingOperationRequest
+
+	// CreateStakingOperationExecute executes the request
+	//  @return StakingOperation
+	CreateStakingOperationExecute(r ApiCreateStakingOperationRequest) (*StakingOperation, *http.Response, error)
+
+	/*
+	FetchHistoricalStakingBalances Fetch historical staking balances
+
+	Fetch historical staking balances for given address.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@param networkId The ID of the blockchain network.
+	@param addressId The onchain address for which the historical staking balances are being fetched.
+	@return ApiFetchHistoricalStakingBalancesRequest
+	*/
+	FetchHistoricalStakingBalances(ctx context.Context, networkId string, addressId string) ApiFetchHistoricalStakingBalancesRequest
+
+	// FetchHistoricalStakingBalancesExecute executes the request
+	//  @return FetchHistoricalStakingBalances200Response
+	FetchHistoricalStakingBalancesExecute(r ApiFetchHistoricalStakingBalancesRequest) (*FetchHistoricalStakingBalances200Response, *http.Response, error)
+
+	/*
+	FetchStakingRewards Fetch staking rewards
+
+	Fetch staking rewards for a list of addresses
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@return ApiFetchStakingRewardsRequest
+	*/
+	FetchStakingRewards(ctx context.Context) ApiFetchStakingRewardsRequest
+
+	// FetchStakingRewardsExecute executes the request
+	//  @return FetchStakingRewards200Response
+	FetchStakingRewardsExecute(r ApiFetchStakingRewardsRequest) (*FetchStakingRewards200Response, *http.Response, error)
+
+	/*
+	GetExternalStakingOperation Get the latest state of a staking operation
+
+	Get the latest state of a staking operation
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@param networkId The ID of the blockchain network
+	@param addressId The ID of the address to fetch the staking operation for
+	@param stakingOperationId The ID of the staking operation
+	@return ApiGetExternalStakingOperationRequest
+	*/
+	GetExternalStakingOperation(ctx context.Context, networkId string, addressId string, stakingOperationId string) ApiGetExternalStakingOperationRequest
+
+	// GetExternalStakingOperationExecute executes the request
+	//  @return StakingOperation
+	GetExternalStakingOperationExecute(r ApiGetExternalStakingOperationRequest) (*StakingOperation, *http.Response, error)
+
+	/*
+	GetStakingContext Get staking context
+
+	Get staking context for an address
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@return ApiGetStakingContextRequest
+	*/
+	GetStakingContext(ctx context.Context) ApiGetStakingContextRequest
+
+	// GetStakingContextExecute executes the request
+	//  @return StakingContext
+	GetStakingContextExecute(r ApiGetStakingContextRequest) (*StakingContext, *http.Response, error)
+
+	/*
+	GetStakingOperation Get the latest state of a staking operation
+
+	Get the latest state of a staking operation.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@param walletId The ID of the wallet the address belongs to
+	@param addressId The ID of the address to fetch the staking operation for.
+	@param stakingOperationId The ID of the staking operation.
+	@return ApiGetStakingOperationRequest
+	*/
+	GetStakingOperation(ctx context.Context, walletId string, addressId string, stakingOperationId string) ApiGetStakingOperationRequest
+
+	// GetStakingOperationExecute executes the request
+	//  @return StakingOperation
+	GetStakingOperationExecute(r ApiGetStakingOperationRequest) (*StakingOperation, *http.Response, error)
+}
+
 // StakeAPIService StakeAPI service
 type StakeAPIService service
 
 type ApiBroadcastStakingOperationRequest struct {
 	ctx context.Context
-	ApiService *StakeAPIService
+	ApiService StakeAPI
 	walletId string
 	addressId string
 	stakingOperationId string
@@ -157,7 +285,7 @@ func (a *StakeAPIService) BroadcastStakingOperationExecute(r ApiBroadcastStaking
 
 type ApiBuildStakingOperationRequest struct {
 	ctx context.Context
-	ApiService *StakeAPIService
+	ApiService StakeAPI
 	buildStakingOperationRequest *BuildStakingOperationRequest
 }
 
@@ -275,7 +403,7 @@ func (a *StakeAPIService) BuildStakingOperationExecute(r ApiBuildStakingOperatio
 
 type ApiCreateStakingOperationRequest struct {
 	ctx context.Context
-	ApiService *StakeAPIService
+	ApiService StakeAPI
 	walletId string
 	addressId string
 	createStakingOperationRequest *CreateStakingOperationRequest
@@ -401,7 +529,7 @@ func (a *StakeAPIService) CreateStakingOperationExecute(r ApiCreateStakingOperat
 
 type ApiFetchHistoricalStakingBalancesRequest struct {
 	ctx context.Context
-	ApiService *StakeAPIService
+	ApiService StakeAPI
 	networkId string
 	assetId *string
 	addressId string
@@ -578,7 +706,7 @@ func (a *StakeAPIService) FetchHistoricalStakingBalancesExecute(r ApiFetchHistor
 
 type ApiFetchStakingRewardsRequest struct {
 	ctx context.Context
-	ApiService *StakeAPIService
+	ApiService StakeAPI
 	fetchStakingRewardsRequest *FetchStakingRewardsRequest
 	limit *int32
 	page *string
@@ -716,7 +844,7 @@ func (a *StakeAPIService) FetchStakingRewardsExecute(r ApiFetchStakingRewardsReq
 
 type ApiGetExternalStakingOperationRequest struct {
 	ctx context.Context
-	ApiService *StakeAPIService
+	ApiService StakeAPI
 	networkId string
 	addressId string
 	stakingOperationId string
@@ -835,7 +963,7 @@ func (a *StakeAPIService) GetExternalStakingOperationExecute(r ApiGetExternalSta
 
 type ApiGetStakingContextRequest struct {
 	ctx context.Context
-	ApiService *StakeAPIService
+	ApiService StakeAPI
 	getStakingContextRequest *GetStakingContextRequest
 }
 
@@ -953,7 +1081,7 @@ func (a *StakeAPIService) GetStakingContextExecute(r ApiGetStakingContextRequest
 
 type ApiGetStakingOperationRequest struct {
 	ctx context.Context
-	ApiService *StakeAPIService
+	ApiService StakeAPI
 	walletId string
 	addressId string
 	stakingOperationId string

@@ -9,7 +9,7 @@ import (
 	"github.com/coinbase/coinbase-sdk-go/gen/client"
 )
 
-// StakeingOperationOption allows for the passing of custom options to
+// StakingOperationOption allows for the passing of custom options to
 // the staking operation, like `mode` or `withdrawal_address`.
 type StakingOperationOption func(*client.BuildStakingOperationRequest)
 
@@ -37,14 +37,19 @@ func (c *Client) BuildStakingOperation(
 	amount *big.Float,
 	o ...StakingOperationOption,
 ) (*StakingOperation, error) {
+
+	asset, err := c.fetchAsset(ctx, address.NetworkID(), assetID)
+	if err != nil {
+		return nil, err
+	}
+
 	req := client.BuildStakingOperationRequest{
 		NetworkId: address.NetworkID(),
 		AssetId:   assetID,
 		AddressId: address.ID(),
 		Action:    action,
 		Options: map[string]string{
-			"mode":   "default",
-			"amount": amount.String(),
+			"amount": asset.toAtomicAmount(amount).String(),
 		},
 	}
 	for _, f := range o {
@@ -70,7 +75,7 @@ func (c *Client) BuildStakeOperation(
 	return c.BuildStakingOperation(ctx, address, assetID, "stake", amount, o...)
 }
 
-// BuildStakeOperation will build an ephemeral staking operation using the
+// BuildUnstakeOperation will build an ephemeral staking operation using the
 // unstake action
 func (c *Client) BuildUnstakeOperation(
 	ctx context.Context,
@@ -82,7 +87,7 @@ func (c *Client) BuildUnstakeOperation(
 	return c.BuildStakingOperation(ctx, address, assetID, "unstake", amount, o...)
 }
 
-// BuildStakeOperation will build an ephemeral staking operation using the
+// BuildClaimStakeOperation will build an ephemeral staking operation using the
 // claim_stake action
 func (c *Client) BuildClaimStakeOperation(
 	ctx context.Context,

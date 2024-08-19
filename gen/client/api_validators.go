@@ -21,12 +21,48 @@ import (
 )
 
 
+type ValidatorsAPI interface {
+
+	/*
+	GetValidator Get a validator belonging to the CDP project
+
+	Get a validator belonging to the user for a given network, asset and id.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@param networkId The ID of the blockchain network.
+	@param assetId The symbol of the asset to get the validator for.
+	@param validatorId The unique id of the validator to fetch details for.
+	@return ApiGetValidatorRequest
+	*/
+	GetValidator(ctx context.Context, networkId string, assetId string, validatorId string) ApiGetValidatorRequest
+
+	// GetValidatorExecute executes the request
+	//  @return Validator
+	GetValidatorExecute(r ApiGetValidatorRequest) (*Validator, *http.Response, error)
+
+	/*
+	ListValidators List validators belonging to the CDP project
+
+	List validators belonging to the user for a given network and asset.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@param networkId The ID of the blockchain network.
+	@param assetId The symbol of the asset to get the validators for.
+	@return ApiListValidatorsRequest
+	*/
+	ListValidators(ctx context.Context, networkId string, assetId string) ApiListValidatorsRequest
+
+	// ListValidatorsExecute executes the request
+	//  @return ValidatorList
+	ListValidatorsExecute(r ApiListValidatorsRequest) (*ValidatorList, *http.Response, error)
+}
+
 // ValidatorsAPIService ValidatorsAPI service
 type ValidatorsAPIService service
 
 type ApiGetValidatorRequest struct {
 	ctx context.Context
-	ApiService *ValidatorsAPIService
+	ApiService ValidatorsAPI
 	networkId string
 	assetId string
 	validatorId string
@@ -145,7 +181,7 @@ func (a *ValidatorsAPIService) GetValidatorExecute(r ApiGetValidatorRequest) (*V
 
 type ApiListValidatorsRequest struct {
 	ctx context.Context
-	ApiService *ValidatorsAPIService
+	ApiService ValidatorsAPI
 	networkId string
 	assetId string
 	status *string

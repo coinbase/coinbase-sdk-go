@@ -4,6 +4,7 @@ import (
 	"crypto/ecdsa"
 	"encoding/hex"
 	"fmt"
+	"log"
 	"math/big"
 
 	"github.com/coinbase/coinbase-sdk-go/gen/client"
@@ -75,12 +76,19 @@ func (t *Transaction) Sign(k *ecdsa.PrivateKey) error {
 		return nil
 	}
 
-	signer := types.NewEIP155Signer(t.Raw().ChainId())
+	signer := types.LatestSignerForChainID(t.Raw().ChainId())
 	signedTx, err := types.SignTx(t.Raw(), signer, k)
 	if err != nil {
 		return err
 	}
 
+	bytes, err := signedTx.MarshalBinary()
+	if err != nil {
+		log.Fatalf("error marshaling transaction: %v", err)
+	}
+
+	signedPayload := hex.EncodeToString(bytes)
+	t.model.SignedPayload = &signedPayload
 	t.raw = signedTx
 	return nil
 }
@@ -96,7 +104,7 @@ func newTransactionFromModel(m *client.Transaction) (*Transaction, error) {
 	}
 
 	t := &types.Transaction{}
-	err = t.UnmarshalBinary(rawHex)
+	err = t.UnmarshalJSON(rawHex)
 	if err != nil {
 		return nil, err
 	}

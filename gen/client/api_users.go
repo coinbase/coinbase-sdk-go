@@ -20,12 +20,29 @@ import (
 )
 
 
+type UsersAPI interface {
+
+	/*
+	GetCurrentUser Get current user
+
+	Get current user
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@return ApiGetCurrentUserRequest
+	*/
+	GetCurrentUser(ctx context.Context) ApiGetCurrentUserRequest
+
+	// GetCurrentUserExecute executes the request
+	//  @return User
+	GetCurrentUserExecute(r ApiGetCurrentUserRequest) (*User, *http.Response, error)
+}
+
 // UsersAPIService UsersAPI service
 type UsersAPIService service
 
 type ApiGetCurrentUserRequest struct {
 	ctx context.Context
-	ApiService *UsersAPIService
+	ApiService UsersAPI
 }
 
 func (r ApiGetCurrentUserRequest) Execute() (*User, *http.Response, error) {

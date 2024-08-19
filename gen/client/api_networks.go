@@ -21,12 +21,30 @@ import (
 )
 
 
+type NetworksAPI interface {
+
+	/*
+	GetNetwork Get network by ID
+
+	Get network
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@param networkId The ID of the network to fetch.
+	@return ApiGetNetworkRequest
+	*/
+	GetNetwork(ctx context.Context, networkId string) ApiGetNetworkRequest
+
+	// GetNetworkExecute executes the request
+	//  @return Network
+	GetNetworkExecute(r ApiGetNetworkRequest) (*Network, *http.Response, error)
+}
+
 // NetworksAPIService NetworksAPI service
 type NetworksAPIService service
 
 type ApiGetNetworkRequest struct {
 	ctx context.Context
-	ApiService *NetworksAPIService
+	ApiService NetworksAPI
 	networkId string
 }
 

@@ -1,4 +1,5 @@
 withGoMod: false
 packageName: client
 isGoSubmodule: true
+generateInterfaces: true
 enumClassPrefix: true

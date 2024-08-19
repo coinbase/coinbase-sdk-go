@@ -50,31 +50,31 @@ type APIClient struct {
 
 	// API Services
 
-	AddressesAPI *AddressesAPIService
+	AddressesAPI AddressesAPI
 
-	AssetsAPI *AssetsAPIService
+	AssetsAPI AssetsAPI
 
-	ContractEventsAPI *ContractEventsAPIService
+	ContractEventsAPI ContractEventsAPI
 
-	ExternalAddressesAPI *ExternalAddressesAPIService
+	ExternalAddressesAPI ExternalAddressesAPI
 
-	NetworksAPI *NetworksAPIService
+	NetworksAPI NetworksAPI
 
-	ServerSignersAPI *ServerSignersAPIService
+	ServerSignersAPI ServerSignersAPI
 
-	StakeAPI *StakeAPIService
+	StakeAPI StakeAPI
 
-	TradesAPI *TradesAPIService
+	TradesAPI TradesAPI
 
-	TransfersAPI *TransfersAPIService
+	TransfersAPI TransfersAPI
 
-	UsersAPI *UsersAPIService
+	UsersAPI UsersAPI
 
-	ValidatorsAPI *ValidatorsAPIService
+	ValidatorsAPI ValidatorsAPI
 
-	WalletsAPI *WalletsAPIService
+	WalletsAPI WalletsAPI
 
-	WebhooksAPI *WebhooksAPIService
+	WebhooksAPI WebhooksAPI
 }
 
 type service struct {
@@ -528,18 +528,6 @@ func addFile(w *multipart.Writer, fieldName, path string) error {
 	_, err = io.Copy(part, file)
 
 	return err
-}
-
-// Prevent trying to import "fmt"
-func reportError(format string, a ...interface{}) error {
-	return fmt.Errorf(format, a...)
-}
-
-// A wrapper for strict JSON decoding
-func newStrictDecoder(data []byte) *json.Decoder {
-	dec := json.NewDecoder(bytes.NewBuffer(data))
-	dec.DisallowUnknownFields()
-	return dec
 }
 
 // Set request body from an interface{}
