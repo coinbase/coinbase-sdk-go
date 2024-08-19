@@ -120,7 +120,7 @@ func (c *Client) fetchAsset(ctx context.Context, networkId string, assetId strin
 	}
 
 	if httpRes.StatusCode != 200 {
-		return Asset{}, err
+		return Asset{}, fmt.Errorf("failed to fetch asset: %s", httpRes.Status)
 	}
 
 	return fromAssetModel(asset, assetId)

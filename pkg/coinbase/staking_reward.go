@@ -205,7 +205,7 @@ func (c *Client) getRewards(
 	}
 
 	if httpRes.StatusCode != 200 {
-		return nil, err
+		return nil, fmt.Errorf("failed to fetch staking rewards: %d", httpRes.StatusCode)
 	}
 
 	return resp, nil
