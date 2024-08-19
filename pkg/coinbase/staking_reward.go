@@ -124,13 +124,41 @@ func (s StakingReward) Date() (time.Time, error) {
 	return parsedDate, nil
 }
 
+// USDValue returns the USD value of the staking reward.
+func (s StakingReward) USDValue() (*big.Float, error) {
+	amountBigInt, ok := new(big.Float).SetString(s.model.GetAmount())
+	if !ok {
+		return nil, fmt.Errorf("invalid amount found: %s", s.model.GetAmount())
+	}
+	return new(big.Float).Quo(amountBigInt, big.NewFloat(100)), nil
+}
+
+// ConversionPrice returns the conversion price of the staking reward.
+func (s StakingReward) ConversionPrice() (*big.Float, error) {
+	amountBigInt, ok := new(big.Float).SetString(s.model.UsdValue.ConversionPrice)
+	if !ok {
+		return nil, fmt.Errorf("invalid conversion price found: %s", s.model.UsdValue.ConversionPrice)
+	}
+	return amountBigInt, nil
+}
+
+// ConversionTime returns the conversion time of the staking reward.
+func (s StakingReward) ConversionTime() time.Time {
+	return s.model.UsdValue.ConversionTime
+}
+
 // ToString prints a simplified version of the reward.
 func (s StakingReward) ToString() string {
+	usdValue := s.model.GetUsdValue()
+
 	return fmt.Sprintf(
-		"StakingReward { date: '%s' address: '%s' amount: '%s' }",
+		"StakingReward { date: '%s' address: '%s' amount: '%s' usd_value: '%s' conversion_price: '%s' conversion_time: '%s'}",
 		s.model.GetDate(),
 		s.model.GetAddressId(),
 		s.model.GetAmount(),
+		usdValue.GetAmount(),
+		usdValue.GetConversionPrice(),
+		usdValue.GetConversionTime().String(),
 	)
 }
 
