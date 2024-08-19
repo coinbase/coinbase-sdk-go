@@ -21,12 +21,81 @@ import (
 )
 
 
+type ExternalAddressesAPI interface {
+
+	/*
+	GetExternalAddressBalance Get the balance of an asset in an external address
+
+	Get the balance of an asset in an external address
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@param networkId The ID of the blockchain network
+	@param addressId The ID of the address to fetch the balance for
+	@param assetId The ID of the asset to fetch the balance for
+	@return ApiGetExternalAddressBalanceRequest
+	*/
+	GetExternalAddressBalance(ctx context.Context, networkId string, addressId string, assetId string) ApiGetExternalAddressBalanceRequest
+
+	// GetExternalAddressBalanceExecute executes the request
+	//  @return Balance
+	GetExternalAddressBalanceExecute(r ApiGetExternalAddressBalanceRequest) (*Balance, *http.Response, error)
+
+	/*
+	ListAddressHistoricalBalance Get address balance history for asset
+
+	List the historical balance of an asset in a specific address.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@param networkId The ID of the blockchain network
+	@param addressId The ID of the address to fetch the historical balance for.
+	@param assetId The symbol of the asset to fetch the historical balance for.
+	@return ApiListAddressHistoricalBalanceRequest
+	*/
+	ListAddressHistoricalBalance(ctx context.Context, networkId string, addressId string, assetId string) ApiListAddressHistoricalBalanceRequest
+
+	// ListAddressHistoricalBalanceExecute executes the request
+	//  @return AddressHistoricalBalanceList
+	ListAddressHistoricalBalanceExecute(r ApiListAddressHistoricalBalanceRequest) (*AddressHistoricalBalanceList, *http.Response, error)
+
+	/*
+	ListExternalAddressBalances Get the balances of an external address
+
+	List all of the balances of an external address
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@param networkId The ID of the blockchain network
+	@param addressId The ID of the address to fetch the balance for
+	@return ApiListExternalAddressBalancesRequest
+	*/
+	ListExternalAddressBalances(ctx context.Context, networkId string, addressId string) ApiListExternalAddressBalancesRequest
+
+	// ListExternalAddressBalancesExecute executes the request
+	//  @return AddressBalanceList
+	ListExternalAddressBalancesExecute(r ApiListExternalAddressBalancesRequest) (*AddressBalanceList, *http.Response, error)
+
+	/*
+	RequestExternalFaucetFunds Request faucet funds for external address.
+
+	Request faucet funds to be sent to external address.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@param networkId The ID of the wallet the address belongs to.
+	@param addressId The onchain address of the address that is being fetched.
+	@return ApiRequestExternalFaucetFundsRequest
+	*/
+	RequestExternalFaucetFunds(ctx context.Context, networkId string, addressId string) ApiRequestExternalFaucetFundsRequest
+
+	// RequestExternalFaucetFundsExecute executes the request
+	//  @return FaucetTransaction
+	RequestExternalFaucetFundsExecute(r ApiRequestExternalFaucetFundsRequest) (*FaucetTransaction, *http.Response, error)
+}
+
 // ExternalAddressesAPIService ExternalAddressesAPI service
 type ExternalAddressesAPIService service
 
 type ApiGetExternalAddressBalanceRequest struct {
 	ctx context.Context
-	ApiService *ExternalAddressesAPIService
+	ApiService ExternalAddressesAPI
 	networkId string
 	addressId string
 	assetId string
@@ -145,7 +214,7 @@ func (a *ExternalAddressesAPIService) GetExternalAddressBalanceExecute(r ApiGetE
 
 type ApiListAddressHistoricalBalanceRequest struct {
 	ctx context.Context
-	ApiService *ExternalAddressesAPIService
+	ApiService ExternalAddressesAPI
 	networkId string
 	addressId string
 	assetId string
@@ -284,7 +353,7 @@ func (a *ExternalAddressesAPIService) ListAddressHistoricalBalanceExecute(r ApiL
 
 type ApiListExternalAddressBalancesRequest struct {
 	ctx context.Context
-	ApiService *ExternalAddressesAPIService
+	ApiService ExternalAddressesAPI
 	networkId string
 	addressId string
 	page *string
@@ -409,7 +478,7 @@ func (a *ExternalAddressesAPIService) ListExternalAddressBalancesExecute(r ApiLi
 
 type ApiRequestExternalFaucetFundsRequest struct {
 	ctx context.Context
-	ApiService *ExternalAddressesAPIService
+	ApiService ExternalAddressesAPI
 	networkId string
 	addressId string
 }

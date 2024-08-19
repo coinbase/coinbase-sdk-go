@@ -21,12 +21,110 @@ import (
 )
 
 
+type AddressesAPI interface {
+
+	/*
+	CreateAddress Create a new address
+
+	Create a new address scoped to the wallet.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@param walletId The ID of the wallet to create the address in.
+	@return ApiCreateAddressRequest
+	*/
+	CreateAddress(ctx context.Context, walletId string) ApiCreateAddressRequest
+
+	// CreateAddressExecute executes the request
+	//  @return Address
+	CreateAddressExecute(r ApiCreateAddressRequest) (*Address, *http.Response, error)
+
+	/*
+	GetAddress Get address by onchain address
+
+	Get address
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@param walletId The ID of the wallet the address belongs to.
+	@param addressId The onchain address of the address that is being fetched.
+	@return ApiGetAddressRequest
+	*/
+	GetAddress(ctx context.Context, walletId string, addressId string) ApiGetAddressRequest
+
+	// GetAddressExecute executes the request
+	//  @return Address
+	GetAddressExecute(r ApiGetAddressRequest) (*Address, *http.Response, error)
+
+	/*
+	GetAddressBalance Get address balance for asset
+
+	Get address balance
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@param walletId The ID of the wallet to fetch the balance for
+	@param addressId The onchain address of the address that is being fetched.
+	@param assetId The symbol of the asset to fetch the balance for
+	@return ApiGetAddressBalanceRequest
+	*/
+	GetAddressBalance(ctx context.Context, walletId string, addressId string, assetId string) ApiGetAddressBalanceRequest
+
+	// GetAddressBalanceExecute executes the request
+	//  @return Balance
+	GetAddressBalanceExecute(r ApiGetAddressBalanceRequest) (*Balance, *http.Response, error)
+
+	/*
+	ListAddressBalances Get all balances for address
+
+	Get address balances
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@param walletId The ID of the wallet to fetch the balances for
+	@param addressId The onchain address of the address that is being fetched.
+	@return ApiListAddressBalancesRequest
+	*/
+	ListAddressBalances(ctx context.Context, walletId string, addressId string) ApiListAddressBalancesRequest
+
+	// ListAddressBalancesExecute executes the request
+	//  @return AddressBalanceList
+	ListAddressBalancesExecute(r ApiListAddressBalancesRequest) (*AddressBalanceList, *http.Response, error)
+
+	/*
+	ListAddresses List addresses in a wallet.
+
+	List addresses in the wallet.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@param walletId The ID of the wallet whose addresses to fetch
+	@return ApiListAddressesRequest
+	*/
+	ListAddresses(ctx context.Context, walletId string) ApiListAddressesRequest
+
+	// ListAddressesExecute executes the request
+	//  @return AddressList
+	ListAddressesExecute(r ApiListAddressesRequest) (*AddressList, *http.Response, error)
+
+	/*
+	RequestFaucetFunds Request faucet funds for onchain address.
+
+	Request faucet funds to be sent to onchain address.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@param walletId The ID of the wallet the address belongs to.
+	@param addressId The onchain address of the address that is being fetched.
+	@return ApiRequestFaucetFundsRequest
+	*/
+	RequestFaucetFunds(ctx context.Context, walletId string, addressId string) ApiRequestFaucetFundsRequest
+
+	// RequestFaucetFundsExecute executes the request
+	//  @return FaucetTransaction
+	RequestFaucetFundsExecute(r ApiRequestFaucetFundsRequest) (*FaucetTransaction, *http.Response, error)
+}
+
 // AddressesAPIService AddressesAPI service
 type AddressesAPIService service
 
 type ApiCreateAddressRequest struct {
 	ctx context.Context
-	ApiService *AddressesAPIService
+	ApiService AddressesAPI
 	walletId string
 	createAddressRequest *CreateAddressRequest
 }
@@ -145,7 +243,7 @@ func (a *AddressesAPIService) CreateAddressExecute(r ApiCreateAddressRequest) (*
 
 type ApiGetAddressRequest struct {
 	ctx context.Context
-	ApiService *AddressesAPIService
+	ApiService AddressesAPI
 	walletId string
 	addressId string
 }
@@ -260,7 +358,7 @@ func (a *AddressesAPIService) GetAddressExecute(r ApiGetAddressRequest) (*Addres
 
 type ApiGetAddressBalanceRequest struct {
 	ctx context.Context
-	ApiService *AddressesAPIService
+	ApiService AddressesAPI
 	walletId string
 	addressId string
 	assetId string
@@ -379,7 +477,7 @@ func (a *AddressesAPIService) GetAddressBalanceExecute(r ApiGetAddressBalanceReq
 
 type ApiListAddressBalancesRequest struct {
 	ctx context.Context
-	ApiService *AddressesAPIService
+	ApiService AddressesAPI
 	walletId string
 	addressId string
 	page *string
@@ -504,7 +602,7 @@ func (a *AddressesAPIService) ListAddressBalancesExecute(r ApiListAddressBalance
 
 type ApiListAddressesRequest struct {
 	ctx context.Context
-	ApiService *AddressesAPIService
+	ApiService AddressesAPI
 	walletId string
 	limit *int32
 	page *string
@@ -635,7 +733,7 @@ func (a *AddressesAPIService) ListAddressesExecute(r ApiListAddressesRequest) (*
 
 type ApiRequestFaucetFundsRequest struct {
 	ctx context.Context
-	ApiService *AddressesAPIService
+	ApiService AddressesAPI
 	walletId string
 	addressId string
 }

@@ -21,12 +21,81 @@ import (
 )
 
 
+type TradesAPI interface {
+
+	/*
+	BroadcastTrade Broadcast a trade
+
+	Broadcast a trade
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@param walletId The ID of the wallet the address belongs to
+	@param addressId The ID of the address the trade belongs to
+	@param tradeId The ID of the trade to broadcast
+	@return ApiBroadcastTradeRequest
+	*/
+	BroadcastTrade(ctx context.Context, walletId string, addressId string, tradeId string) ApiBroadcastTradeRequest
+
+	// BroadcastTradeExecute executes the request
+	//  @return Trade
+	BroadcastTradeExecute(r ApiBroadcastTradeRequest) (*Trade, *http.Response, error)
+
+	/*
+	CreateTrade Create a new trade for an address
+
+	Create a new trade
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@param walletId The ID of the wallet the source address belongs to
+	@param addressId The ID of the address to conduct the trade from
+	@return ApiCreateTradeRequest
+	*/
+	CreateTrade(ctx context.Context, walletId string, addressId string) ApiCreateTradeRequest
+
+	// CreateTradeExecute executes the request
+	//  @return Trade
+	CreateTradeExecute(r ApiCreateTradeRequest) (*Trade, *http.Response, error)
+
+	/*
+	GetTrade Get a trade by ID
+
+	Get a trade by ID
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@param walletId The ID of the wallet the address belongs to
+	@param addressId The ID of the address the trade belongs to
+	@param tradeId The ID of the trade to fetch
+	@return ApiGetTradeRequest
+	*/
+	GetTrade(ctx context.Context, walletId string, addressId string, tradeId string) ApiGetTradeRequest
+
+	// GetTradeExecute executes the request
+	//  @return Trade
+	GetTradeExecute(r ApiGetTradeRequest) (*Trade, *http.Response, error)
+
+	/*
+	ListTrades List trades for an address.
+
+	List trades for an address.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@param walletId The ID of the wallet the address belongs to
+	@param addressId The ID of the address to list trades for
+	@return ApiListTradesRequest
+	*/
+	ListTrades(ctx context.Context, walletId string, addressId string) ApiListTradesRequest
+
+	// ListTradesExecute executes the request
+	//  @return TradeList
+	ListTradesExecute(r ApiListTradesRequest) (*TradeList, *http.Response, error)
+}
+
 // TradesAPIService TradesAPI service
 type TradesAPIService service
 
 type ApiBroadcastTradeRequest struct {
 	ctx context.Context
-	ApiService *TradesAPIService
+	ApiService TradesAPI
 	walletId string
 	addressId string
 	tradeId string
@@ -156,7 +225,7 @@ func (a *TradesAPIService) BroadcastTradeExecute(r ApiBroadcastTradeRequest) (*T
 
 type ApiCreateTradeRequest struct {
 	ctx context.Context
-	ApiService *TradesAPIService
+	ApiService TradesAPI
 	walletId string
 	addressId string
 	createTradeRequest *CreateTradeRequest
@@ -282,7 +351,7 @@ func (a *TradesAPIService) CreateTradeExecute(r ApiCreateTradeRequest) (*Trade, 
 
 type ApiGetTradeRequest struct {
 	ctx context.Context
-	ApiService *TradesAPIService
+	ApiService TradesAPI
 	walletId string
 	addressId string
 	tradeId string
@@ -401,7 +470,7 @@ func (a *TradesAPIService) GetTradeExecute(r ApiGetTradeRequest) (*Trade, *http.
 
 type ApiListTradesRequest struct {
 	ctx context.Context
-	ApiService *TradesAPIService
+	ApiService TradesAPI
 	walletId string
 	addressId string
 	limit *int32

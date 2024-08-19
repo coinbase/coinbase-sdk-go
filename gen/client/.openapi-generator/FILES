@@ -166,4 +166,17 @@ model_webhook_event_filter.go
 model_webhook_event_type.go
 model_webhook_list.go
 response.go
+test/api_addresses_test.go
+test/api_assets_test.go
+test/api_contract_events_test.go
+test/api_external_addresses_test.go
+test/api_networks_test.go
+test/api_server_signers_test.go
+test/api_stake_test.go
+test/api_trades_test.go
+test/api_transfers_test.go
+test/api_users_test.go
+test/api_validators_test.go
+test/api_wallets_test.go
+test/api_webhooks_test.go
 utils.go

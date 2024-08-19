@@ -13,6 +13,7 @@ package client
 
 import (
 	"encoding/json"
+	"gopkg.in/validator.v2"
 	"fmt"
 )
 
@@ -48,7 +49,11 @@ func (dst *ServerSignerEventEvent) UnmarshalJSON(data []byte) error {
 		if string(jsonSeedCreationEvent) == "{}" { // empty struct
 			dst.SeedCreationEvent = nil
 		} else {
-			match++
+			if err = validator.Validate(dst.SeedCreationEvent); err != nil {
+				dst.SeedCreationEvent = nil
+			} else {
+				match++
+			}
 		}
 	} else {
 		dst.SeedCreationEvent = nil
@@ -61,7 +66,11 @@ func (dst *ServerSignerEventEvent) UnmarshalJSON(data []byte) error {
 		if string(jsonSignatureCreationEvent) == "{}" { // empty struct
 			dst.SignatureCreationEvent = nil
 		} else {
-			match++
+			if err = validator.Validate(dst.SignatureCreationEvent); err != nil {
+				dst.SignatureCreationEvent = nil
+			} else {
+				match++
+			}
 		}
 	} else {
 		dst.SignatureCreationEvent = nil

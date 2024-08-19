@@ -13,6 +13,7 @@ package client
 
 import (
 	"encoding/json"
+	"gopkg.in/validator.v2"
 	"fmt"
 )
 
@@ -40,7 +41,11 @@ func (dst *ValidatorDetails) UnmarshalJSON(data []byte) error {
 		if string(jsonEthereumValidatorMetadata) == "{}" { // empty struct
 			dst.EthereumValidatorMetadata = nil
 		} else {
-			match++
+			if err = validator.Validate(dst.EthereumValidatorMetadata); err != nil {
+				dst.EthereumValidatorMetadata = nil
+			} else {
+				match++
+			}
 		}
 	} else {
 		dst.EthereumValidatorMetadata = nil

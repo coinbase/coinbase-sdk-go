@@ -21,12 +21,31 @@ import (
 )
 
 
+type ContractEventsAPI interface {
+
+	/*
+	ListContractEvents Get contract events
+
+	Retrieve events for a specific contract
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@param networkId Unique identifier for the blockchain network
+	@param contractAddress EVM address of the smart contract (42 characters, including '0x', in lowercase)
+	@return ApiListContractEventsRequest
+	*/
+	ListContractEvents(ctx context.Context, networkId string, contractAddress string) ApiListContractEventsRequest
+
+	// ListContractEventsExecute executes the request
+	//  @return ContractEventList
+	ListContractEventsExecute(r ApiListContractEventsRequest) (*ContractEventList, *http.Response, error)
+}
+
 // ContractEventsAPIService ContractEventsAPI service
 type ContractEventsAPIService service
 
 type ApiListContractEventsRequest struct {
 	ctx context.Context
-	ApiService *ContractEventsAPIService
+	ApiService ContractEventsAPI
 	networkId string
 	protocolName *string
 	contractAddress string
