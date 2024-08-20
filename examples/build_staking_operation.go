@@ -19,8 +19,8 @@ func main() {
 		log.Fatalf("error creating coinbase client: %v", err)
 	}
 
-	address := coinbase.NewAddress("ethereum-holesky", "0x57a063e1df096aaA6b2068C3C7FE6Ac4BC3c4F58")
-	op, err := client.BuildStakeOperation(ctx, address, "eth", big.NewFloat(0.0001))
+	address := coinbase.NewExternalAddress("ethereum-holesky", "0x57a063e1df096aaA6b2068C3C7FE6Ac4BC3c4F58")
+	op, err := client.BuildStakeOperation(ctx, big.NewFloat(0.0001), coinbase.Eth, address)
 	if err != nil {
 		log.Fatalf("error building staking operation: %v", err)
 	}
@@ -29,7 +29,7 @@ func main() {
 		log.Printf("staking operation Transaction: %+v\n", transaction)
 	}
 
-	address = coinbase.NewAddress(
+	address = coinbase.NewExternalAddress(
 		"ethereum-mainnet",
 		"0xddb00798137e9e7cc89f1e9679e6ce6ea580b8f9",
 	)
