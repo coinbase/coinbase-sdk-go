@@ -110,7 +110,7 @@ func (s StakingReward) Amount() (*big.Float, error) {
 	if !ok {
 		return nil, fmt.Errorf("invalid amount found: %s", s.model.GetAmount())
 	}
-	return s.asset.fromAtomicAmount(amountBigInt), nil
+	return s.asset.FromAtomicAmount(amountBigInt), nil
 }
 
 // Date returns the date of the staking reward.
