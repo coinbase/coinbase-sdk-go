@@ -29,7 +29,7 @@ func NewAsset(
 	}
 }
 
-func (a Asset) fromAtomicAmount(wholeAmount *big.Int) *big.Float {
+func (a Asset) FromAtomicAmount(wholeAmount *big.Int) *big.Float {
 	exponent := a.decimals
 
 	// Calculate the 10^exponent as *big.Int.
@@ -69,11 +69,11 @@ func (a Asset) AssetId() string {
 
 func (a Asset) ToString() string {
 	return fmt.Sprintf(
-		"Asset { networkId: '%s' assetId: '%s' contractAddress: '%s' decimals: '%s' }",
+		"Asset { networkId: '%s' assetId: '%s' contractAddress: '%s' decimals: '%d' }",
 		a.networkId,
 		a.assetId,
 		a.contractAddress,
-		string(a.decimals),
+		a.decimals,
 	)
 }
 
