@@ -14,7 +14,7 @@ func TestAddress_NetworkID(t *testing.T) {
 	}{
 		{
 			name: "should eq test_network",
-			a:    NewAddress("test_network", "test_id"),
+			a:    NewExternalAddress("test_network", "test_id"),
 			want: "test_network",
 		},
 	}
@@ -33,7 +33,7 @@ func TestAddress_ID(t *testing.T) {
 	}{
 		{
 			name: "should eq test_id",
-			a:    NewAddress("test_network", "test_id"),
+			a:    NewExternalAddress("test_network", "test_id"),
 			want: "test_id",
 		},
 	}
