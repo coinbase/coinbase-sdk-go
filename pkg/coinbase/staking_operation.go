@@ -44,7 +44,7 @@ func (c *Client) BuildStakingOperation(
 	}
 
 	req := client.BuildStakingOperationRequest{
-		NetworkId: address.NetworkID(),
+		NetworkId: normalizeNetwork(address.NetworkID()),
 		AssetId:   assetID,
 		AddressId: address.ID(),
 		Action:    action,
@@ -67,9 +67,9 @@ func (c *Client) BuildStakingOperation(
 // stake action
 func (c *Client) BuildStakeOperation(
 	ctx context.Context,
-	address *Address,
-	assetID string,
 	amount *big.Float,
+	assetID string,
+	address *Address,
 	o ...StakingOperationOption,
 ) (*StakingOperation, error) {
 	return c.BuildStakingOperation(ctx, address, assetID, "stake", amount, o...)
@@ -79,9 +79,9 @@ func (c *Client) BuildStakeOperation(
 // unstake action
 func (c *Client) BuildUnstakeOperation(
 	ctx context.Context,
-	address *Address,
-	assetID string,
 	amount *big.Float,
+	assetID string,
+	address *Address,
 	o ...StakingOperationOption,
 ) (*StakingOperation, error) {
 	return c.BuildStakingOperation(ctx, address, assetID, "unstake", amount, o...)
@@ -91,9 +91,9 @@ func (c *Client) BuildUnstakeOperation(
 // claim_stake action
 func (c *Client) BuildClaimStakeOperation(
 	ctx context.Context,
-	address *Address,
-	assetID string,
 	amount *big.Float,
+	assetID string,
+	address *Address,
 	o ...StakingOperationOption,
 ) (*StakingOperation, error) {
 	return c.BuildStakingOperation(ctx, address, assetID, "claim_stake", amount, o...)

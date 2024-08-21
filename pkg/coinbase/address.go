@@ -6,8 +6,8 @@ type Address struct {
 	id        string
 }
 
-// NewAddress creates a new address.
-func NewAddress(networkID string, ID string) *Address {
+// NewExternalAddress creates a new external address.
+func NewExternalAddress(networkID string, ID string) *Address {
 	return &Address{
 		networkID: networkID,
 		id:        ID,
