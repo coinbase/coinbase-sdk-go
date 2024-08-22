@@ -22,7 +22,7 @@ func WithStakingOperationMode(mode string) StakingOperationOption {
 }
 
 // WithStakingOperationImmediate allows for the setting of the immediate flag
-// specifically for Dedicate ETH Staking whether to immediate unstake or not. (i.e. `true` or `false`)
+// specifically for Dedicated ETH Staking whether to immediate unstake or not. (i.e. `true` or `false`)
 func WithStakingOperationImmediate(immediate string) StakingOperationOption {
 	return WithStakingOperationOption("immediate", immediate)
 }
