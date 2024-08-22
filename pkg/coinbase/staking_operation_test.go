@@ -108,7 +108,7 @@ func TestStakingOperation_Wait_Failure(t *testing.T) {
 
 			so, err := mockStakingOperation(t, tt.soStatus)
 			assert.NoError(t, err, "staking operation creation should not error")
-			so, err = c.Wait(context.Background(), so)
+			_, err = c.Wait(context.Background(), so)
 			assert.Error(t, err, "staking operation wait should error")
 		})
 	}
