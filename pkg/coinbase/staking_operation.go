@@ -3,8 +3,10 @@ package coinbase
 import (
 	"context"
 	"crypto/ecdsa"
+	"encoding/base64"
 	"fmt"
 	"math/big"
+	"time"
 
 	"github.com/coinbase/coinbase-sdk-go/gen/client"
 )
@@ -19,11 +21,41 @@ func WithStakingOperationMode(mode string) StakingOperationOption {
 	return WithStakingOperationOption("mode", mode)
 }
 
+// WithStakingOperationImmediate allows for the setting of the immediate flag
+// specifically for Dedicate ETH Staking whether to immediate unstake or not. (i.e. `true` or `false`)
+func WithStakingOperationImmediate(immediate string) StakingOperationOption {
+	return WithStakingOperationOption("immediate", immediate)
+}
+
 // WithStakingOperationOption allows for the passing of custom options
 // to the staking operation, like `mode` or `withdrawal_address`.
 func WithStakingOperationOption(optionKey string, optionValue string) StakingOperationOption {
 	return func(op *client.BuildStakingOperationRequest) {
 		op.Options[optionKey] = optionValue
+	}
+}
+
+type waitOptions struct {
+	intervalSeconds int
+	timeoutSeconds  int
+}
+
+// WaitOption allows for the passing of custom options to the wait function.
+type WaitOption func(*waitOptions)
+
+// WithWaitIntervalSeconds sets the interval in seconds to wait between
+// polling the staking operation.
+func WithWaitIntervalSeconds(intervalSeconds int) WaitOption {
+	return func(o *waitOptions) {
+		o.intervalSeconds = intervalSeconds
+	}
+}
+
+// WithWaitTimeoutSeconds sets the timeout in seconds to wait for the
+// staking operation to complete.
+func WithWaitTimeoutSeconds(timeoutSeconds int) WaitOption {
+	return func(o *waitOptions) {
+		o.timeoutSeconds = timeoutSeconds
 	}
 }
 
@@ -99,16 +131,6 @@ func (c *Client) BuildClaimStakeOperation(
 	return c.BuildStakingOperation(ctx, address, assetID, "claim_stake", amount, o...)
 }
 
-// FetchExternalStakingOperation loads a staking operation from the API associated
-// with an address.
-func (c *Client) FetchExternalStakingOperation(ctx context.Context, address *Address, id string) (*StakingOperation, error) {
-	op, _, err := c.client.StakeAPI.GetExternalStakingOperation(ctx, address.NetworkID(), address.ID(), id).Execute()
-	if err != nil {
-		return nil, err
-	}
-	return newStakingOperationFromModel(op)
-}
-
 // StakingOperation represents a staking operation for
 // a given action, asset, and amount.
 type StakingOperation struct {
@@ -117,36 +139,36 @@ type StakingOperation struct {
 }
 
 // ID returns the StakingOperation ID
-func (o *StakingOperation) ID() string {
-	return o.model.Id
+func (s *StakingOperation) ID() string {
+	return s.model.Id
 }
 
 // NetworkID returns the StakingOperation network id
-func (o *StakingOperation) NetworkID() string {
-	return o.model.NetworkId
+func (s *StakingOperation) NetworkID() string {
+	return s.model.NetworkId
 }
 
 // AddressID returns the StakingOperation address id
-func (o *StakingOperation) AddressID() string {
-	return o.model.AddressId
+func (s *StakingOperation) AddressID() string {
+	return s.model.AddressId
 }
 
 // Status returns the StakingOperation status
-func (o *StakingOperation) Status() string {
-	return o.model.Status
+func (s *StakingOperation) Status() string {
+	return s.model.Status
 }
 
 // Transactions returns the transactions associated with
 // the StakingOperation
-func (o *StakingOperation) Transactions() []*Transaction {
-	return o.transactions
+func (s *StakingOperation) Transactions() []*Transaction {
+	return s.transactions
 }
 
 // Sign will sign each transaction using the supplied key
 // This will halt and return an error if any of the transactions
 // fail to sign.
-func (o *StakingOperation) Sign(k *ecdsa.PrivateKey) error {
-	for _, tx := range o.Transactions() {
+func (s *StakingOperation) Sign(k *ecdsa.PrivateKey) error {
+	for _, tx := range s.Transactions() {
 		if !tx.IsSigned() {
 			err := tx.Sign(k)
 			if err != nil {
@@ -155,6 +177,84 @@ func (o *StakingOperation) Sign(k *ecdsa.PrivateKey) error {
 		}
 	}
 	return nil
+}
+
+func (s *StakingOperation) GetSignedVoluntaryExitMessages() ([]string, error) {
+	var signedVoluntaryExitMessages []string
+
+	stakingOperationMetadata := s.model.GetMetadata().ArrayOfSignedVoluntaryExitMessageMetadata
+
+	if s.model.Metadata == nil {
+		return []string{}, nil
+	}
+
+	for _, metadata := range *stakingOperationMetadata {
+		decodedMessage, err := base64.StdEncoding.DecodeString(metadata.SignedVoluntaryExit)
+		if err != nil {
+			return nil, fmt.Errorf("failed to decode signed voluntary exit message: %s", err)
+		}
+		signedVoluntaryExitMessages = append(signedVoluntaryExitMessages, string(decodedMessage))
+	}
+
+	return signedVoluntaryExitMessages, nil
+}
+
+func (c *Client) Wait(ctx context.Context, stakingOperation *StakingOperation, o ...WaitOption) (*StakingOperation, error) {
+
+	options := &waitOptions{
+		intervalSeconds: 5,
+		timeoutSeconds:  3600,
+	}
+
+	for _, f := range o {
+		f(options)
+	}
+
+	startTime := time.Now()
+
+	for time.Since(startTime).Seconds() < float64(options.timeoutSeconds) {
+		so, err := c.fetchExternalStakingOperation(ctx, stakingOperation)
+		if err != nil {
+			return stakingOperation, err
+		}
+		stakingOperation = so
+
+		if stakingOperation.isTerminalState() {
+			return stakingOperation, nil
+		}
+
+		if time.Since(startTime).Seconds() > float64(options.timeoutSeconds) {
+			return stakingOperation, fmt.Errorf("staking operation timed out")
+		}
+
+		time.Sleep(time.Duration(options.intervalSeconds) * time.Second)
+	}
+
+	return stakingOperation, fmt.Errorf("staking operation timed out")
+}
+
+// FetchExternalStakingOperation loads a staking operation from the API associated
+// with an address.
+func (c *Client) fetchExternalStakingOperation(ctx context.Context, stakingOperation *StakingOperation) (*StakingOperation, error) {
+	so, httpRes, err := c.client.StakeAPI.GetExternalStakingOperation(
+		ctx,
+		stakingOperation.NetworkID(),
+		stakingOperation.AddressID(),
+		stakingOperation.ID(),
+	).Execute()
+	if err != nil {
+		return nil, err
+	}
+
+	if httpRes.StatusCode != 200 {
+		return nil, fmt.Errorf("failed to fetch staking operation: %s", httpRes.Status)
+	}
+
+	return newStakingOperationFromModel(so)
+}
+
+func (s *StakingOperation) isTerminalState() bool {
+	return s.Status() == "complete" || s.Status() == "failed"
 }
 
 func newStakingOperationFromModel(m *client.StakingOperation) (*StakingOperation, error) {
