@@ -13,6 +13,7 @@ api_trades.go
 api_transfers.go
 api_users.go
 api_validators.go
+api_wallet_stake.go
 api_wallets.go
 api_webhooks.go
 client.go
@@ -88,9 +89,11 @@ docs/UsersAPI.md
 docs/Validator.md
 docs/ValidatorDetails.md
 docs/ValidatorList.md
+docs/ValidatorStatus.md
 docs/ValidatorsAPI.md
 docs/Wallet.md
 docs/WalletList.md
+docs/WalletStakeAPI.md
 docs/WalletsAPI.md
 docs/Webhook.md
 docs/WebhookEventFilter.md
@@ -159,6 +162,7 @@ model_user.go
 model_validator.go
 model_validator_details.go
 model_validator_list.go
+model_validator_status.go
 model_wallet.go
 model_wallet_list.go
 model_webhook.go
