@@ -20,119 +20,127 @@ import (
 )
 
 
-type WebhooksAPI interface {
+type WalletStakeAPI interface {
 
 	/*
-	CreateWebhook Create a new webhook
+	BroadcastStakingOperation Broadcast a staking operation
 
-	Create a new webhook
+	Broadcast a staking operation.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	@return ApiCreateWebhookRequest
+	@param walletId The ID of the wallet the address belongs to.
+	@param addressId The ID of the address the staking operation belongs to.
+	@param stakingOperationId The ID of the staking operation to broadcast.
+	@return ApiBroadcastStakingOperationRequest
 	*/
-	CreateWebhook(ctx context.Context) ApiCreateWebhookRequest
+	BroadcastStakingOperation(ctx context.Context, walletId string, addressId string, stakingOperationId string) ApiBroadcastStakingOperationRequest
 
-	// CreateWebhookExecute executes the request
-	//  @return Webhook
-	CreateWebhookExecute(r ApiCreateWebhookRequest) (*Webhook, *http.Response, error)
+	// BroadcastStakingOperationExecute executes the request
+	//  @return StakingOperation
+	BroadcastStakingOperationExecute(r ApiBroadcastStakingOperationRequest) (*StakingOperation, *http.Response, error)
 
 	/*
-	DeleteWebhook Delete a webhook
+	CreateStakingOperation Create a new staking operation for an address
 
-	Delete a webhook
+	Create a new staking operation.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	@param webhookId The Webhook uuid that needs to be deleted
-	@return ApiDeleteWebhookRequest
+	@param walletId The ID of the wallet the address belongs to.
+	@param addressId The ID of the address to create the staking operation for.
+	@return ApiCreateStakingOperationRequest
 	*/
-	DeleteWebhook(ctx context.Context, webhookId string) ApiDeleteWebhookRequest
+	CreateStakingOperation(ctx context.Context, walletId string, addressId string) ApiCreateStakingOperationRequest
 
-	// DeleteWebhookExecute executes the request
-	DeleteWebhookExecute(r ApiDeleteWebhookRequest) (*http.Response, error)
+	// CreateStakingOperationExecute executes the request
+	//  @return StakingOperation
+	CreateStakingOperationExecute(r ApiCreateStakingOperationRequest) (*StakingOperation, *http.Response, error)
 
 	/*
-	ListWebhooks List webhooks
+	GetStakingOperation Get the latest state of a staking operation
 
-	List webhooks, optionally filtered by event type.
-
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	@return ApiListWebhooksRequest
-	*/
-	ListWebhooks(ctx context.Context) ApiListWebhooksRequest
-
-	// ListWebhooksExecute executes the request
-	//  @return WebhookList
-	ListWebhooksExecute(r ApiListWebhooksRequest) (*WebhookList, *http.Response, error)
-
-	/*
-	UpdateWebhook Update a webhook
-
-	Update a webhook
+	Get the latest state of a staking operation.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	@param webhookId The Webhook id that needs to be updated
-	@return ApiUpdateWebhookRequest
+	@param walletId The ID of the wallet the address belongs to
+	@param addressId The ID of the address to fetch the staking operation for.
+	@param stakingOperationId The ID of the staking operation.
+	@return ApiGetStakingOperationRequest
 	*/
-	UpdateWebhook(ctx context.Context, webhookId string) ApiUpdateWebhookRequest
+	GetStakingOperation(ctx context.Context, walletId string, addressId string, stakingOperationId string) ApiGetStakingOperationRequest
 
-	// UpdateWebhookExecute executes the request
-	//  @return Webhook
-	UpdateWebhookExecute(r ApiUpdateWebhookRequest) (*Webhook, *http.Response, error)
+	// GetStakingOperationExecute executes the request
+	//  @return StakingOperation
+	GetStakingOperationExecute(r ApiGetStakingOperationRequest) (*StakingOperation, *http.Response, error)
 }
 
-// WebhooksAPIService WebhooksAPI service
-type WebhooksAPIService service
+// WalletStakeAPIService WalletStakeAPI service
+type WalletStakeAPIService service
 
-type ApiCreateWebhookRequest struct {
+type ApiBroadcastStakingOperationRequest struct {
 	ctx context.Context
-	ApiService WebhooksAPI
-	createWebhookRequest *CreateWebhookRequest
+	ApiService WalletStakeAPI
+	walletId string
+	addressId string
+	stakingOperationId string
+	broadcastStakingOperationRequest *BroadcastStakingOperationRequest
 }
 
-func (r ApiCreateWebhookRequest) CreateWebhookRequest(createWebhookRequest CreateWebhookRequest) ApiCreateWebhookRequest {
-	r.createWebhookRequest = &createWebhookRequest
+func (r ApiBroadcastStakingOperationRequest) BroadcastStakingOperationRequest(broadcastStakingOperationRequest BroadcastStakingOperationRequest) ApiBroadcastStakingOperationRequest {
+	r.broadcastStakingOperationRequest = &broadcastStakingOperationRequest
 	return r
 }
 
-func (r ApiCreateWebhookRequest) Execute() (*Webhook, *http.Response, error) {
-	return r.ApiService.CreateWebhookExecute(r)
+func (r ApiBroadcastStakingOperationRequest) Execute() (*StakingOperation, *http.Response, error) {
+	return r.ApiService.BroadcastStakingOperationExecute(r)
 }
 
 /*
-CreateWebhook Create a new webhook
+BroadcastStakingOperation Broadcast a staking operation
 
-Create a new webhook
+Broadcast a staking operation.
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- @return ApiCreateWebhookRequest
+ @param walletId The ID of the wallet the address belongs to.
+ @param addressId The ID of the address the staking operation belongs to.
+ @param stakingOperationId The ID of the staking operation to broadcast.
+ @return ApiBroadcastStakingOperationRequest
 */
-func (a *WebhooksAPIService) CreateWebhook(ctx context.Context) ApiCreateWebhookRequest {
-	return ApiCreateWebhookRequest{
+func (a *WalletStakeAPIService) BroadcastStakingOperation(ctx context.Context, walletId string, addressId string, stakingOperationId string) ApiBroadcastStakingOperationRequest {
+	return ApiBroadcastStakingOperationRequest{
 		ApiService: a,
 		ctx: ctx,
+		walletId: walletId,
+		addressId: addressId,
+		stakingOperationId: stakingOperationId,
 	}
 }
 
 // Execute executes the request
-//  @return Webhook
-func (a *WebhooksAPIService) CreateWebhookExecute(r ApiCreateWebhookRequest) (*Webhook, *http.Response, error) {
+//  @return StakingOperation
+func (a *WalletStakeAPIService) BroadcastStakingOperationExecute(r ApiBroadcastStakingOperationRequest) (*StakingOperation, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodPost
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *Webhook
+		localVarReturnValue  *StakingOperation
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "WebhooksAPIService.CreateWebhook")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "WalletStakeAPIService.BroadcastStakingOperation")
 	if err != nil {
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/v1/webhooks"
+	localVarPath := localBasePath + "/v1/wallets/{wallet_id}/addresses/{address_id}/staking_operations/{staking_operation_id}/broadcast"
+	localVarPath = strings.Replace(localVarPath, "{"+"wallet_id"+"}", url.PathEscape(parameterValueToString(r.walletId, "walletId")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"address_id"+"}", url.PathEscape(parameterValueToString(r.addressId, "addressId")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"staking_operation_id"+"}", url.PathEscape(parameterValueToString(r.stakingOperationId, "stakingOperationId")), -1)
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
+	if r.broadcastStakingOperationRequest == nil {
+		return localVarReturnValue, nil, reportError("broadcastStakingOperationRequest is required and must be specified")
+	}
 
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{"application/json"}
@@ -152,7 +160,7 @@ func (a *WebhooksAPIService) CreateWebhookExecute(r ApiCreateWebhookRequest) (*W
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
 	// body params
-	localVarPostBody = r.createWebhookRequest
+	localVarPostBody = r.broadcastStakingOperationRequest
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
 	if err != nil {
 		return localVarReturnValue, nil, err
@@ -198,55 +206,70 @@ func (a *WebhooksAPIService) CreateWebhookExecute(r ApiCreateWebhookRequest) (*W
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
-type ApiDeleteWebhookRequest struct {
+type ApiCreateStakingOperationRequest struct {
 	ctx context.Context
-	ApiService WebhooksAPI
-	webhookId string
+	ApiService WalletStakeAPI
+	walletId string
+	addressId string
+	createStakingOperationRequest *CreateStakingOperationRequest
 }
 
-func (r ApiDeleteWebhookRequest) Execute() (*http.Response, error) {
-	return r.ApiService.DeleteWebhookExecute(r)
+func (r ApiCreateStakingOperationRequest) CreateStakingOperationRequest(createStakingOperationRequest CreateStakingOperationRequest) ApiCreateStakingOperationRequest {
+	r.createStakingOperationRequest = &createStakingOperationRequest
+	return r
+}
+
+func (r ApiCreateStakingOperationRequest) Execute() (*StakingOperation, *http.Response, error) {
+	return r.ApiService.CreateStakingOperationExecute(r)
 }
 
 /*
-DeleteWebhook Delete a webhook
+CreateStakingOperation Create a new staking operation for an address
 
-Delete a webhook
+Create a new staking operation.
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- @param webhookId The Webhook uuid that needs to be deleted
- @return ApiDeleteWebhookRequest
+ @param walletId The ID of the wallet the address belongs to.
+ @param addressId The ID of the address to create the staking operation for.
+ @return ApiCreateStakingOperationRequest
 */
-func (a *WebhooksAPIService) DeleteWebhook(ctx context.Context, webhookId string) ApiDeleteWebhookRequest {
-	return ApiDeleteWebhookRequest{
+func (a *WalletStakeAPIService) CreateStakingOperation(ctx context.Context, walletId string, addressId string) ApiCreateStakingOperationRequest {
+	return ApiCreateStakingOperationRequest{
 		ApiService: a,
 		ctx: ctx,
-		webhookId: webhookId,
+		walletId: walletId,
+		addressId: addressId,
 	}
 }
 
 // Execute executes the request
-func (a *WebhooksAPIService) DeleteWebhookExecute(r ApiDeleteWebhookRequest) (*http.Response, error) {
+//  @return StakingOperation
+func (a *WalletStakeAPIService) CreateStakingOperationExecute(r ApiCreateStakingOperationRequest) (*StakingOperation, *http.Response, error) {
 	var (
-		localVarHTTPMethod   = http.MethodDelete
+		localVarHTTPMethod   = http.MethodPost
 		localVarPostBody     interface{}
 		formFiles            []formFile
+		localVarReturnValue  *StakingOperation
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "WebhooksAPIService.DeleteWebhook")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "WalletStakeAPIService.CreateStakingOperation")
 	if err != nil {
-		return nil, &GenericOpenAPIError{error: err.Error()}
+		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/v1/webhooks/{webhook_id}"
-	localVarPath = strings.Replace(localVarPath, "{"+"webhook_id"+"}", url.PathEscape(parameterValueToString(r.webhookId, "webhookId")), -1)
+	localVarPath := localBasePath + "/v1/wallets/{wallet_id}/addresses/{address_id}/staking_operations"
+	localVarPath = strings.Replace(localVarPath, "{"+"wallet_id"+"}", url.PathEscape(parameterValueToString(r.walletId, "walletId")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"address_id"+"}", url.PathEscape(parameterValueToString(r.addressId, "addressId")), -1)
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
+	if r.createStakingOperationRequest == nil {
+		return localVarReturnValue, nil, reportError("createStakingOperationRequest is required and must be specified")
+	}
 
 	// to determine the Content-Type header
-	localVarHTTPContentTypes := []string{}
+	localVarHTTPContentTypes := []string{"application/json"}
 
 	// set Content-Type header
 	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
@@ -262,21 +285,23 @@ func (a *WebhooksAPIService) DeleteWebhookExecute(r ApiDeleteWebhookRequest) (*h
 	if localVarHTTPHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
+	// body params
+	localVarPostBody = r.createStakingOperationRequest
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
 	if err != nil {
-		return nil, err
+		return localVarReturnValue, nil, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return localVarHTTPResponse, err
+		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
 	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
 	localVarHTTPResponse.Body.Close()
 	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
 	if err != nil {
-		return localVarHTTPResponse, err
+		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
 	if localVarHTTPResponse.StatusCode >= 300 {
@@ -288,81 +313,82 @@ func (a *WebhooksAPIService) DeleteWebhookExecute(r ApiDeleteWebhookRequest) (*h
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
-				return localVarHTTPResponse, newErr
+				return localVarReturnValue, localVarHTTPResponse, newErr
 			}
 					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
 					newErr.model = v
-		return localVarHTTPResponse, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
-	return localVarHTTPResponse, nil
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	if err != nil {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: err.Error(),
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
-type ApiListWebhooksRequest struct {
+type ApiGetStakingOperationRequest struct {
 	ctx context.Context
-	ApiService WebhooksAPI
-	limit *int32
-	page *string
+	ApiService WalletStakeAPI
+	walletId string
+	addressId string
+	stakingOperationId string
 }
 
-// A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default is 10.
-func (r ApiListWebhooksRequest) Limit(limit int32) ApiListWebhooksRequest {
-	r.limit = &limit
-	return r
-}
-
-// A cursor for pagination across multiple pages of results. Don&#39;t include this parameter on the first call. Use the next_page value returned in a previous response to request subsequent results.
-func (r ApiListWebhooksRequest) Page(page string) ApiListWebhooksRequest {
-	r.page = &page
-	return r
-}
-
-func (r ApiListWebhooksRequest) Execute() (*WebhookList, *http.Response, error) {
-	return r.ApiService.ListWebhooksExecute(r)
+func (r ApiGetStakingOperationRequest) Execute() (*StakingOperation, *http.Response, error) {
+	return r.ApiService.GetStakingOperationExecute(r)
 }
 
 /*
-ListWebhooks List webhooks
+GetStakingOperation Get the latest state of a staking operation
 
-List webhooks, optionally filtered by event type.
+Get the latest state of a staking operation.
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- @return ApiListWebhooksRequest
+ @param walletId The ID of the wallet the address belongs to
+ @param addressId The ID of the address to fetch the staking operation for.
+ @param stakingOperationId The ID of the staking operation.
+ @return ApiGetStakingOperationRequest
 */
-func (a *WebhooksAPIService) ListWebhooks(ctx context.Context) ApiListWebhooksRequest {
-	return ApiListWebhooksRequest{
+func (a *WalletStakeAPIService) GetStakingOperation(ctx context.Context, walletId string, addressId string, stakingOperationId string) ApiGetStakingOperationRequest {
+	return ApiGetStakingOperationRequest{
 		ApiService: a,
 		ctx: ctx,
+		walletId: walletId,
+		addressId: addressId,
+		stakingOperationId: stakingOperationId,
 	}
 }
 
 // Execute executes the request
-//  @return WebhookList
-func (a *WebhooksAPIService) ListWebhooksExecute(r ApiListWebhooksRequest) (*WebhookList, *http.Response, error) {
+//  @return StakingOperation
+func (a *WalletStakeAPIService) GetStakingOperationExecute(r ApiGetStakingOperationRequest) (*StakingOperation, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodGet
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *WebhookList
+		localVarReturnValue  *StakingOperation
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "WebhooksAPIService.ListWebhooks")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "WalletStakeAPIService.GetStakingOperation")
 	if err != nil {
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/v1/webhooks"
+	localVarPath := localBasePath + "/v1/wallets/{wallet_id}/addresses/{address_id}/staking_operations/{staking_operation_id}"
+	localVarPath = strings.Replace(localVarPath, "{"+"wallet_id"+"}", url.PathEscape(parameterValueToString(r.walletId, "walletId")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"address_id"+"}", url.PathEscape(parameterValueToString(r.addressId, "addressId")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"staking_operation_id"+"}", url.PathEscape(parameterValueToString(r.stakingOperationId, "stakingOperationId")), -1)
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
-	if r.limit != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "limit", r.limit, "")
-	}
-	if r.page != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "page", r.page, "")
-	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
 
@@ -380,125 +406,6 @@ func (a *WebhooksAPIService) ListWebhooksExecute(r ApiListWebhooksRequest) (*Web
 	if localVarHTTPHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
-	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
-	if err != nil {
-		return localVarReturnValue, nil, err
-	}
-
-	localVarHTTPResponse, err := a.client.callAPI(req)
-	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
-
-	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
-	localVarHTTPResponse.Body.Close()
-	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
-	if err != nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
-
-	if localVarHTTPResponse.StatusCode >= 300 {
-		newErr := &GenericOpenAPIError{
-			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
-		}
-			var v Error
-			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHTTPResponse, newErr
-			}
-					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
-					newErr.model = v
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-
-	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-	if err != nil {
-		newErr := &GenericOpenAPIError{
-			body:  localVarBody,
-			error: err.Error(),
-		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-
-	return localVarReturnValue, localVarHTTPResponse, nil
-}
-
-type ApiUpdateWebhookRequest struct {
-	ctx context.Context
-	ApiService WebhooksAPI
-	webhookId string
-	updateWebhookRequest *UpdateWebhookRequest
-}
-
-func (r ApiUpdateWebhookRequest) UpdateWebhookRequest(updateWebhookRequest UpdateWebhookRequest) ApiUpdateWebhookRequest {
-	r.updateWebhookRequest = &updateWebhookRequest
-	return r
-}
-
-func (r ApiUpdateWebhookRequest) Execute() (*Webhook, *http.Response, error) {
-	return r.ApiService.UpdateWebhookExecute(r)
-}
-
-/*
-UpdateWebhook Update a webhook
-
-Update a webhook
-
- @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- @param webhookId The Webhook id that needs to be updated
- @return ApiUpdateWebhookRequest
-*/
-func (a *WebhooksAPIService) UpdateWebhook(ctx context.Context, webhookId string) ApiUpdateWebhookRequest {
-	return ApiUpdateWebhookRequest{
-		ApiService: a,
-		ctx: ctx,
-		webhookId: webhookId,
-	}
-}
-
-// Execute executes the request
-//  @return Webhook
-func (a *WebhooksAPIService) UpdateWebhookExecute(r ApiUpdateWebhookRequest) (*Webhook, *http.Response, error) {
-	var (
-		localVarHTTPMethod   = http.MethodPut
-		localVarPostBody     interface{}
-		formFiles            []formFile
-		localVarReturnValue  *Webhook
-	)
-
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "WebhooksAPIService.UpdateWebhook")
-	if err != nil {
-		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
-	}
-
-	localVarPath := localBasePath + "/v1/webhooks/{webhook_id}"
-	localVarPath = strings.Replace(localVarPath, "{"+"webhook_id"+"}", url.PathEscape(parameterValueToString(r.webhookId, "webhookId")), -1)
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-
-	// to determine the Content-Type header
-	localVarHTTPContentTypes := []string{"application/json"}
-
-	// set Content-Type header
-	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
-	if localVarHTTPContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
-	}
-
-	// to determine the Accept header
-	localVarHTTPHeaderAccepts := []string{"application/json"}
-
-	// set Accept header
-	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
-	if localVarHTTPHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
-	}
-	// body params
-	localVarPostBody = r.updateWebhookRequest
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
 	if err != nil {
 		return localVarReturnValue, nil, err

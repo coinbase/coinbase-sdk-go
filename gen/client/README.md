@@ -97,14 +97,11 @@ Class | Method | HTTP request | Description
 *ServerSignersAPI* | [**ListServerSigners**](docs/ServerSignersAPI.md#listserversigners) | **Get** /v1/server_signers | List server signers for the current project
 *ServerSignersAPI* | [**SubmitServerSignerSeedEventResult**](docs/ServerSignersAPI.md#submitserversignerseedeventresult) | **Post** /v1/server_signers/{server_signer_id}/seed_event_result | Submit the result of a server signer event
 *ServerSignersAPI* | [**SubmitServerSignerSignatureEventResult**](docs/ServerSignersAPI.md#submitserversignersignatureeventresult) | **Post** /v1/server_signers/{server_signer_id}/signature_event_result | Submit the result of a server signer event
-*StakeAPI* | [**BroadcastStakingOperation**](docs/StakeAPI.md#broadcaststakingoperation) | **Post** /v1/wallets/{wallet_id}/addresses/{address_id}/staking_operations/{staking_operation_id}/broadcast | Broadcast a staking operation
 *StakeAPI* | [**BuildStakingOperation**](docs/StakeAPI.md#buildstakingoperation) | **Post** /v1/stake/build | Build a new staking operation
-*StakeAPI* | [**CreateStakingOperation**](docs/StakeAPI.md#createstakingoperation) | **Post** /v1/wallets/{wallet_id}/addresses/{address_id}/staking_operations | Create a new staking operation for an address
 *StakeAPI* | [**FetchHistoricalStakingBalances**](docs/StakeAPI.md#fetchhistoricalstakingbalances) | **Get** /v1/networks/{network_id}/addresses/{address_id}/stake/balances | Fetch historical staking balances
 *StakeAPI* | [**FetchStakingRewards**](docs/StakeAPI.md#fetchstakingrewards) | **Post** /v1/stake/rewards/search | Fetch staking rewards
 *StakeAPI* | [**GetExternalStakingOperation**](docs/StakeAPI.md#getexternalstakingoperation) | **Get** /v1/networks/{network_id}/addresses/{address_id}/staking_operations/{staking_operation_id} | Get the latest state of a staking operation
 *StakeAPI* | [**GetStakingContext**](docs/StakeAPI.md#getstakingcontext) | **Post** /v1/stake/context | Get staking context
-*StakeAPI* | [**GetStakingOperation**](docs/StakeAPI.md#getstakingoperation) | **Get** /v1/wallets/{wallet_id}/addresses/{address_id}/staking_operations/{staking_operation_id} | Get the latest state of a staking operation
 *TradesAPI* | [**BroadcastTrade**](docs/TradesAPI.md#broadcasttrade) | **Post** /v1/wallets/{wallet_id}/addresses/{address_id}/trades/{trade_id}/broadcast | Broadcast a trade
 *TradesAPI* | [**CreateTrade**](docs/TradesAPI.md#createtrade) | **Post** /v1/wallets/{wallet_id}/addresses/{address_id}/trades | Create a new trade for an address
 *TradesAPI* | [**GetTrade**](docs/TradesAPI.md#gettrade) | **Get** /v1/wallets/{wallet_id}/addresses/{address_id}/trades/{trade_id} | Get a trade by ID
@@ -116,6 +113,9 @@ Class | Method | HTTP request | Description
 *UsersAPI* | [**GetCurrentUser**](docs/UsersAPI.md#getcurrentuser) | **Get** /v1/users/me | Get current user
 *ValidatorsAPI* | [**GetValidator**](docs/ValidatorsAPI.md#getvalidator) | **Get** /v1/networks/{network_id}/assets/{asset_id}/validators/{validator_id} | Get a validator belonging to the CDP project
 *ValidatorsAPI* | [**ListValidators**](docs/ValidatorsAPI.md#listvalidators) | **Get** /v1/networks/{network_id}/assets/{asset_id}/validators | List validators belonging to the CDP project
+*WalletStakeAPI* | [**BroadcastStakingOperation**](docs/WalletStakeAPI.md#broadcaststakingoperation) | **Post** /v1/wallets/{wallet_id}/addresses/{address_id}/staking_operations/{staking_operation_id}/broadcast | Broadcast a staking operation
+*WalletStakeAPI* | [**CreateStakingOperation**](docs/WalletStakeAPI.md#createstakingoperation) | **Post** /v1/wallets/{wallet_id}/addresses/{address_id}/staking_operations | Create a new staking operation for an address
+*WalletStakeAPI* | [**GetStakingOperation**](docs/WalletStakeAPI.md#getstakingoperation) | **Get** /v1/wallets/{wallet_id}/addresses/{address_id}/staking_operations/{staking_operation_id} | Get the latest state of a staking operation
 *WalletsAPI* | [**CreateWallet**](docs/WalletsAPI.md#createwallet) | **Post** /v1/wallets | Create a new wallet
 *WalletsAPI* | [**GetWallet**](docs/WalletsAPI.md#getwallet) | **Get** /v1/wallets/{wallet_id} | Get wallet by ID
 *WalletsAPI* | [**GetWalletBalance**](docs/WalletsAPI.md#getwalletbalance) | **Get** /v1/wallets/{wallet_id}/balances/{asset_id} | Get the balance of an asset in the wallet
@@ -190,6 +190,7 @@ Class | Method | HTTP request | Description
  - [Validator](docs/Validator.md)
  - [ValidatorDetails](docs/ValidatorDetails.md)
  - [ValidatorList](docs/ValidatorList.md)
+ - [ValidatorStatus](docs/ValidatorStatus.md)
  - [Wallet](docs/Wallet.md)
  - [WalletList](docs/WalletList.md)
  - [Webhook](docs/Webhook.md)
@@ -221,5 +222,5 @@ Each of these functions takes a value of the given basic type and returns a poin
 
 ## Author
 
-yuga.cohler@coinbase.com
+
 

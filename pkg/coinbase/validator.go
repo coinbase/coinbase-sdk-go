@@ -21,7 +21,7 @@ func (v Validator) ID() string {
 	return v.validator.ValidatorId
 }
 
-func (v Validator) Status() string {
+func (v Validator) Status() client.ValidatorStatus {
 	return v.validator.Status
 }
 
