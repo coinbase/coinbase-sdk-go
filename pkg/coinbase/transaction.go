@@ -4,7 +4,6 @@ import (
 	"crypto/ecdsa"
 	"encoding/hex"
 	"fmt"
-	"log"
 	"math/big"
 
 	"github.com/coinbase/coinbase-sdk-go/gen/client"
@@ -84,7 +83,7 @@ func (t *Transaction) Sign(k *ecdsa.PrivateKey) error {
 
 	bytes, err := signedTx.MarshalBinary()
 	if err != nil {
-		log.Fatalf("error marshaling transaction: %v", err)
+		return err
 	}
 
 	signedPayload := hex.EncodeToString(bytes)

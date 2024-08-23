@@ -2,6 +2,7 @@ package coinbase
 
 import (
 	"net/http"
+	"time"
 
 	"github.com/coinbase/coinbase-sdk-go/gen/client"
 	"github.com/coinbase/coinbase-sdk-go/pkg/auth"
@@ -61,7 +62,12 @@ func NewClient(o ...ClientOption) (*Client, error) {
 		}
 	}
 	if c.baseHTTPClient == nil {
-		c.baseHTTPClient = http.DefaultClient
+		c.baseHTTPClient = &http.Client{
+			Timeout: time.Second * 10,
+			Transport: &http.Transport{
+				TLSHandshakeTimeout: 5 * time.Second,
+			},
+		}
 	}
 	c.cfg.HTTPClient = c.baseHTTPClient
 	if c.cfg.HTTPClient.Transport == nil {
