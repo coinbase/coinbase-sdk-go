@@ -44,7 +44,7 @@ func (c *Client) ListStakingRewards(
 
 	// No addresses to fetch rewards for.
 	if len(addresses) == 0 {
-		return []StakingReward{}, nil
+		return nil, nil
 	}
 
 	// We're assuming the addresses will be all for the same networkId and assetId.
@@ -53,7 +53,7 @@ func (c *Client) ListStakingRewards(
 	// Get the asset.
 	asset, err := c.fetchAsset(ctx, networkId, assetId)
 	if err != nil {
-		return []StakingReward{}, err
+		return nil, err
 	}
 
 	// Create a list of address ids.
@@ -74,7 +74,7 @@ func (c *Client) ListStakingRewards(
 		// Get the rewards for the address ids.
 		resp, err := c.getRewards(ctx, page, rewardsReq)
 		if err != nil {
-			return []StakingReward{}, err
+			return nil, err
 		}
 
 		for _, stakingReward := range resp.GetData() {

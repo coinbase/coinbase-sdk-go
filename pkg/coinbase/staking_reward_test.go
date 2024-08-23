@@ -29,8 +29,9 @@ type mockController struct {
 
 func TestListStakingRewards_Success(t *testing.T) {
 	tests := map[string]struct {
-		req   ListRewardsRequest
-		setup func(*mockController)
+		req             ListRewardsRequest
+		expectedRespLen int
+		setup           func(*mockController)
 	}{
 		"happy path with no pages": {
 			req: ListRewardsRequest{
@@ -48,6 +49,7 @@ func TestListStakingRewards_Success(t *testing.T) {
 				mockFetchAsset(t, c.assetsAPI, http.StatusOK)
 				mockFetchStakingRewards(t, c.stakeAPI, http.StatusOK)
 			},
+			expectedRespLen: 1,
 		},
 		"happy path with a page": {
 			req: ListRewardsRequest{
@@ -65,17 +67,18 @@ func TestListStakingRewards_Success(t *testing.T) {
 				mockFetchAsset(t, c.assetsAPI, http.StatusOK)
 				mockFetchStakingRewardsWithPage(t, c.stakeAPI)
 			},
+			expectedRespLen: 2,
 		},
 		"happy path with no addresses": {
 			req: ListRewardsRequest{
 				assetId:   "test-asset-id",
-				address:   []Address{},
 				startTime: time.Now(),
 				endTime:   time.Now(),
 				format:    api.STAKINGREWARDFORMAT_USD,
 			},
 			setup: func(c *mockController) {
 			},
+			expectedRespLen: 0,
 		},
 	}
 
@@ -103,8 +106,8 @@ func TestListStakingRewards_Success(t *testing.T) {
 				tc.req.endTime,
 				tc.req.format,
 			)
-			assert.NotNilf(t, resp, "response should not be nil")
 			assert.NoError(t, err, "error should be nil")
+			assert.Equal(t, tc.expectedRespLen, len(resp), "response length should be 0")
 		})
 	}
 }

@@ -185,7 +185,7 @@ func (s *StakingOperation) GetSignedVoluntaryExitMessages() ([]string, error) {
 	stakingOperationMetadata := s.model.GetMetadata().ArrayOfSignedVoluntaryExitMessageMetadata
 
 	if s.model.Metadata == nil {
-		return []string{}, nil
+		return nil, nil
 	}
 
 	for _, metadata := range *stakingOperationMetadata {
