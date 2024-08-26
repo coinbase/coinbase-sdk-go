@@ -26,11 +26,13 @@ func TestStakingOperation_Wait_Success(t *testing.T) {
 	}
 
 	so, err := mockStakingOperation(t, "pending")
+	so.Transactions()[0].model.Status = "complete"
 	assert.NoError(t, err, "staking operation creation should not error")
 	so, err = c.Wait(context.Background(), so)
 	assert.NoError(t, err, "staking operation wait should not error")
 	assert.Equal(t, "complete", so.Status(), "staking operation status should be complete")
 	assert.Equal(t, 1, len(so.Transactions()), "staking operation should have 1 transaction")
+	assert.Equal(t, "complete", so.Transactions()[0].Status(), "staking operation should have 1 transaction")
 }
 
 func TestStakingOperation_Wait_Success_CustomOptions(t *testing.T) {
