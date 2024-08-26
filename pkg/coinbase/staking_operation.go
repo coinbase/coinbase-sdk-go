@@ -233,7 +233,7 @@ func (c *Client) Wait(ctx context.Context, stakingOperation *StakingOperation, o
 	return stakingOperation, fmt.Errorf("staking operation timed out")
 }
 
-// FetchExternalStakingOperation loads a staking operation from the API associated
+// FetchExternalStakingOperation reloads a staking operation from the API associated
 // with an address.
 func (c *Client) fetchExternalStakingOperation(ctx context.Context, stakingOperation *StakingOperation) (*StakingOperation, error) {
 	so, httpRes, err := c.client.StakeAPI.GetExternalStakingOperation(
@@ -250,7 +250,26 @@ func (c *Client) fetchExternalStakingOperation(ctx context.Context, stakingOpera
 		return nil, fmt.Errorf("failed to fetch staking operation: %s", httpRes.Status)
 	}
 
-	return newStakingOperationFromModel(so)
+	stakingOperation.model = so
+	for _, tx := range so.Transactions {
+		if !stakingOperation.hasTransactionByUnsignedPayload(tx.UnsignedPayload) {
+			newTx, err := newTransactionFromModel(&tx)
+			if err != nil {
+				return nil, err
+			}
+			stakingOperation.transactions = append(stakingOperation.transactions, newTx)
+		}
+	}
+	return stakingOperation, nil
+}
+
+func (s *StakingOperation) hasTransactionByUnsignedPayload(unsignedPayload string) bool {
+	for _, tx := range s.Transactions() {
+		if tx.UnsignedPayload() == unsignedPayload {
+			return true
+		}
+	}
+	return false
 }
 
 func (s *StakingOperation) isTerminalState() bool {

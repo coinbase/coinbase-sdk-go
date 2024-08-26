@@ -8,8 +8,10 @@ import (
 
 	api "github.com/coinbase/coinbase-sdk-go/gen/client"
 	"github.com/coinbase/coinbase-sdk-go/pkg/mocks"
+	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"github.com/stretchr/testify/require"
 )
 
 func TestStakingOperation_Wait_Success(t *testing.T) {
@@ -26,11 +28,18 @@ func TestStakingOperation_Wait_Success(t *testing.T) {
 	}
 
 	so, err := mockStakingOperation(t, "pending")
-	assert.NoError(t, err, "staking operation creation should not error")
+	require.NoError(t, err, "failed to create staking operation")
+	key, err := crypto.GenerateKey()
+	require.NoError(t, err, "failed to generate ecdsa key")
+	err = so.Sign(key)
+	require.NoError(t, err, "failed to sign staking operation")
+	signedPayload := so.Transactions()[0].SignedPayload()
+	require.NotEmpty(t, signedPayload, "signed payload should not be empty")
 	so, err = c.Wait(context.Background(), so)
 	assert.NoError(t, err, "staking operation wait should not error")
 	assert.Equal(t, "complete", so.Status(), "staking operation status should be complete")
-	assert.Equal(t, len(so.Transactions()), 1, "staking operation should have 1 transaction")
+	assert.Equal(t, 1, len(so.Transactions()), "staking operation should have 1 transaction")
+	assert.Equal(t, signedPayload, so.Transactions()[0].SignedPayload(), "staking operation signed payload should not have changed")
 }
 
 func TestStakingOperation_Wait_Success_CustomOptions(t *testing.T) {
@@ -56,7 +65,7 @@ func TestStakingOperation_Wait_Success_CustomOptions(t *testing.T) {
 	)
 	assert.NoError(t, err, "staking operation wait should not error")
 	assert.Equal(t, "complete", so.Status(), "staking operation status should be complete")
-	assert.Equal(t, len(so.Transactions()), 1, "staking operation should have 1 transaction")
+	assert.Equal(t, 1, len(so.Transactions()), "staking operation should have 1 transaction")
 }
 
 func TestStakingOperation_Wait_Failure(t *testing.T) {
