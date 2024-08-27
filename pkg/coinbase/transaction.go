@@ -39,6 +39,15 @@ func (t *Transaction) TransactionHash() string {
 	return *t.model.TransactionHash
 }
 
+// TransactionLink returns the link to the transaction on the blockchain explorer.
+func (t *Transaction) TransactionLink() string {
+	if t.model.TransactionLink == nil {
+		return ""
+	}
+
+	return *t.model.TransactionLink
+}
+
 // Status returns the status of the Transaction
 func (t *Transaction) Status() string {
 	return t.model.Status
@@ -67,6 +76,11 @@ func (t *Transaction) IsSigned() bool {
 		return true
 	}
 	return false
+}
+
+// String returns a string representation of the transaction
+func (t *Transaction) String() string {
+	return fmt.Sprintf("Transaction{ TransactionHash: %s TransactionLink: %s}", t.TransactionHash(), t.TransactionLink())
 }
 
 // Sign will sign the transaction using the supplied key
