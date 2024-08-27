@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 	"math/big"
+	"os"
 	"time"
 
 	api "github.com/coinbase/coinbase-sdk-go/gen/client"
@@ -13,7 +14,7 @@ import (
 func main() {
 	ctx := context.Background()
 	client, err := coinbase.NewClient(
-		coinbase.WithAPIKeyFromJSON("api-key.json"),
+		coinbase.WithAPIKeyFromJSON(os.Args[1]),
 	)
 	if err != nil {
 		log.Fatalf("error creating coinbase client: %v", err)
@@ -50,4 +51,22 @@ func main() {
 		println(reward.ToJSON())
 	}
 
+	address = coinbase.NewExternalAddress(
+		"ethereum-mainnet",
+		"0xadbf3776d60b3f9dd30cb3257b50583898745deb40cb6cb842120753bf055f6c3863e0f5bdb5c403d9aa5a275ce165e8",
+	)
+	balances, err := client.ListHistoricalStakingBalances(
+		ctx,
+		coinbase.Eth,
+		address,
+		time.Now().Add(-7*24*time.Hour),
+		time.Now(),
+	)
+	if err != nil {
+		log.Fatalf("error listing balances: %v", err)
+	}
+
+	for _, balance := range balances {
+		println(balance.String())
+	}
 }
