@@ -68,7 +68,7 @@ func (c *Client) fetchStakingBalances(ctx context.Context, assetId string, addre
 		AssetId:   assetId,
 		AddressId: address.ID(),
 		Options: map[string]string{
-			"mode": "default",
+			"mode": StakingOperationModeDefault,
 		},
 	}
 	for _, f := range o {

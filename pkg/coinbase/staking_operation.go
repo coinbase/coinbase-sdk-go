@@ -81,6 +81,7 @@ func (c *Client) BuildStakingOperation(
 		AddressId: address.ID(),
 		Action:    action,
 		Options: map[string]string{
+			"mode":   StakingOperationModeDefault,
 			"amount": asset.toAtomicAmount(amount).String(),
 		},
 	}
