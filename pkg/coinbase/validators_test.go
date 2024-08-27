@@ -49,7 +49,7 @@ func (s *ValidatorSuite) TestListValidators_Success() {
 
 	s.mockSuccessfulListValidators(ctx, networkId, assetId, mockValidators)
 
-	validators, err := s.client.ListValidators(ctx, networkId, assetId)
+	validators, err := s.client.ListValidators(ctx, networkId, assetId, nil)
 
 	s.Assert().NoError(err)
 	s.Len(validators, 1)
@@ -65,7 +65,7 @@ func (s *ValidatorSuite) TestListValidators_Failure() {
 
 	s.mockFailedListValidators(ctx, networkId, assetId, fmt.Errorf(errorMessage))
 
-	validators, err := s.client.ListValidators(ctx, networkId, assetId)
+	validators, err := s.client.ListValidators(ctx, networkId, assetId, nil)
 
 	s.Assert().Nil(validators)
 	s.EqualError(err, errorMessage)
