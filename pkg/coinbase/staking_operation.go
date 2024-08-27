@@ -16,15 +16,9 @@ import (
 type StakingOperationOption func(*client.BuildStakingOperationRequest)
 
 // WithStakingOperationMode allows for the setting of the mode of
-// the staking operation (ie. `default`, `partial`, or `native`)
+// the staking operation (i.e. `default`, `partial`, or `native`)
 func WithStakingOperationMode(mode string) StakingOperationOption {
 	return WithStakingOperationOption("mode", mode)
-}
-
-// WithStakingOperationImmediate allows for the setting of the immediate flag
-// specifically for Dedicated ETH Staking whether to immediate unstake or not. (i.e. `true` or `false`)
-func WithStakingOperationImmediate(immediate string) StakingOperationOption {
-	return WithStakingOperationOption("immediate", immediate)
 }
 
 // WithStakingOperationOption allows for the passing of custom options
