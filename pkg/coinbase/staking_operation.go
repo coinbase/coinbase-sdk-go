@@ -63,7 +63,6 @@ func (c *Client) BuildStakingOperation(
 	amount *big.Float,
 	o ...StakingOperationOption,
 ) (*StakingOperation, error) {
-
 	asset, err := c.fetchAsset(ctx, address.NetworkID(), assetID)
 	if err != nil {
 		return nil, err
