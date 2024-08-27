@@ -6,8 +6,8 @@ import (
 	"github.com/coinbase/coinbase-sdk-go/gen/client"
 )
 
-// stakingBalances represents the active stakeable balances for a given address and asset.
-type stakingBalances struct {
+// StakingContextBalance represents the active stakeable balances for a given address and asset.
+type StakingContextBalance struct {
 	StakeableBalance   *Balance
 	UnstakeableBalance *Balance
 	ClaimableBalance   *Balance
@@ -62,7 +62,7 @@ func WithStakingBalanceMode(mode string) StakingBalanceOption {
 }
 
 // FetchStakingBalances fetches the staking balances for a given address and asset.
-func (c *Client) fetchStakingBalances(ctx context.Context, assetId string, address *Address, o ...StakingBalanceOption) (*stakingBalances, error) {
+func (c *Client) fetchStakingBalances(ctx context.Context, assetId string, address *Address, o ...StakingBalanceOption) (*StakingContextBalance, error) {
 	req := client.GetStakingContextRequest{
 		NetworkId: address.NetworkID(),
 		AssetId:   assetId,
@@ -82,7 +82,7 @@ func (c *Client) fetchStakingBalances(ctx context.Context, assetId string, addre
 	return newStakingBalancesFromModel(context)
 }
 
-func newStakingBalancesFromModel(context *client.StakingContext) (*stakingBalances, error) {
+func newStakingBalancesFromModel(context *client.StakingContext) (*StakingContextBalance, error) {
 	stakeableBalance, err := newBalanceFromModel(&context.Context.StakeableBalance)
 	if err != nil {
 		return nil, err
@@ -98,7 +98,7 @@ func newStakingBalancesFromModel(context *client.StakingContext) (*stakingBalanc
 		return nil, err
 	}
 
-	return &stakingBalances{
+	return &StakingContextBalance{
 		StakeableBalance:   stakeableBalance,
 		UnstakeableBalance: unstakeableBalance,
 		ClaimableBalance:   claimableBalance,
