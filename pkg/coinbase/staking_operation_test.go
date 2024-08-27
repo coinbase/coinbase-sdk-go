@@ -35,7 +35,7 @@ func TestStakingOperation_Wait_Success(t *testing.T) {
 	require.NoError(t, err, "failed to sign staking operation")
 	signedPayload := so.Transactions()[0].SignedPayload()
 	require.NotEmpty(t, signedPayload, "signed payload should not be empty")
-	so, err = c.Wait(context.Background(), so)
+	err = c.Wait(context.Background(), so)
 	assert.NoError(t, err, "staking operation wait should not error")
 	assert.Equal(t, "complete", so.Status(), "staking operation status should be complete")
 	assert.Equal(t, 1, len(so.Transactions()), "staking operation should have 1 transaction")
@@ -57,7 +57,7 @@ func TestStakingOperation_Wait_Success_CustomOptions(t *testing.T) {
 
 	so, err := mockStakingOperation(t, "pending")
 	assert.NoError(t, err, "staking operation creation should not error")
-	so, err = c.Wait(
+	err = c.Wait(
 		context.Background(),
 		so,
 		WithWaitIntervalSeconds(1),
@@ -117,7 +117,7 @@ func TestStakingOperation_Wait_Failure(t *testing.T) {
 
 			so, err := mockStakingOperation(t, tt.soStatus)
 			assert.NoError(t, err, "staking operation creation should not error")
-			_, err = c.Wait(context.Background(), so)
+			err = c.Wait(context.Background(), so)
 			assert.Error(t, err, "staking operation wait should error")
 		})
 	}
