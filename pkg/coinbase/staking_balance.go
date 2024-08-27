@@ -2,105 +2,104 @@ package coinbase
 
 import (
 	"context"
+	"fmt"
+	"time"
 
 	"github.com/coinbase/coinbase-sdk-go/gen/client"
 )
 
-// stakingBalances represents the active stakeable balances for a given address and asset.
-type stakingBalances struct {
-	StakeableBalance   *Balance
-	UnstakeableBalance *Balance
-	ClaimableBalance   *Balance
+// StakingBalance represents a struct that holds a staking balance data.
+type StakingBalance struct {
+	model           *client.StakingBalance
+	parsedDate      time.Time
+	bondedStake     *Balance
+	unbondedBalance *Balance
 }
 
-// StakingBalanceOption allows for the passing of custom options to the staking balance
-type StakingBalanceOption func(*client.GetStakingContextRequest)
-
-// GetStakeableBalance returns the stakeable balance.
-func (c *Client) GetStakeableBalance(ctx context.Context, assetId string, address *Address, o ...StakingBalanceOption) (*Balance, error) {
-	sb, err := c.fetchStakingBalances(ctx, assetId, address, o...)
-	if err != nil {
-		return nil, err
-
-	}
-
-	return sb.StakeableBalance, nil
+// Date returns the date of the staking balance.
+func (sb *StakingBalance) Date() time.Time {
+	return sb.parsedDate
 }
 
-// GetUnstakeableBalance returns the unstakeable balance.
-func (c *Client) GetUnstakeableBalance(ctx context.Context, assetId string, address *Address, o ...StakingBalanceOption) (*Balance, error) {
-	sb, err := c.fetchStakingBalances(ctx, assetId, address, o...)
-	if err != nil {
-		return nil, err
-
-	}
-
-	return sb.UnstakeableBalance, nil
+// BondedStake returns the bonded stake of the staking balance.
+func (sb *StakingBalance) BondedStake() *Balance {
+	return sb.bondedStake
 }
 
-// GetClaimableBalance returns the claimable balance.
-func (c *Client) GetClaimableBalance(ctx context.Context, assetId string, address *Address, o ...StakingBalanceOption) (*Balance, error) {
-	sb, err := c.fetchStakingBalances(ctx, assetId, address, o...)
-	if err != nil {
-		return nil, err
-
-	}
-
-	return sb.ClaimableBalance, nil
+// UnbondedBalance returns the unbonded balance of the staking balance.
+func (sb *StakingBalance) UnbondedBalance() *Balance {
+	return sb.unbondedBalance
 }
 
-// WithStakingBalanceOption allows for the passing of custom options to the staking balance
-func WithStakingBalanceOption(optionKey string, optionValue string) StakingBalanceOption {
-	return func(op *client.GetStakingContextRequest) {
-		op.Options[optionKey] = optionValue
-	}
+// ParticipantType returns the participant type of the staking balance.
+func (sb *StakingBalance) ParticipantType() string {
+	return sb.model.ParticipantType
 }
 
-// WithStakingBalanceMode allows for the setting of the mode of the staking balance
-func WithStakingBalanceMode(mode string) StakingBalanceOption {
-	return WithStakingBalanceOption("mode", mode)
+// String returns the string representation of the staking balance.
+func (sb *StakingBalance) String() string {
+	return fmt.Sprintf(
+		"StakingBalance { date: '%s' bondedStake: '%s' unbondedBalance: '%s' participantType: '%s' }",
+		sb.Date().String(),
+		sb.BondedStake().String(),
+		sb.UnbondedBalance().String(),
+		sb.ParticipantType(),
+	)
 }
 
-// FetchStakingBalances fetches the staking balances for a given address and asset.
-func (c *Client) fetchStakingBalances(ctx context.Context, assetId string, address *Address, o ...StakingBalanceOption) (*stakingBalances, error) {
-	req := client.GetStakingContextRequest{
-		NetworkId: address.NetworkID(),
-		AssetId:   assetId,
-		AddressId: address.ID(),
-		Options: map[string]string{
-			"mode": "default",
-		},
-	}
-	for _, f := range o {
-		f(&req)
-	}
-	context, _, err := c.client.StakeAPI.GetStakingContext(ctx).GetStakingContextRequest(req).Execute()
+// ListHistoricalStakingBalances fetches the historical staking balances for a given address and asset, and timeframe.
+func (c *Client) ListHistoricalStakingBalances(
+	ctx context.Context,
+	assetId string,
+	address *Address,
+	startTime time.Time,
+	endTime time.Time,
+) ([]*StakingBalance, error) {
+	req := c.client.StakeAPI.FetchHistoricalStakingBalances(ctx, address.NetworkID(), address.ID())
+	req = req.AssetId(assetId)
+	req = req.StartTime(startTime)
+	req = req.EndTime(endTime)
+	resp, httpRes, err := req.Execute()
 	if err != nil {
 		return nil, err
 	}
 
-	return newStakingBalancesFromModel(context)
+	if httpRes.StatusCode != 200 {
+		return nil, fmt.Errorf("failed to fetch staking balances: %d", httpRes.StatusCode)
+	}
+
+	balances := make([]*StakingBalance, len(resp.Data))
+	for i, model := range resp.Data {
+		balance, err := newStakingBalanceFromModel(&model)
+		if err != nil {
+			return nil, err
+		}
+		balances[i] = balance
+	}
+
+	return balances, nil
 }
 
-func newStakingBalancesFromModel(context *client.StakingContext) (*stakingBalances, error) {
-	stakeableBalance, err := newBalanceFromModel(&context.Context.StakeableBalance)
+func newStakingBalanceFromModel(m *client.StakingBalance) (*StakingBalance, error) {
+	date, err := time.Parse("2006-01-02", m.Date)
 	if err != nil {
 		return nil, err
 	}
 
-	unstakeableBalance, err := newBalanceFromModel(&context.Context.UnstakeableBalance)
+	bondedStake, err := newBalanceFromModel(&m.BondedStake)
 	if err != nil {
 		return nil, err
 	}
 
-	claimableBalance, err := newBalanceFromModel(&context.Context.ClaimableBalance)
+	unbondedBalance, err := newBalanceFromModel(&m.UnbondedBalance)
 	if err != nil {
 		return nil, err
 	}
 
-	return &stakingBalances{
-		StakeableBalance:   stakeableBalance,
-		UnstakeableBalance: unstakeableBalance,
-		ClaimableBalance:   claimableBalance,
+	return &StakingBalance{
+		model:           m,
+		parsedDate:      date,
+		bondedStake:     bondedStake,
+		unbondedBalance: unbondedBalance,
 	}, nil
 }

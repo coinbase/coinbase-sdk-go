@@ -8,7 +8,9 @@ const (
 	Gwei         = "gwei"
 	GweiDecimals = 9
 
-	StakingOperationModeNative = "native"
+	StakingOperationModePartial = "partial"
+	StakingOperationModeDefault = "default"
+	StakingOperationModeNative  = "native"
 )
 
 func normalizeNetwork(network string) string {
