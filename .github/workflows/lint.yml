@@ -17,5 +17,5 @@ jobs:
       - name: Run linter
         uses: golangci/golangci-lint-action@v6
         with:
-          version: latest
+          version: v1.55.2
           args: --timeout 3m

@@ -8,21 +8,21 @@ import (
 )
 
 type Validator struct {
-	validator client.Validator
+	model client.Validator
 }
 
 func NewValidator(validator client.Validator) Validator {
 	return Validator{
-		validator: validator,
+		model: validator,
 	}
 }
 
 func (v Validator) ID() string {
-	return v.validator.ValidatorId
+	return v.model.ValidatorId
 }
 
 func (v Validator) Status() client.ValidatorStatus {
-	return v.validator.Status
+	return v.model.Status
 }
 
 func (v Validator) ToString() string {
@@ -43,7 +43,7 @@ func (c *Client) ListValidators(ctx context.Context, networkId string, assetId s
 		return nil, err
 	}
 
-	validators := make([]Validator, 0, len(validatorList.GetData()))
+	validators := make([]Validator, len(validatorList.GetData()))
 	for i, validator := range validatorList.GetData() {
 		validators[i] = NewValidator(validator)
 	}

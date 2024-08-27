@@ -1,5 +1,11 @@
 # Coinbase Go SDK Changelog
 
+## [0.0.2] - 2024-08-27
+
+### Fixed
+
+- Fixed a bug where we weren't handling the api returned validators properly resulting in an index out of range error.
+
 ## [0.0.1] - 2024-08-23
 
 ### Added

@@ -22,8 +22,9 @@ test-coverage:
 
 .PHONY: mocks
 mocks:
-	mockery --disable-version-string --name StakeAPI --keeptree --dir gen/client --output pkg/mocks
 	mockery --disable-version-string --name AssetsAPI --keeptree --dir gen/client --output pkg/mocks
+	mockery --disable-version-string --name StakeAPI --keeptree --dir gen/client --output pkg/mocks
+	mockery --disable-version-string --name ValidatorsAPI --keeptree --dir gen/client --output pkg/mocks
 
 .PHONY: docs
 docs:
