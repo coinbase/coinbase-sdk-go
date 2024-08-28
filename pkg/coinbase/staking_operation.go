@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/coinbase/coinbase-sdk-go/gen/client"
+	"github.com/coinbase/coinbase-sdk-go/pkg/errors"
 )
 
 // StakingOperationOption allows for the passing of custom options to
@@ -81,9 +82,9 @@ func (c *Client) BuildStakingOperation(
 	for _, f := range o {
 		f(&req)
 	}
-	op, _, err := c.client.StakeAPI.BuildStakingOperation(ctx).BuildStakingOperationRequest(req).Execute()
+	op, httpResp, err := c.client.StakeAPI.BuildStakingOperation(ctx).BuildStakingOperationRequest(req).Execute()
 	if err != nil {
-		return nil, err
+		return nil, errors.MapToUserFacing(err, httpResp)
 	}
 
 	return newStakingOperationFromModel(op)
@@ -194,7 +195,6 @@ func (s *StakingOperation) GetSignedVoluntaryExitMessages() ([]string, error) {
 }
 
 func (c *Client) Wait(ctx context.Context, stakingOperation *StakingOperation, o ...WaitOption) (*StakingOperation, error) {
-
 	options := &waitOptions{
 		intervalSeconds: 5,
 		timeoutSeconds:  3600,
@@ -230,18 +230,14 @@ func (c *Client) Wait(ctx context.Context, stakingOperation *StakingOperation, o
 // FetchExternalStakingOperation reloads a staking operation from the API associated
 // with an address.
 func (c *Client) fetchExternalStakingOperation(ctx context.Context, stakingOperation *StakingOperation) (*StakingOperation, error) {
-	so, httpRes, err := c.client.StakeAPI.GetExternalStakingOperation(
+	so, httpResp, err := c.client.StakeAPI.GetExternalStakingOperation(
 		ctx,
 		stakingOperation.NetworkID(),
 		stakingOperation.AddressID(),
 		stakingOperation.ID(),
 	).Execute()
 	if err != nil {
-		return nil, err
-	}
-
-	if httpRes.StatusCode != 200 {
-		return nil, fmt.Errorf("failed to fetch staking operation: %s", httpRes.Status)
+		return nil, errors.MapToUserFacing(err, httpResp)
 	}
 
 	stakingOperation.model = so

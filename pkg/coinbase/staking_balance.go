@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/coinbase/coinbase-sdk-go/gen/client"
+	"github.com/coinbase/coinbase-sdk-go/pkg/errors"
 )
 
 // StakingBalance represents a struct that holds a staking balance data.
@@ -59,13 +60,9 @@ func (c *Client) ListHistoricalStakingBalances(
 	req = req.AssetId(assetId)
 	req = req.StartTime(startTime)
 	req = req.EndTime(endTime)
-	resp, httpRes, err := req.Execute()
+	resp, httpResp, err := req.Execute()
 	if err != nil {
-		return nil, err
-	}
-
-	if httpRes.StatusCode != 200 {
-		return nil, fmt.Errorf("failed to fetch staking balances: %d", httpRes.StatusCode)
+		return nil, errors.MapToUserFacing(err, httpResp)
 	}
 
 	balances := make([]*StakingBalance, len(resp.Data))

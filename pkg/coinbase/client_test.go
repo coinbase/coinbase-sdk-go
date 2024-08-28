@@ -85,6 +85,29 @@ func TestWithHTTPClient(t *testing.T) {
 	}
 }
 
+func TestWithDebug(t *testing.T) {
+	tests := []struct {
+		name     string
+		expected bool
+	}{
+		{name: "should eq true", expected: true},
+		{name: "should eq false", expected: false},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := &Client{cfg: client.NewConfiguration()}
+			if tt.expected {
+				err := WithDebug()(c)
+				assert.NoError(t, err)
+				assert.True(t, c.cfg.Debug)
+			} else {
+				assert.False(t, c.cfg.Debug)
+			}
+		})
+	}
+}
+
 type f struct {
 	t        *testing.T
 	filePath string

@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"github.com/coinbase/coinbase-sdk-go/gen/client"
+	"github.com/coinbase/coinbase-sdk-go/pkg/errors"
 )
 
 // StakingReward represents a struct that holds a staking reward data.
@@ -115,7 +116,6 @@ func (s StakingReward) Amount() (*big.Float, error) {
 
 // Date returns the date of the staking reward.
 func (s StakingReward) Date() (time.Time, error) {
-
 	parsedDate, err := time.Parse(time.DateOnly, s.model.GetDate())
 	if err != nil {
 		return time.Time{}, fmt.Errorf("invalid date found: %s", s.model.GetDate())
@@ -180,19 +180,19 @@ func (c *Client) getRewards(
 	req client.FetchStakingRewardsRequest,
 ) (*client.FetchStakingRewards200Response, error) {
 	var (
-		resp    *client.FetchStakingRewards200Response
-		httpRes *http.Response
-		err     error
+		resp     *client.FetchStakingRewards200Response
+		httpResp *http.Response
+		err      error
 	)
 
 	if page == "" {
-		resp, httpRes, err = c.client.StakeAPI.
+		resp, httpResp, err = c.client.StakeAPI.
 			FetchStakingRewards(ctx).
 			FetchStakingRewardsRequest(req).
 			Limit(100).
 			Execute()
 	} else {
-		resp, httpRes, err = c.client.StakeAPI.
+		resp, httpResp, err = c.client.StakeAPI.
 			FetchStakingRewards(ctx).
 			FetchStakingRewardsRequest(req).
 			Limit(100).
@@ -201,11 +201,7 @@ func (c *Client) getRewards(
 	}
 
 	if err != nil {
-		return nil, err
-	}
-
-	if httpRes.StatusCode != 200 {
-		return nil, fmt.Errorf("failed to fetch staking rewards: %d", httpRes.StatusCode)
+		return nil, errors.MapToUserFacing(err, httpResp)
 	}
 
 	return resp, nil
