@@ -42,6 +42,17 @@ func WithAPIKeyFromJSON(fileName string) ClientOption {
 	}
 }
 
+// WithAPIKey sets the explicit API key for the client loaded
+func WithAPIKey(name, privateKey string) ClientOption {
+	return func(c *Client) error {
+		c.apiKey = auth.APIKey{
+			Name:       name,
+			PrivateKey: privateKey,
+		}
+		return nil
+	}
+}
+
 // WithHTTPClient sets the http client for the client
 func WithHTTPClient(httpClient *http.Client) ClientOption {
 	return func(c *Client) error {
