@@ -60,6 +60,33 @@ func TestWithAPIKeyFromJSON(t *testing.T) {
 	}
 }
 
+func TestWithAPIKey(t *testing.T) {
+	tests := []struct {
+		name         string
+		keyName      string
+		privateKey   string
+		expectations func(t *testing.T, c *Client, err error)
+	}{
+		{
+			name:       "should eq test_key and some-name",
+			keyName:    "some-name",
+			privateKey: "test_key",
+			expectations: func(t *testing.T, c *Client, err error) {
+				assert.Equal(t, "test_key", c.apiKey.PrivateKey)
+				assert.Equal(t, "some-name", c.apiKey.Name)
+				assert.NoError(t, err)
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			c := &Client{cfg: client.NewConfiguration()}
+			err := WithAPIKey(tt.keyName, tt.privateKey)(c)
+			tt.expectations(t, c, err)
+		})
+	}
+}
+
 func TestWithHTTPClient(t *testing.T) {
 	testClient := &http.Client{}
 	tests := []struct {
