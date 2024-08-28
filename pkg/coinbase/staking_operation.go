@@ -23,7 +23,7 @@ func WithStakingOperationMode(mode string) StakingOperationOption {
 
 // WithStakingOperationOption allows for the passing of custom options
 // to the staking operation, like `mode` or `withdrawal_address`.
-func WithStakingOperationOption(optionKey string, optionValue string) StakingOperationOption {
+func WithStakingOperationOption(optionKey, optionValue string) StakingOperationOption {
 	return func(op *client.BuildStakingOperationRequest) {
 		op.Options[optionKey] = optionValue
 	}

@@ -57,6 +57,31 @@ func (s *ValidatorSuite) TestListValidators_Success() {
 	s.Equal(api.VALIDATORSTATUS_ACTIVE, validators[0].Status())
 }
 
+// Since options are a slice a user can pass a nil which we should try and handle.
+func (s *ValidatorSuite) TestListValidators_Success_WithNilOptions() {
+	ctx := context.Background()
+	networkId := "test-network"
+	assetId := "test-asset"
+
+	mockValidators := &api.ValidatorList{
+		Data: []api.Validator{
+			{
+				ValidatorId: "validator-1",
+				Status:      api.VALIDATORSTATUS_ACTIVE,
+			},
+		},
+	}
+
+	s.mockSuccessfulListValidators(ctx, networkId, assetId, mockValidators)
+
+	validators, err := s.client.ListValidators(ctx, networkId, assetId, nil)
+
+	s.Assert().NoError(err)
+	s.Len(validators, 1)
+	s.Equal("validator-1", validators[0].ID())
+	s.Equal(api.VALIDATORSTATUS_ACTIVE, validators[0].Status())
+}
+
 func (s *ValidatorSuite) TestListValidators_Failure() {
 	ctx := context.Background()
 	networkId := "test-network"
