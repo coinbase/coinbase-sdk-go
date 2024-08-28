@@ -63,6 +63,18 @@ func getAPIValidatorStatus(status *ValidatorStatus) client.ValidatorStatus {
 	}
 }
 
+// ListValidatorsOption is a function that modifies the ListValidators request.
+type ListValidatorsOption func(client.ApiListValidatorsRequest) client.ApiListValidatorsRequest
+
+// WithListValidatorsStatusOption filters the list of validators by status.
+// Note: The Go generated code doesn't allow updating the request by reference.
+// As a result we are forced to return back a copy of the request.
+func WithListValidatorsStatusOption(status ValidatorStatus) ListValidatorsOption {
+	return func(request client.ApiListValidatorsRequest) client.ApiListValidatorsRequest {
+		return request.Status(getAPIValidatorStatus(&status))
+	}
+}
+
 type Validator struct {
 	model client.Validator
 }
@@ -89,9 +101,21 @@ func (v Validator) ToString() string {
 	)
 }
 
-func (c *Client) ListValidators(ctx context.Context, networkId string, assetId string, status *ValidatorStatus) ([]Validator, error) {
+func (c *Client) ListValidators(
+	ctx context.Context,
+	networkId string,
+	assetId string,
+	o ...ListValidatorsOption,
+) ([]Validator, error) {
 	listValidatorReq := c.client.ValidatorsAPI.ListValidators(ctx, normalizeNetwork(networkId), assetId)
-	listValidatorReq = listValidatorReq.Status(getAPIValidatorStatus(status))
+
+	for _, f := range o {
+		if f == nil {
+			continue
+		}
+
+		listValidatorReq = f(listValidatorReq)
+	}
 
 	validatorList, _, err := listValidatorReq.Execute()
 	if err != nil {
