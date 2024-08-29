@@ -87,18 +87,6 @@ func TestStakingOperation_Wait_Failure(t *testing.T) {
 			},
 			expectedError: "failed to fetch staking operation",
 		},
-		"fail to fetch staking operation with failed http status": {
-			setup: func(c *mockController) {
-				c.stakeAPI.On("GetExternalStakingOperation", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(
-					api.ApiGetExternalStakingOperationRequest{ApiService: c.stakeAPI},
-				).Once()
-				c.stakeAPI.On("GetExternalStakingOperationExecute", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(
-					nil,
-					&http.Response{StatusCode: http.StatusInternalServerError},
-					nil,
-				).Once()
-			},
-		},
 	}
 
 	for name, tt := range tests {
@@ -160,7 +148,8 @@ func mockStakingOperation(t *testing.T, status string) (*StakingOperation, error
 		Metadata: &api.StakingOperationMetadata{
 			ArrayOfSignedVoluntaryExitMessageMetadata: &[]api.SignedVoluntaryExitMessageMetadata{{
 				SignedVoluntaryExit: "dGVzdC1kYXRh",
-			}}},
+			}},
+		},
 	})
 }
 
@@ -224,5 +213,4 @@ func mockGetExternalStakingOperation(t *testing.T, stakeAPI *mocks.StakeAPI, sta
 		&http.Response{StatusCode: statusCode},
 		nil,
 	).Once()
-
 }

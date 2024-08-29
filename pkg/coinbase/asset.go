@@ -6,6 +6,7 @@ import (
 	"math/big"
 
 	"github.com/coinbase/coinbase-sdk-go/gen/client"
+	"github.com/coinbase/coinbase-sdk-go/pkg/errors"
 )
 
 type Asset struct {
@@ -85,7 +86,6 @@ func primaryDenomination(assetId string) string {
 }
 
 func fromAssetModel(model *client.Asset, assetId string) (Asset, error) {
-
 	decimals := model.GetDecimals()
 
 	if toAssetId(model.GetAssetId()) != toAssetId(assetId) {
@@ -110,17 +110,13 @@ func fromAssetModel(model *client.Asset, assetId string) (Asset, error) {
 
 func (c *Client) fetchAsset(ctx context.Context, networkId string, assetId string) (Asset, error) {
 	// Get the Asset from the backend.
-	asset, httpRes, err := c.client.AssetsAPI.GetAsset(
+	asset, httpResp, err := c.client.AssetsAPI.GetAsset(
 		ctx,
 		normalizeNetwork(networkId),
 		primaryDenomination(assetId),
 	).Execute()
 	if err != nil {
-		return Asset{}, err
-	}
-
-	if httpRes.StatusCode != 200 {
-		return Asset{}, fmt.Errorf("failed to fetch asset: %s", httpRes.Status)
+		return Asset{}, errors.MapToUserFacing(err, httpResp)
 	}
 
 	return fromAssetModel(asset, assetId)

@@ -61,17 +61,26 @@ func WithHTTPClient(httpClient *http.Client) ClientOption {
 	}
 }
 
-// NewClient creates a new coinbase client with the
-// supplied options
+// WithDebug sets the debug flag for the client
+func WithDebug() ClientOption {
+	return func(c *Client) error {
+		c.cfg.Debug = true
+		return nil
+	}
+}
+
+// NewClient creates a new coinbase client with the supplied options.
 func NewClient(o ...ClientOption) (*Client, error) {
 	c := &Client{
 		cfg: client.NewConfiguration(),
 	}
+
 	for _, opt := range o {
 		if err := opt(c); err != nil {
 			return nil, err
 		}
 	}
+
 	if c.baseHTTPClient == nil {
 		c.baseHTTPClient = &http.Client{
 			Timeout: time.Second * 10,
@@ -80,11 +89,15 @@ func NewClient(o ...ClientOption) (*Client, error) {
 			},
 		}
 	}
+
 	c.cfg.HTTPClient = c.baseHTTPClient
+
 	if c.cfg.HTTPClient.Transport == nil {
 		c.cfg.HTTPClient.Transport = http.DefaultTransport
 	}
+
 	c.cfg.HTTPClient.Transport = auth.NewTransport(c.apiKey, c.cfg.HTTPClient.Transport)
+
 	c.client = client.NewAPIClient(c.cfg)
 	return c, nil
 }

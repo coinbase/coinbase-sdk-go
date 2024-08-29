@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/coinbase/coinbase-sdk-go/gen/client"
+	"github.com/coinbase/coinbase-sdk-go/pkg/errors"
 )
 
 type ValidatorStatus string
@@ -117,9 +118,9 @@ func (c *Client) ListValidators(
 		listValidatorReq = f(listValidatorReq)
 	}
 
-	validatorList, _, err := listValidatorReq.Execute()
+	validatorList, httpResp, err := listValidatorReq.Execute()
 	if err != nil {
-		return nil, err
+		return nil, errors.MapToUserFacing(err, httpResp)
 	}
 
 	validators := make([]Validator, len(validatorList.GetData()))
@@ -131,14 +132,14 @@ func (c *Client) ListValidators(
 }
 
 func (c *Client) GetValidator(ctx context.Context, networkId string, assetId string, validatorId string) (Validator, error) {
-	validator, _, err := c.client.ValidatorsAPI.GetValidator(
+	validator, httpResp, err := c.client.ValidatorsAPI.GetValidator(
 		ctx,
 		normalizeNetwork(networkId),
 		assetId,
 		validatorId,
 	).Execute()
 	if err != nil {
-		return Validator{}, err
+		return Validator{}, errors.MapToUserFacing(err, httpResp)
 	}
 
 	return NewValidator(*validator), nil

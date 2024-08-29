@@ -169,41 +169,6 @@ func TestListStakingRewards_Failures(t *testing.T) {
 			},
 			expectedError: "failed to fetch staking rewards",
 		},
-		"fail to fetch asset with failed http status": {
-			req: ListRewardsRequest{
-				assetId: "test-asset-id",
-				address: []Address{
-					{
-						id: "test-address-id",
-					},
-				},
-				startTime: time.Now(),
-				endTime:   time.Now(),
-				format:    api.STAKINGREWARDFORMAT_USD,
-			},
-			setup: func(c *mockController) {
-				mockFetchAsset(t, c.assetsAPI, http.StatusInternalServerError)
-			},
-			expectedError: "failed to fetch asset",
-		},
-		"fail to fetch staking rewards with failed http status": {
-			req: ListRewardsRequest{
-				assetId: "test-asset-id",
-				address: []Address{
-					{
-						id: "test-address-id",
-					},
-				},
-				startTime: time.Now(),
-				endTime:   time.Now(),
-				format:    api.STAKINGREWARDFORMAT_USD,
-			},
-			setup: func(c *mockController) {
-				mockFetchAsset(t, c.assetsAPI, http.StatusOK)
-				mockFetchStakingRewards(t, c.stakeAPI, http.StatusInternalServerError)
-			},
-			expectedError: "failed to fetch staking rewards",
-		},
 	}
 
 	for name, tc := range tests {
@@ -231,13 +196,11 @@ func TestListStakingRewards_Failures(t *testing.T) {
 			)
 			assert.Error(t, err, "error should not be nil")
 			assert.Contains(t, err.Error(), tc.expectedError)
-
 		})
 	}
 }
 
 func TestAddressId(t *testing.T) {
-
 	stakingReward := StakingReward{
 		model: api.StakingReward{
 			AddressId: "test-address-id",

@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/coinbase/coinbase-sdk-go/gen/client"
+	"github.com/coinbase/coinbase-sdk-go/pkg/errors"
 )
 
 // StakingContextBalance represents the active stakeable balances for a given address and asset.
@@ -21,7 +22,6 @@ func (c *Client) GetStakeableBalance(ctx context.Context, assetId string, addres
 	sb, err := c.fetchStakingBalances(ctx, assetId, address, o...)
 	if err != nil {
 		return nil, err
-
 	}
 
 	return sb.StakeableBalance, nil
@@ -32,7 +32,6 @@ func (c *Client) GetUnstakeableBalance(ctx context.Context, assetId string, addr
 	sb, err := c.fetchStakingBalances(ctx, assetId, address, o...)
 	if err != nil {
 		return nil, err
-
 	}
 
 	return sb.UnstakeableBalance, nil
@@ -43,7 +42,6 @@ func (c *Client) GetClaimableBalance(ctx context.Context, assetId string, addres
 	sb, err := c.fetchStakingBalances(ctx, assetId, address, o...)
 	if err != nil {
 		return nil, err
-
 	}
 
 	return sb.ClaimableBalance, nil
@@ -74,12 +72,13 @@ func (c *Client) fetchStakingBalances(ctx context.Context, assetId string, addre
 	for _, f := range o {
 		f(&req)
 	}
-	context, _, err := c.client.StakeAPI.GetStakingContext(ctx).GetStakingContextRequest(req).Execute()
+
+	stakingContext, httpResp, err := c.client.StakeAPI.GetStakingContext(ctx).GetStakingContextRequest(req).Execute()
 	if err != nil {
-		return nil, err
+		return nil, errors.MapToUserFacing(err, httpResp)
 	}
 
-	return newStakingBalancesFromModel(context)
+	return newStakingBalancesFromModel(stakingContext)
 }
 
 func newStakingBalancesFromModel(context *client.StakingContext) (*StakingContextBalance, error) {

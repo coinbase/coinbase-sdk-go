@@ -3,6 +3,7 @@ package coinbase
 import (
 	"context"
 	"fmt"
+	"net/http"
 	"testing"
 
 	api "github.com/coinbase/coinbase-sdk-go/gen/client"
@@ -93,7 +94,7 @@ func (s *ValidatorSuite) TestListValidators_Failure() {
 	validators, err := s.client.ListValidators(ctx, networkId, assetId)
 
 	s.Assert().Nil(validators)
-	s.EqualError(err, errorMessage)
+	s.EqualError(err, "APIError{ httpStatusCode: 500, apiCode: unknown, apiMessage: some error calling api }")
 }
 
 func (s *ValidatorSuite) TestGetValidator_Success() {
@@ -127,7 +128,7 @@ func (s *ValidatorSuite) TestGetValidator_Failure() {
 	validator, err := s.client.GetValidator(ctx, networkId, assetId, validatorId)
 
 	s.Assert().Empty(validator)
-	s.EqualError(err, errorMessage)
+	s.EqualError(err, "APIError{ httpStatusCode: 500, apiCode: unknown, apiMessage: some error calling api }")
 }
 
 func (s *ValidatorSuite) mockSuccessfulListValidators(ctx context.Context, networkId string, assetId string, mockValidators *api.ValidatorList) {
@@ -147,7 +148,7 @@ func (s *ValidatorSuite) mockFailedListValidators(ctx context.Context, networkId
 		ApiService: s.mockValidatorsAPI,
 	}, nil, nil).Once()
 
-	s.mockValidatorsAPI.On("ListValidatorsExecute", mock.Anything).Return(nil, nil, err).Once()
+	s.mockValidatorsAPI.On("ListValidatorsExecute", mock.Anything).Return(nil, internalFailureHttpResponse(), err).Once()
 }
 
 func (s *ValidatorSuite) mockSuccessfulGetValidator(ctx context.Context, networkId string, assetId string, validatorId string, validator *api.Validator) {
@@ -167,5 +168,11 @@ func (s *ValidatorSuite) mockFailedGetValidator(ctx context.Context, networkId s
 		ApiService: s.mockValidatorsAPI,
 	}, nil, nil)
 
-	s.mockValidatorsAPI.On("GetValidatorExecute", mock.Anything).Return(nil, nil, err)
+	s.mockValidatorsAPI.On("GetValidatorExecute", mock.Anything).Return(nil, internalFailureHttpResponse(), err)
+}
+
+func internalFailureHttpResponse() *http.Response {
+	return &http.Response{
+		StatusCode: http.StatusInternalServerError,
+	}
 }
