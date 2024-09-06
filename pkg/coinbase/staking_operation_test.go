@@ -126,12 +126,12 @@ func mockStakingOperation(t *testing.T, status string) (*StakingOperation, error
 	t.Helper()
 	return newStakingOperationFromModel(&api.StakingOperation{
 		Id:        "staking-operation-id",
-		NetworkId: "test-network-id",
+		NetworkId: "ethereum-test-network-id",
 		AddressId: "test-asset-id",
 		Status:    status,
 		Transactions: []api.Transaction{
 			{
-				NetworkId: "test-network-id",
+				NetworkId: "ethereum-test-network-id",
 				Status:    "pending",
 				UnsignedPayload: "7b2274797065223a22307832222c22636861696e4964223a2230783134613334222c226e6f6e63" +
 					"65223a22307830222c22746f223a22307834643965346633663464316138623566346637623166" +
@@ -161,12 +161,12 @@ func mockGetExternalStakingOperation(t *testing.T, stakeAPI *mocks.StakeAPI, sta
 	stakeAPI.On("GetExternalStakingOperationExecute", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(
 		&api.StakingOperation{
 			Id:        "staking-operation-id",
-			NetworkId: "test-network-id",
+			NetworkId: "ethereum-test-network-id",
 			AddressId: "test-asset-id",
 			Status:    soStatus,
 			Transactions: []api.Transaction{
 				{
-					NetworkId: "test-network-id",
+					NetworkId: "ethereum-test-network-id",
 					Status:    "pending",
 					UnsignedPayload: "7b2274797065223a22307832222c22636861696e4964223a2230783134613334222c226e6f6e63" +
 						"65223a22307830222c22746f223a22307834643965346633663464316138623566346637623166" +
@@ -190,12 +190,12 @@ func mockGetExternalStakingOperation(t *testing.T, stakeAPI *mocks.StakeAPI, sta
 	stakeAPI.On("GetExternalStakingOperationExecute", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(
 		&api.StakingOperation{
 			Id:        "staking-operation-id",
-			NetworkId: "test-network-id",
+			NetworkId: "ethereum-test-network-id",
 			AddressId: "test-asset-id",
 			Status:    "complete",
 			Transactions: []api.Transaction{
 				{
-					NetworkId: "test-network-id",
+					NetworkId: "ethereum-test-network-id",
 					Status:    "complete",
 					UnsignedPayload: "7b2274797065223a22307832222c22636861696e4964223a2230783134613334222c226e6f6e63" +
 						"65223a22307830222c22746f223a22307834643965346633663464316138623566346637623166" +

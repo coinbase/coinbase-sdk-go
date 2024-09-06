@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"math/big"
+	"strings"
 
 	"github.com/coinbase/coinbase-sdk-go/gen/client"
 	"github.com/ethereum/go-ethereum/core/types"
@@ -111,19 +112,24 @@ func newTransactionFromModel(m *client.Transaction) (*Transaction, error) {
 		return nil, fmt.Errorf("transaction model cannot be nil")
 	}
 
-	rawHex, err := hex.DecodeString(m.UnsignedPayload)
-	if err != nil {
-		return nil, err
+	resp := &Transaction{}
+
+	if strings.HasPrefix(m.NetworkId, "ethereum") {
+		rawHex, err := hex.DecodeString(m.UnsignedPayload)
+		if err != nil {
+			return nil, err
+		}
+
+		t := &types.Transaction{}
+		err = t.UnmarshalJSON(rawHex)
+		if err != nil {
+			return nil, err
+		}
+
+		resp.raw = t
 	}
 
-	t := &types.Transaction{}
-	err = t.UnmarshalJSON(rawHex)
-	if err != nil {
-		return nil, err
-	}
+	resp.model = m
 
-	return &Transaction{
-		model: m,
-		raw:   t,
-	}, nil
+	return resp, nil
 }
