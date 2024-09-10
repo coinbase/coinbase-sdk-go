@@ -31,6 +31,12 @@ func (t *transport) RoundTrip(req *http.Request) (*http.Response, error) {
 	}
 
 	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", jwt))
+	fmt.Sprintf(
+		"%s,%s",
+		fmt.Sprintf("%s=%s", "sdk_version", "0.0.6"),
+		fmt.Sprintf("%s=%s", "sdk_language", "go"),
+	)
+	req.Header.Set("Correlation-Context", fmt.Sprintf("Bearer %s", jwt))
 
 	return t.transport.RoundTrip(req)
 }
