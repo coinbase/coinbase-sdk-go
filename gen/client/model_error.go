@@ -25,6 +25,8 @@ type Error struct {
 	Code string `json:"code"`
 	// A human-readable message providing more details about the error.
 	Message string `json:"message"`
+	// A unique identifier for the request that generated the error. This can be used to help debug issues with the API.
+	CorrelationId *string `json:"correlation_id,omitempty"`
 }
 
 type _Error Error
@@ -96,6 +98,38 @@ func (o *Error) SetMessage(v string) {
 	o.Message = v
 }
 
+// GetCorrelationId returns the CorrelationId field value if set, zero value otherwise.
+func (o *Error) GetCorrelationId() string {
+	if o == nil || IsNil(o.CorrelationId) {
+		var ret string
+		return ret
+	}
+	return *o.CorrelationId
+}
+
+// GetCorrelationIdOk returns a tuple with the CorrelationId field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *Error) GetCorrelationIdOk() (*string, bool) {
+	if o == nil || IsNil(o.CorrelationId) {
+		return nil, false
+	}
+	return o.CorrelationId, true
+}
+
+// HasCorrelationId returns a boolean if a field has been set.
+func (o *Error) HasCorrelationId() bool {
+	if o != nil && !IsNil(o.CorrelationId) {
+		return true
+	}
+
+	return false
+}
+
+// SetCorrelationId gets a reference to the given string and assigns it to the CorrelationId field.
+func (o *Error) SetCorrelationId(v string) {
+	o.CorrelationId = &v
+}
+
 func (o Error) MarshalJSON() ([]byte, error) {
 	toSerialize,err := o.ToMap()
 	if err != nil {
@@ -108,6 +142,9 @@ func (o Error) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["code"] = o.Code
 	toSerialize["message"] = o.Message
+	if !IsNil(o.CorrelationId) {
+		toSerialize["correlation_id"] = o.CorrelationId
+	}
 	return toSerialize, nil
 }
 

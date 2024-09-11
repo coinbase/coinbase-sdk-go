@@ -4,6 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"reflect"
+	"strings"
 
 	"github.com/coinbase/coinbase-sdk-go/gen/client"
 )
@@ -11,14 +13,25 @@ import (
 // APIError is a custom error type for API errors.
 type APIError struct {
 	HttpStatusCode int
-	// A short string representing the reported error. Can be used to handle errors programmatically.
-	Code string
-	// A human-readable message providing more details about the error.
-	Message string
+	Code           string // A short string representing the reported error. Can be used to handle errors programmatically.
+	Message        string // A human-readable message providing more details about the error.
+	CorrelationId  string // A correlation ID that can be used to help debug the error.
 }
 
 func (e *APIError) Error() string {
-	return fmt.Sprintf("APIError{ httpStatusCode: %d, apiCode: %s, apiMessage: %s }", e.HttpStatusCode, e.Code, e.Message)
+	v := reflect.ValueOf(*e)
+	typeOfE := v.Type()
+	var fields []string
+
+	for i := 0; i < v.NumField(); i++ {
+		fieldValue := v.Field(i)
+		if !fieldValue.IsZero() {
+			field := fmt.Sprintf("%s: %v", typeOfE.Field(i).Name, fieldValue.Interface())
+			fields = append(fields, field)
+		}
+	}
+
+	return fmt.Sprintf("APIError{%s}", strings.Join(fields, ", "))
 }
 
 // MapToUserFacing maps the error to a custom user facing error type.

@@ -13,6 +13,7 @@ import (
 
 func main() {
 	ctx := context.Background()
+
 	client, err := coinbase.NewClient(
 		coinbase.WithAPIKeyFromJSON(os.Args[1]),
 	)
@@ -21,11 +22,27 @@ func main() {
 	}
 
 	address := coinbase.NewExternalAddress("ethereum-holesky", "0x57a063e1df096aaA6b2068C3C7FE6Ac4BC3c4F58")
-	op, err := client.BuildStakeOperation(ctx, big.NewFloat(0.0001), coinbase.Eth, address)
+
+	stakeableBalance, err := client.GetStakeableBalance(ctx, coinbase.Eth, address, coinbase.WithStakingBalanceMode(coinbase.StakingOperationModePartial))
+	if err != nil {
+		log.Fatalf("error getting stakeable balance: %v", err)
+	}
+
+	log.Printf("stakeable balance: %s\n", stakeableBalance)
+
+	op, err := client.BuildStakeOperation(
+		ctx,
+		big.NewFloat(0.0001),
+		coinbase.Eth,
+		address,
+		coinbase.WithStakingOperationMode(coinbase.StakingOperationModePartial),
+	)
 	if err != nil {
 		log.Fatalf("error building staking operation: %v", err)
 	}
+
 	log.Printf("staking operation ID: %s\n", op.ID())
+
 	for _, transaction := range op.Transactions() {
 		log.Printf("staking operation Transaction: %+v\n", transaction)
 	}

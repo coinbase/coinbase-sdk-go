@@ -94,7 +94,7 @@ func (s *ValidatorSuite) TestListValidators_Failure() {
 	validators, err := s.client.ListValidators(ctx, networkId, assetId)
 
 	s.Assert().Nil(validators)
-	s.EqualError(err, "APIError{ httpStatusCode: 500, apiCode: unknown, apiMessage: some error calling api }")
+	s.EqualError(err, "APIError{HttpStatusCode: 500, Code: unknown, Message: some error calling api}")
 }
 
 func (s *ValidatorSuite) TestGetValidator_Success() {
@@ -128,7 +128,7 @@ func (s *ValidatorSuite) TestGetValidator_Failure() {
 	validator, err := s.client.GetValidator(ctx, networkId, assetId, validatorId)
 
 	s.Assert().Empty(validator)
-	s.EqualError(err, "APIError{ httpStatusCode: 500, apiCode: unknown, apiMessage: some error calling api }")
+	s.EqualError(err, "APIError{HttpStatusCode: 500, Code: unknown, Message: some error calling api}")
 }
 
 func (s *ValidatorSuite) mockSuccessfulListValidators(ctx context.Context, networkId string, assetId string, mockValidators *api.ValidatorList) {
