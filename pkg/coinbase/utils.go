@@ -7,6 +7,8 @@ const (
 	Wei          = "wei"
 	Gwei         = "gwei"
 	GweiDecimals = 9
+	Sol          = "sol"
+	Lamport      = "lamport"
 
 	StakingOperationModePartial = "partial"
 	StakingOperationModeDefault = "default"
