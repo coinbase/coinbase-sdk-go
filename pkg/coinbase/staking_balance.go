@@ -78,7 +78,7 @@ func (c *Client) ListHistoricalStakingBalances(
 }
 
 func newStakingBalanceFromModel(m *client.StakingBalance) (*StakingBalance, error) {
-	date, err := time.Parse("2006-01-02", m.Date)
+	date, err := time.Parse(timestampFormat, m.Date)
 	if err != nil {
 		return nil, err
 	}

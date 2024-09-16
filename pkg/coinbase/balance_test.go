@@ -48,6 +48,27 @@ func TestBalance_String(t *testing.T) {
 			}(),
 			want: "Balance { amount: '100' asset: 'Asset { networkId: 'networkId' assetId: 'assetId' contractAddress: 'contractAddress' decimals: '18' }' }",
 		},
+		{
+			name: "empty amount",
+			b: func() *Balance {
+				dec := int32(18)
+				contractAddress := "contractAddress"
+				balance, err := newBalanceFromModel(&client.Balance{
+					Asset: client.Asset{
+						NetworkId:       "networkId",
+						AssetId:         "assetId",
+						ContractAddress: &contractAddress,
+						Decimals:        &dec,
+					},
+					Amount: "",
+				})
+				if err != nil {
+					t.Fatal(err)
+				}
+				return balance
+			}(),
+			want: "Balance { amount: '0' asset: 'Asset { networkId: 'networkId' assetId: 'assetId' contractAddress: 'contractAddress' decimals: '18' }' }",
+		},
 	}
 	for _, tt := range tests {
 		assert.Equal(t, tt.want, tt.b.String())
