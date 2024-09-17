@@ -261,13 +261,13 @@ func TestAmount(t *testing.T) {
 func TestDate(t *testing.T) {
 	stakingReward := StakingReward{
 		model: api.StakingReward{
-			Date: "2024-08-10",
+			Date: "2024-08-10T00:00:11Z",
 		},
 	}
 
 	resp, err := stakingReward.Date()
 	assert.NoError(t, err, "error should be nil")
-	assert.Equal(t, "2024-08-10", resp.Format("2006-01-02"))
+	assert.Equal(t, "2024-08-10T00:00:11Z", resp.Format(timestampFormat))
 }
 
 func mockFetchAsset(t *testing.T, assetsAPI *mocks.AssetsAPI, statusCode int) {

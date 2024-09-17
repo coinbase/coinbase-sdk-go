@@ -38,9 +38,15 @@ func newBalanceFromModel(model *client.Balance) (*Balance, error) {
 	if err != nil {
 		return nil, err
 	}
-	amount, ok := new(big.Int).SetString(model.Amount, 10)
-	if !ok {
-		return nil, fmt.Errorf("failed to parse amount: %s", model.Amount)
+
+	amount := big.NewInt(0)
+
+	if model.GetAmount() != "" {
+		a, ok := new(big.Int).SetString(model.Amount, 10)
+		if !ok {
+			return nil, fmt.Errorf("failed to parse amount: %s", model.Amount)
+		}
+		amount = a
 	}
 
 	return &Balance{

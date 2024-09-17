@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## [0.0.8] - 2024-09-17
+
+- StakingRewards's Date field is now a full timestamp
+- StakingBalance's Date field is now a full timestamp
+- Empty balance values default to 0
+
 ## [0.0.7] - 2024-09-12
 
 - Adds headers to requests with SDK version & language
