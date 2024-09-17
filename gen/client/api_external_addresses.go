@@ -40,21 +40,20 @@ type ExternalAddressesAPI interface {
 	GetExternalAddressBalanceExecute(r ApiGetExternalAddressBalanceRequest) (*Balance, *http.Response, error)
 
 	/*
-	ListAddressHistoricalBalance Get address balance history for asset
+	ListAddressTransactions List transactions for an address.
 
-	List the historical balance of an asset in a specific address.
+	List all transactions that interact with the address.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	@param networkId The ID of the blockchain network
-	@param addressId The ID of the address to fetch the historical balance for.
-	@param assetId The symbol of the asset to fetch the historical balance for.
-	@return ApiListAddressHistoricalBalanceRequest
+	@param addressId The ID of the address to fetch the transactions for.
+	@return ApiListAddressTransactionsRequest
 	*/
-	ListAddressHistoricalBalance(ctx context.Context, networkId string, addressId string, assetId string) ApiListAddressHistoricalBalanceRequest
+	ListAddressTransactions(ctx context.Context, networkId string, addressId string) ApiListAddressTransactionsRequest
 
-	// ListAddressHistoricalBalanceExecute executes the request
-	//  @return AddressHistoricalBalanceList
-	ListAddressHistoricalBalanceExecute(r ApiListAddressHistoricalBalanceRequest) (*AddressHistoricalBalanceList, *http.Response, error)
+	// ListAddressTransactionsExecute executes the request
+	//  @return AddressTransactionList
+	ListAddressTransactionsExecute(r ApiListAddressTransactionsRequest) (*AddressTransactionList, *http.Response, error)
 
 	/*
 	ListExternalAddressBalances Get the balances of an external address
@@ -211,82 +210,78 @@ func (a *ExternalAddressesAPIService) GetExternalAddressBalanceExecute(r ApiGetE
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
-type ApiListAddressHistoricalBalanceRequest struct {
+type ApiListAddressTransactionsRequest struct {
 	ctx context.Context
 	ApiService ExternalAddressesAPI
 	networkId string
 	addressId string
-	assetId string
 	limit *int32
 	page *string
 }
 
 // A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default is 10.
-func (r ApiListAddressHistoricalBalanceRequest) Limit(limit int32) ApiListAddressHistoricalBalanceRequest {
+func (r ApiListAddressTransactionsRequest) Limit(limit int32) ApiListAddressTransactionsRequest {
 	r.limit = &limit
 	return r
 }
 
 // A cursor for pagination across multiple pages of results. Don&#39;t include this parameter on the first call. Use the next_page value returned in a previous response to request subsequent results.
-func (r ApiListAddressHistoricalBalanceRequest) Page(page string) ApiListAddressHistoricalBalanceRequest {
+func (r ApiListAddressTransactionsRequest) Page(page string) ApiListAddressTransactionsRequest {
 	r.page = &page
 	return r
 }
 
-func (r ApiListAddressHistoricalBalanceRequest) Execute() (*AddressHistoricalBalanceList, *http.Response, error) {
-	return r.ApiService.ListAddressHistoricalBalanceExecute(r)
+func (r ApiListAddressTransactionsRequest) Execute() (*AddressTransactionList, *http.Response, error) {
+	return r.ApiService.ListAddressTransactionsExecute(r)
 }
 
 /*
-ListAddressHistoricalBalance Get address balance history for asset
+ListAddressTransactions List transactions for an address.
 
-List the historical balance of an asset in a specific address.
+List all transactions that interact with the address.
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  @param networkId The ID of the blockchain network
- @param addressId The ID of the address to fetch the historical balance for.
- @param assetId The symbol of the asset to fetch the historical balance for.
- @return ApiListAddressHistoricalBalanceRequest
+ @param addressId The ID of the address to fetch the transactions for.
+ @return ApiListAddressTransactionsRequest
 */
-func (a *ExternalAddressesAPIService) ListAddressHistoricalBalance(ctx context.Context, networkId string, addressId string, assetId string) ApiListAddressHistoricalBalanceRequest {
-	return ApiListAddressHistoricalBalanceRequest{
+func (a *ExternalAddressesAPIService) ListAddressTransactions(ctx context.Context, networkId string, addressId string) ApiListAddressTransactionsRequest {
+	return ApiListAddressTransactionsRequest{
 		ApiService: a,
 		ctx: ctx,
 		networkId: networkId,
 		addressId: addressId,
-		assetId: assetId,
 	}
 }
 
 // Execute executes the request
-//  @return AddressHistoricalBalanceList
-func (a *ExternalAddressesAPIService) ListAddressHistoricalBalanceExecute(r ApiListAddressHistoricalBalanceRequest) (*AddressHistoricalBalanceList, *http.Response, error) {
+//  @return AddressTransactionList
+func (a *ExternalAddressesAPIService) ListAddressTransactionsExecute(r ApiListAddressTransactionsRequest) (*AddressTransactionList, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodGet
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *AddressHistoricalBalanceList
+		localVarReturnValue  *AddressTransactionList
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "ExternalAddressesAPIService.ListAddressHistoricalBalance")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "ExternalAddressesAPIService.ListAddressTransactions")
 	if err != nil {
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/v1/networks/{network_id}/addresses/{address_id}/balance_history/{asset_id}"
+	localVarPath := localBasePath + "/v1/networks/{network_id}/addresses/{address_id}/transactions"
 	localVarPath = strings.Replace(localVarPath, "{"+"network_id"+"}", url.PathEscape(parameterValueToString(r.networkId, "networkId")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"address_id"+"}", url.PathEscape(parameterValueToString(r.addressId, "addressId")), -1)
-	localVarPath = strings.Replace(localVarPath, "{"+"asset_id"+"}", url.PathEscape(parameterValueToString(r.assetId, "assetId")), -1)
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
 	if r.limit != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "limit", r.limit, "")
+		parameterAddToHeaderOrQuery(localVarQueryParams, "limit", r.limit, "form", "")
 	}
 	if r.page != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "page", r.page, "")
+		parameterAddToHeaderOrQuery(localVarQueryParams, "page", r.page, "form", "")
 	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
@@ -411,7 +406,7 @@ func (a *ExternalAddressesAPIService) ListExternalAddressBalancesExecute(r ApiLi
 	localVarFormParams := url.Values{}
 
 	if r.page != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "page", r.page, "")
+		parameterAddToHeaderOrQuery(localVarQueryParams, "page", r.page, "form", "")
 	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
@@ -480,6 +475,13 @@ type ApiRequestExternalFaucetFundsRequest struct {
 	ApiService ExternalAddressesAPI
 	networkId string
 	addressId string
+	assetId *string
+}
+
+// The ID of the asset to transfer from the faucet.
+func (r ApiRequestExternalFaucetFundsRequest) AssetId(assetId string) ApiRequestExternalFaucetFundsRequest {
+	r.assetId = &assetId
+	return r
 }
 
 func (r ApiRequestExternalFaucetFundsRequest) Execute() (*FaucetTransaction, *http.Response, error) {
@@ -528,6 +530,9 @@ func (a *ExternalAddressesAPIService) RequestExternalFaucetFundsExecute(r ApiReq
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
+	if r.assetId != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "asset_id", r.assetId, "form", "")
+	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
 

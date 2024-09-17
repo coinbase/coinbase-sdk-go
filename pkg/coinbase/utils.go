@@ -13,8 +13,6 @@ const (
 	StakingOperationModePartial = "partial"
 	StakingOperationModeDefault = "default"
 	StakingOperationModeNative  = "native"
-
-	timestampFormat = "2006-01-02T15:04:05Z"
 )
 
 func normalizeNetwork(network string) string {

@@ -23,7 +23,7 @@ import (
 type ContractEventsAPI interface {
 
 	/*
-	ListContractEvents Get contract events
+	ListContractEvents List contract events
 
 	Retrieve events for a specific contract
 
@@ -96,7 +96,7 @@ func (r ApiListContractEventsRequest) Execute() (*ContractEventList, *http.Respo
 }
 
 /*
-ListContractEvents Get contract events
+ListContractEvents List contract events
 
 Retrieve events for a specific contract
 
@@ -152,13 +152,13 @@ func (a *ContractEventsAPIService) ListContractEventsExecute(r ApiListContractEv
 		return localVarReturnValue, nil, reportError("toBlockHeight is required and must be specified")
 	}
 
-	parameterAddToHeaderOrQuery(localVarQueryParams, "protocol_name", r.protocolName, "")
-	parameterAddToHeaderOrQuery(localVarQueryParams, "contract_name", r.contractName, "")
-	parameterAddToHeaderOrQuery(localVarQueryParams, "event_name", r.eventName, "")
-	parameterAddToHeaderOrQuery(localVarQueryParams, "from_block_height", r.fromBlockHeight, "")
-	parameterAddToHeaderOrQuery(localVarQueryParams, "to_block_height", r.toBlockHeight, "")
+	parameterAddToHeaderOrQuery(localVarQueryParams, "protocol_name", r.protocolName, "form", "")
+	parameterAddToHeaderOrQuery(localVarQueryParams, "contract_name", r.contractName, "form", "")
+	parameterAddToHeaderOrQuery(localVarQueryParams, "event_name", r.eventName, "form", "")
+	parameterAddToHeaderOrQuery(localVarQueryParams, "from_block_height", r.fromBlockHeight, "form", "")
+	parameterAddToHeaderOrQuery(localVarQueryParams, "to_block_height", r.toBlockHeight, "form", "")
 	if r.nextPage != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "next_page", r.nextPage, "")
+		parameterAddToHeaderOrQuery(localVarQueryParams, "next_page", r.nextPage, "form", "")
 	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}

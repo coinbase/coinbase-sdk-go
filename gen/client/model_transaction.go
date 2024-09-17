@@ -23,6 +23,10 @@ var _ MappedNullable = &Transaction{}
 type Transaction struct {
 	// The ID of the blockchain network.
 	NetworkId string `json:"network_id"`
+	// The hash of the block at which the transaction was recorded.
+	BlockHash *string `json:"block_hash,omitempty"`
+	// The block height at which the transaction was recorded.
+	BlockHeight *string `json:"block_height,omitempty"`
 	// The onchain address of the sender.
 	FromAddressId string `json:"from_address_id"`
 	// The onchain address of the recipient.
@@ -37,6 +41,7 @@ type Transaction struct {
 	TransactionLink *string `json:"transaction_link,omitempty"`
 	// The status of the transaction.
 	Status string `json:"status"`
+	Content *TransactionContent `json:"content,omitempty"`
 }
 
 type _Transaction Transaction
@@ -84,6 +89,70 @@ func (o *Transaction) GetNetworkIdOk() (*string, bool) {
 // SetNetworkId sets field value
 func (o *Transaction) SetNetworkId(v string) {
 	o.NetworkId = v
+}
+
+// GetBlockHash returns the BlockHash field value if set, zero value otherwise.
+func (o *Transaction) GetBlockHash() string {
+	if o == nil || IsNil(o.BlockHash) {
+		var ret string
+		return ret
+	}
+	return *o.BlockHash
+}
+
+// GetBlockHashOk returns a tuple with the BlockHash field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *Transaction) GetBlockHashOk() (*string, bool) {
+	if o == nil || IsNil(o.BlockHash) {
+		return nil, false
+	}
+	return o.BlockHash, true
+}
+
+// HasBlockHash returns a boolean if a field has been set.
+func (o *Transaction) HasBlockHash() bool {
+	if o != nil && !IsNil(o.BlockHash) {
+		return true
+	}
+
+	return false
+}
+
+// SetBlockHash gets a reference to the given string and assigns it to the BlockHash field.
+func (o *Transaction) SetBlockHash(v string) {
+	o.BlockHash = &v
+}
+
+// GetBlockHeight returns the BlockHeight field value if set, zero value otherwise.
+func (o *Transaction) GetBlockHeight() string {
+	if o == nil || IsNil(o.BlockHeight) {
+		var ret string
+		return ret
+	}
+	return *o.BlockHeight
+}
+
+// GetBlockHeightOk returns a tuple with the BlockHeight field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *Transaction) GetBlockHeightOk() (*string, bool) {
+	if o == nil || IsNil(o.BlockHeight) {
+		return nil, false
+	}
+	return o.BlockHeight, true
+}
+
+// HasBlockHeight returns a boolean if a field has been set.
+func (o *Transaction) HasBlockHeight() bool {
+	if o != nil && !IsNil(o.BlockHeight) {
+		return true
+	}
+
+	return false
+}
+
+// SetBlockHeight gets a reference to the given string and assigns it to the BlockHeight field.
+func (o *Transaction) SetBlockHeight(v string) {
+	o.BlockHeight = &v
 }
 
 // GetFromAddressId returns the FromAddressId field value
@@ -286,6 +355,38 @@ func (o *Transaction) SetStatus(v string) {
 	o.Status = v
 }
 
+// GetContent returns the Content field value if set, zero value otherwise.
+func (o *Transaction) GetContent() TransactionContent {
+	if o == nil || IsNil(o.Content) {
+		var ret TransactionContent
+		return ret
+	}
+	return *o.Content
+}
+
+// GetContentOk returns a tuple with the Content field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *Transaction) GetContentOk() (*TransactionContent, bool) {
+	if o == nil || IsNil(o.Content) {
+		return nil, false
+	}
+	return o.Content, true
+}
+
+// HasContent returns a boolean if a field has been set.
+func (o *Transaction) HasContent() bool {
+	if o != nil && !IsNil(o.Content) {
+		return true
+	}
+
+	return false
+}
+
+// SetContent gets a reference to the given TransactionContent and assigns it to the Content field.
+func (o *Transaction) SetContent(v TransactionContent) {
+	o.Content = &v
+}
+
 func (o Transaction) MarshalJSON() ([]byte, error) {
 	toSerialize,err := o.ToMap()
 	if err != nil {
@@ -297,6 +398,12 @@ func (o Transaction) MarshalJSON() ([]byte, error) {
 func (o Transaction) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["network_id"] = o.NetworkId
+	if !IsNil(o.BlockHash) {
+		toSerialize["block_hash"] = o.BlockHash
+	}
+	if !IsNil(o.BlockHeight) {
+		toSerialize["block_height"] = o.BlockHeight
+	}
 	toSerialize["from_address_id"] = o.FromAddressId
 	if !IsNil(o.ToAddressId) {
 		toSerialize["to_address_id"] = o.ToAddressId
@@ -312,6 +419,9 @@ func (o Transaction) ToMap() (map[string]interface{}, error) {
 		toSerialize["transaction_link"] = o.TransactionLink
 	}
 	toSerialize["status"] = o.Status
+	if !IsNil(o.Content) {
+		toSerialize["content"] = o.Content
+	}
 	return toSerialize, nil
 }
 

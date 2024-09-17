@@ -25,6 +25,7 @@ type Webhook struct {
 	// The ID of the blockchain network
 	NetworkId *string `json:"network_id,omitempty"`
 	EventType *WebhookEventType `json:"event_type,omitempty"`
+	EventTypeFilter *WebhookEventTypeFilter `json:"event_type_filter,omitempty"`
 	// Webhook will monitor all events that matches any one of the event filters.
 	EventFilters []WebhookEventFilter `json:"event_filters,omitempty"`
 	// The URL to which the notifications will be sent.
@@ -33,6 +34,8 @@ type Webhook struct {
 	CreatedAt *time.Time `json:"created_at,omitempty"`
 	// The date and time the webhook was last updated.
 	UpdatedAt *time.Time `json:"updated_at,omitempty"`
+	// The header that will contain the signature of the webhook payload.
+	SignatureHeader *string `json:"signature_header,omitempty"`
 }
 
 // NewWebhook instantiates a new Webhook object
@@ -146,6 +149,38 @@ func (o *Webhook) HasEventType() bool {
 // SetEventType gets a reference to the given WebhookEventType and assigns it to the EventType field.
 func (o *Webhook) SetEventType(v WebhookEventType) {
 	o.EventType = &v
+}
+
+// GetEventTypeFilter returns the EventTypeFilter field value if set, zero value otherwise.
+func (o *Webhook) GetEventTypeFilter() WebhookEventTypeFilter {
+	if o == nil || IsNil(o.EventTypeFilter) {
+		var ret WebhookEventTypeFilter
+		return ret
+	}
+	return *o.EventTypeFilter
+}
+
+// GetEventTypeFilterOk returns a tuple with the EventTypeFilter field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *Webhook) GetEventTypeFilterOk() (*WebhookEventTypeFilter, bool) {
+	if o == nil || IsNil(o.EventTypeFilter) {
+		return nil, false
+	}
+	return o.EventTypeFilter, true
+}
+
+// HasEventTypeFilter returns a boolean if a field has been set.
+func (o *Webhook) HasEventTypeFilter() bool {
+	if o != nil && !IsNil(o.EventTypeFilter) {
+		return true
+	}
+
+	return false
+}
+
+// SetEventTypeFilter gets a reference to the given WebhookEventTypeFilter and assigns it to the EventTypeFilter field.
+func (o *Webhook) SetEventTypeFilter(v WebhookEventTypeFilter) {
+	o.EventTypeFilter = &v
 }
 
 // GetEventFilters returns the EventFilters field value if set, zero value otherwise.
@@ -276,6 +311,38 @@ func (o *Webhook) SetUpdatedAt(v time.Time) {
 	o.UpdatedAt = &v
 }
 
+// GetSignatureHeader returns the SignatureHeader field value if set, zero value otherwise.
+func (o *Webhook) GetSignatureHeader() string {
+	if o == nil || IsNil(o.SignatureHeader) {
+		var ret string
+		return ret
+	}
+	return *o.SignatureHeader
+}
+
+// GetSignatureHeaderOk returns a tuple with the SignatureHeader field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *Webhook) GetSignatureHeaderOk() (*string, bool) {
+	if o == nil || IsNil(o.SignatureHeader) {
+		return nil, false
+	}
+	return o.SignatureHeader, true
+}
+
+// HasSignatureHeader returns a boolean if a field has been set.
+func (o *Webhook) HasSignatureHeader() bool {
+	if o != nil && !IsNil(o.SignatureHeader) {
+		return true
+	}
+
+	return false
+}
+
+// SetSignatureHeader gets a reference to the given string and assigns it to the SignatureHeader field.
+func (o *Webhook) SetSignatureHeader(v string) {
+	o.SignatureHeader = &v
+}
+
 func (o Webhook) MarshalJSON() ([]byte, error) {
 	toSerialize,err := o.ToMap()
 	if err != nil {
@@ -295,6 +362,9 @@ func (o Webhook) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.EventType) {
 		toSerialize["event_type"] = o.EventType
 	}
+	if !IsNil(o.EventTypeFilter) {
+		toSerialize["event_type_filter"] = o.EventTypeFilter
+	}
 	if !IsNil(o.EventFilters) {
 		toSerialize["event_filters"] = o.EventFilters
 	}
@@ -306,6 +376,9 @@ func (o Webhook) ToMap() (map[string]interface{}, error) {
 	}
 	if !IsNil(o.UpdatedAt) {
 		toSerialize["updated_at"] = o.UpdatedAt
+	}
+	if !IsNil(o.SignatureHeader) {
+		toSerialize["signature_header"] = o.SignatureHeader
 	}
 	return toSerialize, nil
 }

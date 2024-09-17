@@ -21,11 +21,9 @@ var _ MappedNullable = &UpdateWebhookRequest{}
 
 // UpdateWebhookRequest struct for UpdateWebhookRequest
 type UpdateWebhookRequest struct {
-	// The ID of the blockchain network
-	NetworkId *string `json:"network_id,omitempty"`
-	EventType WebhookEventType `json:"event_type"`
+	EventTypeFilter *WebhookEventTypeFilter `json:"event_type_filter,omitempty"`
 	// Webhook will monitor all events that matches any one of the event filters.
-	EventFilters []WebhookEventFilter `json:"event_filters"`
+	EventFilters []WebhookEventFilter `json:"event_filters,omitempty"`
 	// The Webhook uri that updates to
 	NotificationUri string `json:"notification_uri"`
 }
@@ -36,10 +34,8 @@ type _UpdateWebhookRequest UpdateWebhookRequest
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewUpdateWebhookRequest(eventType WebhookEventType, eventFilters []WebhookEventFilter, notificationUri string) *UpdateWebhookRequest {
+func NewUpdateWebhookRequest(notificationUri string) *UpdateWebhookRequest {
 	this := UpdateWebhookRequest{}
-	this.EventType = eventType
-	this.EventFilters = eventFilters
 	this.NotificationUri = notificationUri
 	return &this
 }
@@ -52,82 +48,66 @@ func NewUpdateWebhookRequestWithDefaults() *UpdateWebhookRequest {
 	return &this
 }
 
-// GetNetworkId returns the NetworkId field value if set, zero value otherwise.
-func (o *UpdateWebhookRequest) GetNetworkId() string {
-	if o == nil || IsNil(o.NetworkId) {
-		var ret string
+// GetEventTypeFilter returns the EventTypeFilter field value if set, zero value otherwise.
+func (o *UpdateWebhookRequest) GetEventTypeFilter() WebhookEventTypeFilter {
+	if o == nil || IsNil(o.EventTypeFilter) {
+		var ret WebhookEventTypeFilter
 		return ret
 	}
-	return *o.NetworkId
+	return *o.EventTypeFilter
 }
 
-// GetNetworkIdOk returns a tuple with the NetworkId field value if set, nil otherwise
+// GetEventTypeFilterOk returns a tuple with the EventTypeFilter field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *UpdateWebhookRequest) GetNetworkIdOk() (*string, bool) {
-	if o == nil || IsNil(o.NetworkId) {
+func (o *UpdateWebhookRequest) GetEventTypeFilterOk() (*WebhookEventTypeFilter, bool) {
+	if o == nil || IsNil(o.EventTypeFilter) {
 		return nil, false
 	}
-	return o.NetworkId, true
+	return o.EventTypeFilter, true
 }
 
-// HasNetworkId returns a boolean if a field has been set.
-func (o *UpdateWebhookRequest) HasNetworkId() bool {
-	if o != nil && !IsNil(o.NetworkId) {
+// HasEventTypeFilter returns a boolean if a field has been set.
+func (o *UpdateWebhookRequest) HasEventTypeFilter() bool {
+	if o != nil && !IsNil(o.EventTypeFilter) {
 		return true
 	}
 
 	return false
 }
 
-// SetNetworkId gets a reference to the given string and assigns it to the NetworkId field.
-func (o *UpdateWebhookRequest) SetNetworkId(v string) {
-	o.NetworkId = &v
+// SetEventTypeFilter gets a reference to the given WebhookEventTypeFilter and assigns it to the EventTypeFilter field.
+func (o *UpdateWebhookRequest) SetEventTypeFilter(v WebhookEventTypeFilter) {
+	o.EventTypeFilter = &v
 }
 
-// GetEventType returns the EventType field value
-func (o *UpdateWebhookRequest) GetEventType() WebhookEventType {
-	if o == nil {
-		var ret WebhookEventType
-		return ret
-	}
-
-	return o.EventType
-}
-
-// GetEventTypeOk returns a tuple with the EventType field value
-// and a boolean to check if the value has been set.
-func (o *UpdateWebhookRequest) GetEventTypeOk() (*WebhookEventType, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return &o.EventType, true
-}
-
-// SetEventType sets field value
-func (o *UpdateWebhookRequest) SetEventType(v WebhookEventType) {
-	o.EventType = v
-}
-
-// GetEventFilters returns the EventFilters field value
+// GetEventFilters returns the EventFilters field value if set, zero value otherwise.
 func (o *UpdateWebhookRequest) GetEventFilters() []WebhookEventFilter {
-	if o == nil {
+	if o == nil || IsNil(o.EventFilters) {
 		var ret []WebhookEventFilter
 		return ret
 	}
-
 	return o.EventFilters
 }
 
-// GetEventFiltersOk returns a tuple with the EventFilters field value
+// GetEventFiltersOk returns a tuple with the EventFilters field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *UpdateWebhookRequest) GetEventFiltersOk() ([]WebhookEventFilter, bool) {
-	if o == nil {
+	if o == nil || IsNil(o.EventFilters) {
 		return nil, false
 	}
 	return o.EventFilters, true
 }
 
-// SetEventFilters sets field value
+// HasEventFilters returns a boolean if a field has been set.
+func (o *UpdateWebhookRequest) HasEventFilters() bool {
+	if o != nil && !IsNil(o.EventFilters) {
+		return true
+	}
+
+	return false
+}
+
+// SetEventFilters gets a reference to the given []WebhookEventFilter and assigns it to the EventFilters field.
 func (o *UpdateWebhookRequest) SetEventFilters(v []WebhookEventFilter) {
 	o.EventFilters = v
 }
@@ -166,11 +146,12 @@ func (o UpdateWebhookRequest) MarshalJSON() ([]byte, error) {
 
 func (o UpdateWebhookRequest) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.NetworkId) {
-		toSerialize["network_id"] = o.NetworkId
+	if !IsNil(o.EventTypeFilter) {
+		toSerialize["event_type_filter"] = o.EventTypeFilter
 	}
-	toSerialize["event_type"] = o.EventType
-	toSerialize["event_filters"] = o.EventFilters
+	if !IsNil(o.EventFilters) {
+		toSerialize["event_filters"] = o.EventFilters
+	}
 	toSerialize["notification_uri"] = o.NotificationUri
 	return toSerialize, nil
 }
@@ -180,8 +161,6 @@ func (o *UpdateWebhookRequest) UnmarshalJSON(data []byte) (err error) {
 	// by unmarshalling the object into a generic map with string keys and checking
 	// that every required field exists as a key in the generic map.
 	requiredProperties := []string{
-		"event_type",
-		"event_filters",
 		"notification_uri",
 	}
 

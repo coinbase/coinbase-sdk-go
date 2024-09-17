@@ -78,11 +78,6 @@ func (c *Client) ListHistoricalStakingBalances(
 }
 
 func newStakingBalanceFromModel(m *client.StakingBalance) (*StakingBalance, error) {
-	date, err := time.Parse(timestampFormat, m.Date)
-	if err != nil {
-		return nil, err
-	}
-
 	bondedStake, err := newBalanceFromModel(&m.BondedStake)
 	if err != nil {
 		return nil, err
@@ -95,7 +90,7 @@ func newStakingBalanceFromModel(m *client.StakingBalance) (*StakingBalance, erro
 
 	return &StakingBalance{
 		model:           m,
-		parsedDate:      date,
+		parsedDate:      m.GetDate(),
 		bondedStake:     bondedStake,
 		unbondedBalance: unbondedBalance,
 	}, nil

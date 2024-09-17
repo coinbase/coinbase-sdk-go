@@ -19,11 +19,11 @@ var _ MappedNullable = &WebhookEventFilter{}
 
 // WebhookEventFilter The event_filter parameter specifies the criteria to filter events from the blockchain. It allows filtering events by contract address, sender address and receiver address. For a single event filter, not all of the properties need to be presented.
 type WebhookEventFilter struct {
-	// The onchain contract address of the token being transferred.
+	// The onchain contract address of the token for which the events should be tracked.
 	ContractAddress *string `json:"contract_address,omitempty"`
-	// The onchain address of the sender.
+	// The onchain address of the sender. Set this filter to track all transfer events originating from your address.
 	FromAddress *string `json:"from_address,omitempty"`
-	// The onchain address of the receiver.
+	// The onchain address of the receiver. Set this filter to track all transfer events sent to your address.
 	ToAddress *string `json:"to_address,omitempty"`
 }
 

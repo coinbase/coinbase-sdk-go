@@ -20,142 +20,138 @@ import (
 )
 
 
-type TradesAPI interface {
+type SmartContractsAPI interface {
 
 	/*
-	BroadcastTrade Broadcast a trade
+	CreateSmartContract Create a new smart contract
 
-	Broadcast a trade
+	Create a new smart contract
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	@param walletId The ID of the wallet the address belongs to
-	@param addressId The ID of the address the trade belongs to
-	@param tradeId The ID of the trade to broadcast
-	@return ApiBroadcastTradeRequest
+	@param walletId The ID of the wallet the address belongs to.
+	@param addressId The ID of the address to deploy the smart contract from.
+	@return ApiCreateSmartContractRequest
 	*/
-	BroadcastTrade(ctx context.Context, walletId string, addressId string, tradeId string) ApiBroadcastTradeRequest
+	CreateSmartContract(ctx context.Context, walletId string, addressId string) ApiCreateSmartContractRequest
 
-	// BroadcastTradeExecute executes the request
-	//  @return Trade
-	BroadcastTradeExecute(r ApiBroadcastTradeRequest) (*Trade, *http.Response, error)
+	// CreateSmartContractExecute executes the request
+	//  @return SmartContract
+	CreateSmartContractExecute(r ApiCreateSmartContractRequest) (*SmartContract, *http.Response, error)
 
 	/*
-	CreateTrade Create a new trade for an address
+	DeploySmartContract Deploy a smart contract
 
-	Create a new trade
+	Deploys a smart contract, by broadcasting the transaction to the network.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	@param walletId The ID of the wallet the source address belongs to
-	@param addressId The ID of the address to conduct the trade from
-	@return ApiCreateTradeRequest
+	@param walletId The ID of the wallet the address belongs to.
+	@param addressId The ID of the address to broadcast the transaction from.
+	@param smartContractId The UUID of the smart contract to broadcast the transaction to.
+	@return ApiDeploySmartContractRequest
 	*/
-	CreateTrade(ctx context.Context, walletId string, addressId string) ApiCreateTradeRequest
+	DeploySmartContract(ctx context.Context, walletId string, addressId string, smartContractId string) ApiDeploySmartContractRequest
 
-	// CreateTradeExecute executes the request
-	//  @return Trade
-	CreateTradeExecute(r ApiCreateTradeRequest) (*Trade, *http.Response, error)
+	// DeploySmartContractExecute executes the request
+	//  @return SmartContract
+	DeploySmartContractExecute(r ApiDeploySmartContractRequest) (*SmartContract, *http.Response, error)
 
 	/*
-	GetTrade Get a trade by ID
+	GetSmartContract Get a specific smart contract deployed by address
 
-	Get a trade by ID
+	Get a specific smart contract deployed by address.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	@param walletId The ID of the wallet the address belongs to
-	@param addressId The ID of the address the trade belongs to
-	@param tradeId The ID of the trade to fetch
-	@return ApiGetTradeRequest
+	@param walletId The ID of the wallet the address belongs to.
+	@param addressId The ID of the address to fetch the smart contract for.
+	@param smartContractId The UUID of the smart contract to fetch.
+	@return ApiGetSmartContractRequest
 	*/
-	GetTrade(ctx context.Context, walletId string, addressId string, tradeId string) ApiGetTradeRequest
+	GetSmartContract(ctx context.Context, walletId string, addressId string, smartContractId string) ApiGetSmartContractRequest
 
-	// GetTradeExecute executes the request
-	//  @return Trade
-	GetTradeExecute(r ApiGetTradeRequest) (*Trade, *http.Response, error)
+	// GetSmartContractExecute executes the request
+	//  @return SmartContract
+	GetSmartContractExecute(r ApiGetSmartContractRequest) (*SmartContract, *http.Response, error)
 
 	/*
-	ListTrades List trades for an address.
+	ListSmartContracts List smart contracts deployed by address
 
-	List trades for an address.
+	List all smart contracts deployed by address.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	@param walletId The ID of the wallet the address belongs to
-	@param addressId The ID of the address to list trades for
-	@return ApiListTradesRequest
+	@param walletId The ID of the wallet the address belongs to.
+	@param addressId The ID of the address to fetch the smart contracts for.
+	@return ApiListSmartContractsRequest
 	*/
-	ListTrades(ctx context.Context, walletId string, addressId string) ApiListTradesRequest
+	ListSmartContracts(ctx context.Context, walletId string, addressId string) ApiListSmartContractsRequest
 
-	// ListTradesExecute executes the request
-	//  @return TradeList
-	ListTradesExecute(r ApiListTradesRequest) (*TradeList, *http.Response, error)
+	// ListSmartContractsExecute executes the request
+	//  @return SmartContractList
+	ListSmartContractsExecute(r ApiListSmartContractsRequest) (*SmartContractList, *http.Response, error)
 }
 
-// TradesAPIService TradesAPI service
-type TradesAPIService service
+// SmartContractsAPIService SmartContractsAPI service
+type SmartContractsAPIService service
 
-type ApiBroadcastTradeRequest struct {
+type ApiCreateSmartContractRequest struct {
 	ctx context.Context
-	ApiService TradesAPI
+	ApiService SmartContractsAPI
 	walletId string
 	addressId string
-	tradeId string
-	broadcastTradeRequest *BroadcastTradeRequest
+	createSmartContractRequest *CreateSmartContractRequest
 }
 
-func (r ApiBroadcastTradeRequest) BroadcastTradeRequest(broadcastTradeRequest BroadcastTradeRequest) ApiBroadcastTradeRequest {
-	r.broadcastTradeRequest = &broadcastTradeRequest
+func (r ApiCreateSmartContractRequest) CreateSmartContractRequest(createSmartContractRequest CreateSmartContractRequest) ApiCreateSmartContractRequest {
+	r.createSmartContractRequest = &createSmartContractRequest
 	return r
 }
 
-func (r ApiBroadcastTradeRequest) Execute() (*Trade, *http.Response, error) {
-	return r.ApiService.BroadcastTradeExecute(r)
+func (r ApiCreateSmartContractRequest) Execute() (*SmartContract, *http.Response, error) {
+	return r.ApiService.CreateSmartContractExecute(r)
 }
 
 /*
-BroadcastTrade Broadcast a trade
+CreateSmartContract Create a new smart contract
 
-Broadcast a trade
+Create a new smart contract
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- @param walletId The ID of the wallet the address belongs to
- @param addressId The ID of the address the trade belongs to
- @param tradeId The ID of the trade to broadcast
- @return ApiBroadcastTradeRequest
+ @param walletId The ID of the wallet the address belongs to.
+ @param addressId The ID of the address to deploy the smart contract from.
+ @return ApiCreateSmartContractRequest
 */
-func (a *TradesAPIService) BroadcastTrade(ctx context.Context, walletId string, addressId string, tradeId string) ApiBroadcastTradeRequest {
-	return ApiBroadcastTradeRequest{
+func (a *SmartContractsAPIService) CreateSmartContract(ctx context.Context, walletId string, addressId string) ApiCreateSmartContractRequest {
+	return ApiCreateSmartContractRequest{
 		ApiService: a,
 		ctx: ctx,
 		walletId: walletId,
 		addressId: addressId,
-		tradeId: tradeId,
 	}
 }
 
 // Execute executes the request
-//  @return Trade
-func (a *TradesAPIService) BroadcastTradeExecute(r ApiBroadcastTradeRequest) (*Trade, *http.Response, error) {
+//  @return SmartContract
+func (a *SmartContractsAPIService) CreateSmartContractExecute(r ApiCreateSmartContractRequest) (*SmartContract, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodPost
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *Trade
+		localVarReturnValue  *SmartContract
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "TradesAPIService.BroadcastTrade")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SmartContractsAPIService.CreateSmartContract")
 	if err != nil {
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/v1/wallets/{wallet_id}/addresses/{address_id}/trades/{trade_id}/broadcast"
+	localVarPath := localBasePath + "/v1/wallets/{wallet_id}/addresses/{address_id}/smart_contracts"
 	localVarPath = strings.Replace(localVarPath, "{"+"wallet_id"+"}", url.PathEscape(parameterValueToString(r.walletId, "walletId")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"address_id"+"}", url.PathEscape(parameterValueToString(r.addressId, "addressId")), -1)
-	localVarPath = strings.Replace(localVarPath, "{"+"trade_id"+"}", url.PathEscape(parameterValueToString(r.tradeId, "tradeId")), -1)
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
-	if r.broadcastTradeRequest == nil {
-		return localVarReturnValue, nil, reportError("broadcastTradeRequest is required and must be specified")
+	if r.createSmartContractRequest == nil {
+		return localVarReturnValue, nil, reportError("createSmartContractRequest is required and must be specified")
 	}
 
 	// to determine the Content-Type header
@@ -176,7 +172,7 @@ func (a *TradesAPIService) BroadcastTradeExecute(r ApiBroadcastTradeRequest) (*T
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
 	// body params
-	localVarPostBody = r.broadcastTradeRequest
+	localVarPostBody = r.createSmartContractRequest
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
 	if err != nil {
 		return localVarReturnValue, nil, err
@@ -222,66 +218,70 @@ func (a *TradesAPIService) BroadcastTradeExecute(r ApiBroadcastTradeRequest) (*T
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
-type ApiCreateTradeRequest struct {
+type ApiDeploySmartContractRequest struct {
 	ctx context.Context
-	ApiService TradesAPI
+	ApiService SmartContractsAPI
 	walletId string
 	addressId string
-	createTradeRequest *CreateTradeRequest
+	smartContractId string
+	deploySmartContractRequest *DeploySmartContractRequest
 }
 
-func (r ApiCreateTradeRequest) CreateTradeRequest(createTradeRequest CreateTradeRequest) ApiCreateTradeRequest {
-	r.createTradeRequest = &createTradeRequest
+func (r ApiDeploySmartContractRequest) DeploySmartContractRequest(deploySmartContractRequest DeploySmartContractRequest) ApiDeploySmartContractRequest {
+	r.deploySmartContractRequest = &deploySmartContractRequest
 	return r
 }
 
-func (r ApiCreateTradeRequest) Execute() (*Trade, *http.Response, error) {
-	return r.ApiService.CreateTradeExecute(r)
+func (r ApiDeploySmartContractRequest) Execute() (*SmartContract, *http.Response, error) {
+	return r.ApiService.DeploySmartContractExecute(r)
 }
 
 /*
-CreateTrade Create a new trade for an address
+DeploySmartContract Deploy a smart contract
 
-Create a new trade
+Deploys a smart contract, by broadcasting the transaction to the network.
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- @param walletId The ID of the wallet the source address belongs to
- @param addressId The ID of the address to conduct the trade from
- @return ApiCreateTradeRequest
+ @param walletId The ID of the wallet the address belongs to.
+ @param addressId The ID of the address to broadcast the transaction from.
+ @param smartContractId The UUID of the smart contract to broadcast the transaction to.
+ @return ApiDeploySmartContractRequest
 */
-func (a *TradesAPIService) CreateTrade(ctx context.Context, walletId string, addressId string) ApiCreateTradeRequest {
-	return ApiCreateTradeRequest{
+func (a *SmartContractsAPIService) DeploySmartContract(ctx context.Context, walletId string, addressId string, smartContractId string) ApiDeploySmartContractRequest {
+	return ApiDeploySmartContractRequest{
 		ApiService: a,
 		ctx: ctx,
 		walletId: walletId,
 		addressId: addressId,
+		smartContractId: smartContractId,
 	}
 }
 
 // Execute executes the request
-//  @return Trade
-func (a *TradesAPIService) CreateTradeExecute(r ApiCreateTradeRequest) (*Trade, *http.Response, error) {
+//  @return SmartContract
+func (a *SmartContractsAPIService) DeploySmartContractExecute(r ApiDeploySmartContractRequest) (*SmartContract, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodPost
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *Trade
+		localVarReturnValue  *SmartContract
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "TradesAPIService.CreateTrade")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SmartContractsAPIService.DeploySmartContract")
 	if err != nil {
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/v1/wallets/{wallet_id}/addresses/{address_id}/trades"
+	localVarPath := localBasePath + "/v1/wallets/{wallet_id}/addresses/{address_id}/smart_contracts/{smart_contract_id}/deploy"
 	localVarPath = strings.Replace(localVarPath, "{"+"wallet_id"+"}", url.PathEscape(parameterValueToString(r.walletId, "walletId")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"address_id"+"}", url.PathEscape(parameterValueToString(r.addressId, "addressId")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"smart_contract_id"+"}", url.PathEscape(parameterValueToString(r.smartContractId, "smartContractId")), -1)
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
-	if r.createTradeRequest == nil {
-		return localVarReturnValue, nil, reportError("createTradeRequest is required and must be specified")
+	if r.deploySmartContractRequest == nil {
+		return localVarReturnValue, nil, reportError("deploySmartContractRequest is required and must be specified")
 	}
 
 	// to determine the Content-Type header
@@ -302,7 +302,7 @@ func (a *TradesAPIService) CreateTradeExecute(r ApiCreateTradeRequest) (*Trade, 
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
 	// body params
-	localVarPostBody = r.createTradeRequest
+	localVarPostBody = r.deploySmartContractRequest
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
 	if err != nil {
 		return localVarReturnValue, nil, err
@@ -348,58 +348,58 @@ func (a *TradesAPIService) CreateTradeExecute(r ApiCreateTradeRequest) (*Trade, 
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
-type ApiGetTradeRequest struct {
+type ApiGetSmartContractRequest struct {
 	ctx context.Context
-	ApiService TradesAPI
+	ApiService SmartContractsAPI
 	walletId string
 	addressId string
-	tradeId string
+	smartContractId string
 }
 
-func (r ApiGetTradeRequest) Execute() (*Trade, *http.Response, error) {
-	return r.ApiService.GetTradeExecute(r)
+func (r ApiGetSmartContractRequest) Execute() (*SmartContract, *http.Response, error) {
+	return r.ApiService.GetSmartContractExecute(r)
 }
 
 /*
-GetTrade Get a trade by ID
+GetSmartContract Get a specific smart contract deployed by address
 
-Get a trade by ID
+Get a specific smart contract deployed by address.
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- @param walletId The ID of the wallet the address belongs to
- @param addressId The ID of the address the trade belongs to
- @param tradeId The ID of the trade to fetch
- @return ApiGetTradeRequest
+ @param walletId The ID of the wallet the address belongs to.
+ @param addressId The ID of the address to fetch the smart contract for.
+ @param smartContractId The UUID of the smart contract to fetch.
+ @return ApiGetSmartContractRequest
 */
-func (a *TradesAPIService) GetTrade(ctx context.Context, walletId string, addressId string, tradeId string) ApiGetTradeRequest {
-	return ApiGetTradeRequest{
+func (a *SmartContractsAPIService) GetSmartContract(ctx context.Context, walletId string, addressId string, smartContractId string) ApiGetSmartContractRequest {
+	return ApiGetSmartContractRequest{
 		ApiService: a,
 		ctx: ctx,
 		walletId: walletId,
 		addressId: addressId,
-		tradeId: tradeId,
+		smartContractId: smartContractId,
 	}
 }
 
 // Execute executes the request
-//  @return Trade
-func (a *TradesAPIService) GetTradeExecute(r ApiGetTradeRequest) (*Trade, *http.Response, error) {
+//  @return SmartContract
+func (a *SmartContractsAPIService) GetSmartContractExecute(r ApiGetSmartContractRequest) (*SmartContract, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodGet
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *Trade
+		localVarReturnValue  *SmartContract
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "TradesAPIService.GetTrade")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SmartContractsAPIService.GetSmartContract")
 	if err != nil {
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/v1/wallets/{wallet_id}/addresses/{address_id}/trades/{trade_id}"
+	localVarPath := localBasePath + "/v1/wallets/{wallet_id}/addresses/{address_id}/smart_contracts/{smart_contract_id}"
 	localVarPath = strings.Replace(localVarPath, "{"+"wallet_id"+"}", url.PathEscape(parameterValueToString(r.walletId, "walletId")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"address_id"+"}", url.PathEscape(parameterValueToString(r.addressId, "addressId")), -1)
-	localVarPath = strings.Replace(localVarPath, "{"+"trade_id"+"}", url.PathEscape(parameterValueToString(r.tradeId, "tradeId")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"smart_contract_id"+"}", url.PathEscape(parameterValueToString(r.smartContractId, "smartContractId")), -1)
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -467,43 +467,29 @@ func (a *TradesAPIService) GetTradeExecute(r ApiGetTradeRequest) (*Trade, *http.
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
-type ApiListTradesRequest struct {
+type ApiListSmartContractsRequest struct {
 	ctx context.Context
-	ApiService TradesAPI
+	ApiService SmartContractsAPI
 	walletId string
 	addressId string
-	limit *int32
-	page *string
 }
 
-// A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default is 10.
-func (r ApiListTradesRequest) Limit(limit int32) ApiListTradesRequest {
-	r.limit = &limit
-	return r
-}
-
-// A cursor for pagination across multiple pages of results. Don&#39;t include this parameter on the first call. Use the next_page value returned in a previous response to request subsequent results.
-func (r ApiListTradesRequest) Page(page string) ApiListTradesRequest {
-	r.page = &page
-	return r
-}
-
-func (r ApiListTradesRequest) Execute() (*TradeList, *http.Response, error) {
-	return r.ApiService.ListTradesExecute(r)
+func (r ApiListSmartContractsRequest) Execute() (*SmartContractList, *http.Response, error) {
+	return r.ApiService.ListSmartContractsExecute(r)
 }
 
 /*
-ListTrades List trades for an address.
+ListSmartContracts List smart contracts deployed by address
 
-List trades for an address.
+List all smart contracts deployed by address.
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- @param walletId The ID of the wallet the address belongs to
- @param addressId The ID of the address to list trades for
- @return ApiListTradesRequest
+ @param walletId The ID of the wallet the address belongs to.
+ @param addressId The ID of the address to fetch the smart contracts for.
+ @return ApiListSmartContractsRequest
 */
-func (a *TradesAPIService) ListTrades(ctx context.Context, walletId string, addressId string) ApiListTradesRequest {
-	return ApiListTradesRequest{
+func (a *SmartContractsAPIService) ListSmartContracts(ctx context.Context, walletId string, addressId string) ApiListSmartContractsRequest {
+	return ApiListSmartContractsRequest{
 		ApiService: a,
 		ctx: ctx,
 		walletId: walletId,
@@ -512,21 +498,21 @@ func (a *TradesAPIService) ListTrades(ctx context.Context, walletId string, addr
 }
 
 // Execute executes the request
-//  @return TradeList
-func (a *TradesAPIService) ListTradesExecute(r ApiListTradesRequest) (*TradeList, *http.Response, error) {
+//  @return SmartContractList
+func (a *SmartContractsAPIService) ListSmartContractsExecute(r ApiListSmartContractsRequest) (*SmartContractList, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodGet
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *TradeList
+		localVarReturnValue  *SmartContractList
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "TradesAPIService.ListTrades")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SmartContractsAPIService.ListSmartContracts")
 	if err != nil {
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/v1/wallets/{wallet_id}/addresses/{address_id}/trades"
+	localVarPath := localBasePath + "/v1/wallets/{wallet_id}/addresses/{address_id}/smart_contracts"
 	localVarPath = strings.Replace(localVarPath, "{"+"wallet_id"+"}", url.PathEscape(parameterValueToString(r.walletId, "walletId")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"address_id"+"}", url.PathEscape(parameterValueToString(r.addressId, "addressId")), -1)
 
@@ -534,12 +520,6 @@ func (a *TradesAPIService) ListTradesExecute(r ApiListTradesRequest) (*TradeList
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
-	if r.limit != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "limit", r.limit, "form", "")
-	}
-	if r.page != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "page", r.page, "form", "")
-	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
 

@@ -327,14 +327,14 @@ func (a *StakeAPIService) FetchHistoricalStakingBalancesExecute(r ApiFetchHistor
 	}
 
 	if r.limit != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "limit", r.limit, "")
+		parameterAddToHeaderOrQuery(localVarQueryParams, "limit", r.limit, "form", "")
 	}
 	if r.page != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "page", r.page, "")
+		parameterAddToHeaderOrQuery(localVarQueryParams, "page", r.page, "form", "")
 	}
-	parameterAddToHeaderOrQuery(localVarQueryParams, "asset_id", r.assetId, "")
-	parameterAddToHeaderOrQuery(localVarQueryParams, "start_time", r.startTime, "")
-	parameterAddToHeaderOrQuery(localVarQueryParams, "end_time", r.endTime, "")
+	parameterAddToHeaderOrQuery(localVarQueryParams, "asset_id", r.assetId, "form", "")
+	parameterAddToHeaderOrQuery(localVarQueryParams, "start_time", r.startTime, "form", "")
+	parameterAddToHeaderOrQuery(localVarQueryParams, "end_time", r.endTime, "form", "")
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
 
@@ -466,10 +466,10 @@ func (a *StakeAPIService) FetchStakingRewardsExecute(r ApiFetchStakingRewardsReq
 	}
 
 	if r.limit != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "limit", r.limit, "")
+		parameterAddToHeaderOrQuery(localVarQueryParams, "limit", r.limit, "form", "")
 	}
 	if r.page != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "page", r.page, "")
+		parameterAddToHeaderOrQuery(localVarQueryParams, "page", r.page, "form", "")
 	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{"application/json"}

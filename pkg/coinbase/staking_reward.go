@@ -116,12 +116,7 @@ func (s StakingReward) Amount() (*big.Float, error) {
 
 // Date returns the date of the staking reward.
 func (s StakingReward) Date() (time.Time, error) {
-	parsedDate, err := time.Parse(timestampFormat, s.model.GetDate())
-	if err != nil {
-		return time.Time{}, fmt.Errorf("invalid date found: %s", s.model.GetDate())
-	}
-
-	return parsedDate, nil
+	return s.model.GetDate(), nil
 }
 
 // USDValue returns the USD value of the staking reward.

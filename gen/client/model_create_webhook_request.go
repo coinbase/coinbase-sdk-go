@@ -23,11 +23,14 @@ var _ MappedNullable = &CreateWebhookRequest{}
 type CreateWebhookRequest struct {
 	// The ID of the blockchain network
 	NetworkId string `json:"network_id"`
-	EventType *WebhookEventType `json:"event_type,omitempty"`
+	EventType WebhookEventType `json:"event_type"`
+	EventTypeFilter *WebhookEventTypeFilter `json:"event_type_filter,omitempty"`
 	// Webhook will monitor all events that matches any one of the event filters.
 	EventFilters []WebhookEventFilter `json:"event_filters,omitempty"`
 	// The URL to which the notifications will be sent
 	NotificationUri string `json:"notification_uri"`
+	// The custom header to be used for x-webhook-signature header on callbacks, so developers can verify the requests are coming from Coinbase.
+	SignatureHeader *string `json:"signature_header,omitempty"`
 }
 
 type _CreateWebhookRequest CreateWebhookRequest
@@ -36,9 +39,10 @@ type _CreateWebhookRequest CreateWebhookRequest
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewCreateWebhookRequest(networkId string, notificationUri string) *CreateWebhookRequest {
+func NewCreateWebhookRequest(networkId string, eventType WebhookEventType, notificationUri string) *CreateWebhookRequest {
 	this := CreateWebhookRequest{}
 	this.NetworkId = networkId
+	this.EventType = eventType
 	this.NotificationUri = notificationUri
 	return &this
 }
@@ -75,36 +79,60 @@ func (o *CreateWebhookRequest) SetNetworkId(v string) {
 	o.NetworkId = v
 }
 
-// GetEventType returns the EventType field value if set, zero value otherwise.
+// GetEventType returns the EventType field value
 func (o *CreateWebhookRequest) GetEventType() WebhookEventType {
-	if o == nil || IsNil(o.EventType) {
+	if o == nil {
 		var ret WebhookEventType
 		return ret
 	}
-	return *o.EventType
+
+	return o.EventType
 }
 
-// GetEventTypeOk returns a tuple with the EventType field value if set, nil otherwise
+// GetEventTypeOk returns a tuple with the EventType field value
 // and a boolean to check if the value has been set.
 func (o *CreateWebhookRequest) GetEventTypeOk() (*WebhookEventType, bool) {
-	if o == nil || IsNil(o.EventType) {
+	if o == nil {
 		return nil, false
 	}
-	return o.EventType, true
+	return &o.EventType, true
 }
 
-// HasEventType returns a boolean if a field has been set.
-func (o *CreateWebhookRequest) HasEventType() bool {
-	if o != nil && !IsNil(o.EventType) {
+// SetEventType sets field value
+func (o *CreateWebhookRequest) SetEventType(v WebhookEventType) {
+	o.EventType = v
+}
+
+// GetEventTypeFilter returns the EventTypeFilter field value if set, zero value otherwise.
+func (o *CreateWebhookRequest) GetEventTypeFilter() WebhookEventTypeFilter {
+	if o == nil || IsNil(o.EventTypeFilter) {
+		var ret WebhookEventTypeFilter
+		return ret
+	}
+	return *o.EventTypeFilter
+}
+
+// GetEventTypeFilterOk returns a tuple with the EventTypeFilter field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *CreateWebhookRequest) GetEventTypeFilterOk() (*WebhookEventTypeFilter, bool) {
+	if o == nil || IsNil(o.EventTypeFilter) {
+		return nil, false
+	}
+	return o.EventTypeFilter, true
+}
+
+// HasEventTypeFilter returns a boolean if a field has been set.
+func (o *CreateWebhookRequest) HasEventTypeFilter() bool {
+	if o != nil && !IsNil(o.EventTypeFilter) {
 		return true
 	}
 
 	return false
 }
 
-// SetEventType gets a reference to the given WebhookEventType and assigns it to the EventType field.
-func (o *CreateWebhookRequest) SetEventType(v WebhookEventType) {
-	o.EventType = &v
+// SetEventTypeFilter gets a reference to the given WebhookEventTypeFilter and assigns it to the EventTypeFilter field.
+func (o *CreateWebhookRequest) SetEventTypeFilter(v WebhookEventTypeFilter) {
+	o.EventTypeFilter = &v
 }
 
 // GetEventFilters returns the EventFilters field value if set, zero value otherwise.
@@ -163,6 +191,38 @@ func (o *CreateWebhookRequest) SetNotificationUri(v string) {
 	o.NotificationUri = v
 }
 
+// GetSignatureHeader returns the SignatureHeader field value if set, zero value otherwise.
+func (o *CreateWebhookRequest) GetSignatureHeader() string {
+	if o == nil || IsNil(o.SignatureHeader) {
+		var ret string
+		return ret
+	}
+	return *o.SignatureHeader
+}
+
+// GetSignatureHeaderOk returns a tuple with the SignatureHeader field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *CreateWebhookRequest) GetSignatureHeaderOk() (*string, bool) {
+	if o == nil || IsNil(o.SignatureHeader) {
+		return nil, false
+	}
+	return o.SignatureHeader, true
+}
+
+// HasSignatureHeader returns a boolean if a field has been set.
+func (o *CreateWebhookRequest) HasSignatureHeader() bool {
+	if o != nil && !IsNil(o.SignatureHeader) {
+		return true
+	}
+
+	return false
+}
+
+// SetSignatureHeader gets a reference to the given string and assigns it to the SignatureHeader field.
+func (o *CreateWebhookRequest) SetSignatureHeader(v string) {
+	o.SignatureHeader = &v
+}
+
 func (o CreateWebhookRequest) MarshalJSON() ([]byte, error) {
 	toSerialize,err := o.ToMap()
 	if err != nil {
@@ -174,13 +234,17 @@ func (o CreateWebhookRequest) MarshalJSON() ([]byte, error) {
 func (o CreateWebhookRequest) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["network_id"] = o.NetworkId
-	if !IsNil(o.EventType) {
-		toSerialize["event_type"] = o.EventType
+	toSerialize["event_type"] = o.EventType
+	if !IsNil(o.EventTypeFilter) {
+		toSerialize["event_type_filter"] = o.EventTypeFilter
 	}
 	if !IsNil(o.EventFilters) {
 		toSerialize["event_filters"] = o.EventFilters
 	}
 	toSerialize["notification_uri"] = o.NotificationUri
+	if !IsNil(o.SignatureHeader) {
+		toSerialize["signature_header"] = o.SignatureHeader
+	}
 	return toSerialize, nil
 }
 
@@ -190,6 +254,7 @@ func (o *CreateWebhookRequest) UnmarshalJSON(data []byte) (err error) {
 	// that every required field exists as a key in the generic map.
 	requiredProperties := []string{
 		"network_id",
+		"event_type",
 		"notification_uri",
 	}
 

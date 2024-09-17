@@ -12,6 +12,7 @@ package client
 
 import (
 	"encoding/json"
+	"time"
 	"bytes"
 	"fmt"
 )
@@ -23,8 +24,8 @@ var _ MappedNullable = &StakingBalance{}
 type StakingBalance struct {
 	// The onchain address for which the staking balances are being fetched.
 	Address string `json:"address"`
-	// The date of the staking balance in format 'YYYY-MM-DD' in UTC.
-	Date string `json:"date"`
+	// The timestamp of the staking balance in UTC.
+	Date time.Time `json:"date"`
 	BondedStake Balance `json:"bonded_stake"`
 	UnbondedBalance Balance `json:"unbonded_balance"`
 	// The type of staking participation.
@@ -37,7 +38,7 @@ type _StakingBalance StakingBalance
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewStakingBalance(address string, date string, bondedStake Balance, unbondedBalance Balance, participantType string) *StakingBalance {
+func NewStakingBalance(address string, date time.Time, bondedStake Balance, unbondedBalance Balance, participantType string) *StakingBalance {
 	this := StakingBalance{}
 	this.Address = address
 	this.Date = date
@@ -80,9 +81,9 @@ func (o *StakingBalance) SetAddress(v string) {
 }
 
 // GetDate returns the Date field value
-func (o *StakingBalance) GetDate() string {
+func (o *StakingBalance) GetDate() time.Time {
 	if o == nil {
-		var ret string
+		var ret time.Time
 		return ret
 	}
 
@@ -91,7 +92,7 @@ func (o *StakingBalance) GetDate() string {
 
 // GetDateOk returns a tuple with the Date field value
 // and a boolean to check if the value has been set.
-func (o *StakingBalance) GetDateOk() (*string, bool) {
+func (o *StakingBalance) GetDateOk() (*time.Time, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -99,7 +100,7 @@ func (o *StakingBalance) GetDateOk() (*string, bool) {
 }
 
 // SetDate sets field value
-func (o *StakingBalance) SetDate(v string) {
+func (o *StakingBalance) SetDate(v time.Time) {
 	o.Date = v
 }
 
