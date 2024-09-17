@@ -11,6 +11,11 @@ import (
 	"github.com/coinbase/coinbase-sdk-go/pkg/coinbase"
 )
 
+/*
+ * This example code stakes ETH on the Holesky network.
+ * Run the code with 'go run examples/ethereum/build-staking-operation/main.go <api_key_file_path> <wallet_address>'
+ */
+
 func main() {
 	ctx := context.Background()
 
@@ -21,7 +26,7 @@ func main() {
 		log.Fatalf("error creating coinbase client: %v", err)
 	}
 
-	address := coinbase.NewExternalAddress("ethereum-holesky", "0x57a063e1df096aaA6b2068C3C7FE6Ac4BC3c4F58")
+	address := coinbase.NewExternalAddress("ethereum-holesky", os.Args[2])
 
 	stakeableBalance, err := client.GetStakeableBalance(ctx, coinbase.Eth, address, coinbase.WithStakingBalanceMode(coinbase.StakingOperationModePartial))
 	if err != nil {
