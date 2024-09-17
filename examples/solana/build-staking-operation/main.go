@@ -25,6 +25,11 @@ var (
 	defaultPrivKeyPath = filepath.Join(home(), ".config/solana/id.json")
 )
 
+/*
+ * This example code stakes SOL on the devnet network.
+ * Run the code with 'go run examples/solana/build-staking-operation/main.go <api_key_file_path> <wallet_address>'
+ */
+
 func main() {
 	ctx := context.Background()
 
