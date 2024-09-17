@@ -6,39 +6,58 @@ import (
 	"log"
 	"math/big"
 	"os"
+	"path/filepath"
+	"strings"
 	"time"
 
 	"github.com/btcsuite/btcutil/base58"
-	"github.com/coinbase/coinbase-sdk-go/gen/client"
 	"github.com/coinbase/coinbase-sdk-go/pkg/coinbase"
+
 	bin "github.com/gagliardetto/binary"
 	"github.com/gagliardetto/solana-go"
 	"github.com/gagliardetto/solana-go/rpc"
 )
 
 var (
-	networkID = client.NETWORKIDENTIFIER_SOLANA_DEVNET
-	amount    = big.NewFloat(0.1)
-	rpcURL    = "https://api.devnet.solana.com"
+	networkID          = "solana-devnet"
+	amount             = big.NewFloat(0.1)
+	rpcURL             = "https://api.devnet.solana.com"
+	defaultPrivKeyPath = filepath.Join(home(), ".config/solana/id.json")
 )
 
 /*
  * This example code stakes SOL on the devnet network.
- * Run the code with 'go run examples/solana/build-staking-operation/main.go <api_key_file_path> <wallet_address> <wallet_private_key>'
+ * Run the code with 'go run examples/solana/build-staking-operation/main.go <api_key_file_path> <wallet_address>'
  */
 
 func main() {
 	ctx := context.Background()
 
+	walletAddress := os.Args[2]
+
+	privKeys := []string{defaultPrivKeyPath}
+	if keys := os.Getenv("SOL_PRIVATE_KEYS"); keys != "" {
+		privKeys = strings.Split(keys, ",")
+	}
+
+	signers := make([]solana.PrivateKey, len(privKeys))
+	for i, pk := range privKeys {
+		privKey, err := solana.PrivateKeyFromSolanaKeygenFile(pk)
+		if err != nil {
+			log.Fatalf("private key %s does not exist or is invalid", privKey)
+		}
+
+		signers[i] = privKey
+	}
+
 	client, err := coinbase.NewClient(
 		coinbase.WithAPIKeyFromJSON(os.Args[1]),
-		coinbase.WithTimeout(20*time.Second),
 	)
 	if err != nil {
 		log.Fatalf("error creating coinbase client: %v", err)
 	}
 
-	address := coinbase.NewExternalAddress(string(networkID), os.Args[2])
+	address := coinbase.NewExternalAddress(networkID, walletAddress)
 
 	balance, err := client.GetStakeableBalance(ctx, coinbase.Sol, address)
 	if err != nil {
@@ -54,46 +73,26 @@ func main() {
 
 	log.Printf("Staking operation ID: %s\n\n", stakingOperation.ID())
 
-	stakingOperation, err = client.Wait(ctx, stakingOperation, coinbase.WithWaitTimeoutSeconds(60))
-	if err != nil {
-		log.Fatalf("error waiting for staking operation: %v", err)
-	}
-
 	for _, transaction := range stakingOperation.Transactions() {
-		log.Printf("Unsigned tx payload: %s\n\n", transaction.UnsignedPayload())
+		log.Printf("Tx unsigned payload: %s\n\n", transaction.UnsignedPayload())
 
-		signedTx, err := signSolTransaction(transaction.UnsignedPayload(), []string{os.Args[3]})
+		signedTx, err := signSolTransaction(transaction.UnsignedPayload(), signers)
 		if err != nil {
 			log.Fatalf("error signing transaction: %v", err)
 		}
 
 		log.Printf("Signed tx: %s\n\n", signedTx)
 
-		broadcastedTx, err := broadcastSolTransaction(ctx, signedTx)
+		sig, err := broadcastSolTransaction(ctx, signedTx)
 		if err != nil {
 			log.Fatalf("error broadcasting transaction: %v", err)
 		}
 
-		log.Printf("Broadcasted tx: %s\n\n", getTxLink(stakingOperation.NetworkID(), broadcastedTx))
+		log.Printf("Broadcasted tx: %s\n\n", getTxLink(stakingOperation.NetworkID(), sig))
 	}
 }
 
-func signSolTransaction(unsignedTx string, privateKeys []string) (string, error) {
-	if len(privateKeys) == 0 {
-		return "", fmt.Errorf("need to pass at least one private key")
-	}
-
-	signers := make([]solana.PrivateKey, 0, len(privateKeys))
-
-	for _, privateKey := range privateKeys {
-		signer, err := solana.PrivateKeyFromBase58(privateKey)
-		if err != nil {
-			return "", fmt.Errorf("error getting private key: %w", err)
-		}
-
-		signers = append(signers, signer)
-	}
-
+func signSolTransaction(unsignedTx string, signers []solana.PrivateKey) (string, error) {
 	data := base58.Decode(unsignedTx)
 
 	// parse transaction
@@ -134,8 +133,7 @@ func broadcastSolTransaction(ctx context.Context, signedTx string) (string, erro
 	)
 
 	cluster := rpc.Cluster{
-		Name: "solana-staking-demo-rpc",
-		RPC:  rpcURL,
+		RPC: rpcURL,
 	}
 
 	rpcClient := rpc.New(cluster.RPC)
@@ -148,8 +146,6 @@ func broadcastSolTransaction(ctx context.Context, signedTx string) (string, erro
 		return "", err
 	}
 
-	fmt.Println("Blockhash: ", tx.Message.RecentBlockhash)
-
 	opts := rpc.TransactionOpts{
 		SkipPreflight:       false,
 		PreflightCommitment: rpc.CommitmentFinalized,
@@ -157,19 +153,17 @@ func broadcastSolTransaction(ctx context.Context, signedTx string) (string, erro
 
 	fmt.Println("Sending transaction...")
 
-	maxRetries := 5
+	maxRetries := 20
 
-	for i := 0; i < maxRetries; i++ {
-		fmt.Printf("Sending transaction attempt [%d]...\n", i)
+	for maxRetries > 0 {
+		fmt.Printf("Trying again [%d] Sending transaction...\n", 21-maxRetries)
 
 		sig, err = rpcClient.SendTransactionWithOpts(ctx, tx, opts)
 		if err != nil {
-			fmt.Printf("Error sending transaction: %v.", err)
-			fmt.Printf("Retrying in 3 seconds...\n")
-
 			time.Sleep(3 * time.Second)
+			maxRetries--
 
-			i++
+			continue
 		}
 
 		break
@@ -190,4 +184,13 @@ func getTxLink(networkID, signature string) string {
 	}
 
 	return ""
+}
+
+func home() string {
+	home, err := os.UserHomeDir()
+	if err != nil {
+		log.Fatal("unable to get user homedir")
+	}
+
+	return home
 }
