@@ -14,7 +14,7 @@ var (
 )
 
 /*
- * This example code list historical staking balances of any delegator on the Solana blockchain
+ * This example code lists historical staking balances of any delegator on the Solana blockchain
  * Run the code with 'go run examples/solana/list-staking-balances/main.go <api_key_file_path> <wallet_address>'
  */
 
