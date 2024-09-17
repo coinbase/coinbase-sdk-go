@@ -25,6 +25,9 @@ const (
 	NETWORKIDENTIFIER_ETHEREUM_HOLESKY NetworkIdentifier = "ethereum-holesky"
 	NETWORKIDENTIFIER_ETHEREUM_MAINNET NetworkIdentifier = "ethereum-mainnet"
 	NETWORKIDENTIFIER_POLYGON_MAINNET NetworkIdentifier = "polygon-mainnet"
+	NETWORKIDENTIFIER_SOLANA_DEVNET NetworkIdentifier = "solana-devnet"
+	NETWORKIDENTIFIER_SOLANA_MAINNET NetworkIdentifier = "solana-mainnet"
+	NETWORKIDENTIFIER_ARBITRUM_MAINNET NetworkIdentifier = "arbitrum-mainnet"
 )
 
 // All allowed values of NetworkIdentifier enum
@@ -34,6 +37,9 @@ var AllowedNetworkIdentifierEnumValues = []NetworkIdentifier{
 	"ethereum-holesky",
 	"ethereum-mainnet",
 	"polygon-mainnet",
+	"solana-devnet",
+	"solana-mainnet",
+	"arbitrum-mainnet",
 }
 
 func (v *NetworkIdentifier) UnmarshalJSON(src []byte) error {

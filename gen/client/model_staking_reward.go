@@ -12,6 +12,7 @@ package client
 
 import (
 	"encoding/json"
+	"time"
 	"bytes"
 	"fmt"
 )
@@ -23,8 +24,8 @@ var _ MappedNullable = &StakingReward{}
 type StakingReward struct {
 	// The onchain address for which the staking rewards are being fetched.
 	AddressId string `json:"address_id"`
-	// The date of the reward in format 'YYYY-MM-DD' in UTC.
-	Date string `json:"date"`
+	// The timestamp of the reward in UTC.
+	Date time.Time `json:"date"`
 	// The reward amount in requested \"format\". Default is USD.
 	Amount string `json:"amount"`
 	// The state of the reward.
@@ -39,7 +40,7 @@ type _StakingReward StakingReward
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewStakingReward(addressId string, date string, amount string, state string, format StakingRewardFormat, usdValue StakingRewardUSDValue) *StakingReward {
+func NewStakingReward(addressId string, date time.Time, amount string, state string, format StakingRewardFormat, usdValue StakingRewardUSDValue) *StakingReward {
 	this := StakingReward{}
 	this.AddressId = addressId
 	this.Date = date
@@ -85,9 +86,9 @@ func (o *StakingReward) SetAddressId(v string) {
 }
 
 // GetDate returns the Date field value
-func (o *StakingReward) GetDate() string {
+func (o *StakingReward) GetDate() time.Time {
 	if o == nil {
-		var ret string
+		var ret time.Time
 		return ret
 	}
 
@@ -96,7 +97,7 @@ func (o *StakingReward) GetDate() string {
 
 // GetDateOk returns a tuple with the Date field value
 // and a boolean to check if the value has been set.
-func (o *StakingReward) GetDateOk() (*string, bool) {
+func (o *StakingReward) GetDateOk() (*time.Time, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -104,7 +105,7 @@ func (o *StakingReward) GetDateOk() (*string, bool) {
 }
 
 // SetDate sets field value
-func (o *StakingReward) SetDate(v string) {
+func (o *StakingReward) SetDate(v time.Time) {
 	o.Date = v
 }
 

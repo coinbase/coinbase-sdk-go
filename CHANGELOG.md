@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+## [0.0.9] - 2024-09-17
+- Update SDK with latest generated client code.
+
+
 ## [0.0.8] - 2024-09-17
 
 - StakingRewards's Date field is now a full timestamp

@@ -38,6 +38,22 @@ type AddressesAPI interface {
 	CreateAddressExecute(r ApiCreateAddressRequest) (*Address, *http.Response, error)
 
 	/*
+	CreatePayloadSignature Create a new payload signature.
+
+	Create a new payload signature with an address.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@param walletId The ID of the wallet the address belongs to.
+	@param addressId The onchain address of the address to sign the payload with.
+	@return ApiCreatePayloadSignatureRequest
+	*/
+	CreatePayloadSignature(ctx context.Context, walletId string, addressId string) ApiCreatePayloadSignatureRequest
+
+	// CreatePayloadSignatureExecute executes the request
+	//  @return PayloadSignature
+	CreatePayloadSignatureExecute(r ApiCreatePayloadSignatureRequest) (*PayloadSignature, *http.Response, error)
+
+	/*
 	GetAddress Get address by onchain address
 
 	Get address
@@ -71,6 +87,23 @@ type AddressesAPI interface {
 	GetAddressBalanceExecute(r ApiGetAddressBalanceRequest) (*Balance, *http.Response, error)
 
 	/*
+	GetPayloadSignature Get payload signature.
+
+	Get payload signature.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@param walletId The ID of the wallet the address belongs to.
+	@param addressId The onchain address of the address that signed the payload.
+	@param payloadSignatureId The ID of the payload signature to fetch.
+	@return ApiGetPayloadSignatureRequest
+	*/
+	GetPayloadSignature(ctx context.Context, walletId string, addressId string, payloadSignatureId string) ApiGetPayloadSignatureRequest
+
+	// GetPayloadSignatureExecute executes the request
+	//  @return PayloadSignature
+	GetPayloadSignatureExecute(r ApiGetPayloadSignatureRequest) (*PayloadSignature, *http.Response, error)
+
+	/*
 	ListAddressBalances Get all balances for address
 
 	Get address balances
@@ -100,6 +133,22 @@ type AddressesAPI interface {
 	// ListAddressesExecute executes the request
 	//  @return AddressList
 	ListAddressesExecute(r ApiListAddressesRequest) (*AddressList, *http.Response, error)
+
+	/*
+	ListPayloadSignatures List payload signatures for an address.
+
+	List payload signatures for an address.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@param walletId The ID of the wallet the address belongs to.
+	@param addressId The onchain address of the address whose payload signatures to fetch.
+	@return ApiListPayloadSignaturesRequest
+	*/
+	ListPayloadSignatures(ctx context.Context, walletId string, addressId string) ApiListPayloadSignaturesRequest
+
+	// ListPayloadSignaturesExecute executes the request
+	//  @return PayloadSignatureList
+	ListPayloadSignaturesExecute(r ApiListPayloadSignaturesRequest) (*PayloadSignatureList, *http.Response, error)
 
 	/*
 	RequestFaucetFunds Request faucet funds for onchain address.
@@ -195,6 +244,129 @@ func (a *AddressesAPIService) CreateAddressExecute(r ApiCreateAddressRequest) (*
 	}
 	// body params
 	localVarPostBody = r.createAddressRequest
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+	localVarHTTPResponse.Body.Close()
+	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	if err != nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: localVarHTTPResponse.Status,
+		}
+			var v Error
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+					newErr.model = v
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	if err != nil {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: err.Error(),
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, nil
+}
+
+type ApiCreatePayloadSignatureRequest struct {
+	ctx context.Context
+	ApiService AddressesAPI
+	walletId string
+	addressId string
+	createPayloadSignatureRequest *CreatePayloadSignatureRequest
+}
+
+func (r ApiCreatePayloadSignatureRequest) CreatePayloadSignatureRequest(createPayloadSignatureRequest CreatePayloadSignatureRequest) ApiCreatePayloadSignatureRequest {
+	r.createPayloadSignatureRequest = &createPayloadSignatureRequest
+	return r
+}
+
+func (r ApiCreatePayloadSignatureRequest) Execute() (*PayloadSignature, *http.Response, error) {
+	return r.ApiService.CreatePayloadSignatureExecute(r)
+}
+
+/*
+CreatePayloadSignature Create a new payload signature.
+
+Create a new payload signature with an address.
+
+ @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ @param walletId The ID of the wallet the address belongs to.
+ @param addressId The onchain address of the address to sign the payload with.
+ @return ApiCreatePayloadSignatureRequest
+*/
+func (a *AddressesAPIService) CreatePayloadSignature(ctx context.Context, walletId string, addressId string) ApiCreatePayloadSignatureRequest {
+	return ApiCreatePayloadSignatureRequest{
+		ApiService: a,
+		ctx: ctx,
+		walletId: walletId,
+		addressId: addressId,
+	}
+}
+
+// Execute executes the request
+//  @return PayloadSignature
+func (a *AddressesAPIService) CreatePayloadSignatureExecute(r ApiCreatePayloadSignatureRequest) (*PayloadSignature, *http.Response, error) {
+	var (
+		localVarHTTPMethod   = http.MethodPost
+		localVarPostBody     interface{}
+		formFiles            []formFile
+		localVarReturnValue  *PayloadSignature
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "AddressesAPIService.CreatePayloadSignature")
+	if err != nil {
+		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/v1/wallets/{wallet_id}/addresses/{address_id}/payload_signatures"
+	localVarPath = strings.Replace(localVarPath, "{"+"wallet_id"+"}", url.PathEscape(parameterValueToString(r.walletId, "walletId")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"address_id"+"}", url.PathEscape(parameterValueToString(r.addressId, "addressId")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{"application/json"}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	// body params
+	localVarPostBody = r.createPayloadSignatureRequest
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
 	if err != nil {
 		return localVarReturnValue, nil, err
@@ -474,6 +646,125 @@ func (a *AddressesAPIService) GetAddressBalanceExecute(r ApiGetAddressBalanceReq
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
+type ApiGetPayloadSignatureRequest struct {
+	ctx context.Context
+	ApiService AddressesAPI
+	walletId string
+	addressId string
+	payloadSignatureId string
+}
+
+func (r ApiGetPayloadSignatureRequest) Execute() (*PayloadSignature, *http.Response, error) {
+	return r.ApiService.GetPayloadSignatureExecute(r)
+}
+
+/*
+GetPayloadSignature Get payload signature.
+
+Get payload signature.
+
+ @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ @param walletId The ID of the wallet the address belongs to.
+ @param addressId The onchain address of the address that signed the payload.
+ @param payloadSignatureId The ID of the payload signature to fetch.
+ @return ApiGetPayloadSignatureRequest
+*/
+func (a *AddressesAPIService) GetPayloadSignature(ctx context.Context, walletId string, addressId string, payloadSignatureId string) ApiGetPayloadSignatureRequest {
+	return ApiGetPayloadSignatureRequest{
+		ApiService: a,
+		ctx: ctx,
+		walletId: walletId,
+		addressId: addressId,
+		payloadSignatureId: payloadSignatureId,
+	}
+}
+
+// Execute executes the request
+//  @return PayloadSignature
+func (a *AddressesAPIService) GetPayloadSignatureExecute(r ApiGetPayloadSignatureRequest) (*PayloadSignature, *http.Response, error) {
+	var (
+		localVarHTTPMethod   = http.MethodGet
+		localVarPostBody     interface{}
+		formFiles            []formFile
+		localVarReturnValue  *PayloadSignature
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "AddressesAPIService.GetPayloadSignature")
+	if err != nil {
+		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/v1/wallets/{wallet_id}/addresses/{address_id}/payload_signatures/{payload_signature_id}"
+	localVarPath = strings.Replace(localVarPath, "{"+"wallet_id"+"}", url.PathEscape(parameterValueToString(r.walletId, "walletId")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"address_id"+"}", url.PathEscape(parameterValueToString(r.addressId, "addressId")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"payload_signature_id"+"}", url.PathEscape(parameterValueToString(r.payloadSignatureId, "payloadSignatureId")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+	localVarHTTPResponse.Body.Close()
+	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	if err != nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: localVarHTTPResponse.Status,
+		}
+			var v Error
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+					newErr.model = v
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	if err != nil {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: err.Error(),
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, nil
+}
+
 type ApiListAddressBalancesRequest struct {
 	ctx context.Context
 	ApiService AddressesAPI
@@ -535,7 +826,7 @@ func (a *AddressesAPIService) ListAddressBalancesExecute(r ApiListAddressBalance
 	localVarFormParams := url.Values{}
 
 	if r.page != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "page", r.page, "")
+		parameterAddToHeaderOrQuery(localVarQueryParams, "page", r.page, "form", "")
 	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
@@ -663,10 +954,145 @@ func (a *AddressesAPIService) ListAddressesExecute(r ApiListAddressesRequest) (*
 	localVarFormParams := url.Values{}
 
 	if r.limit != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "limit", r.limit, "")
+		parameterAddToHeaderOrQuery(localVarQueryParams, "limit", r.limit, "form", "")
 	}
 	if r.page != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "page", r.page, "")
+		parameterAddToHeaderOrQuery(localVarQueryParams, "page", r.page, "form", "")
+	}
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+	localVarHTTPResponse.Body.Close()
+	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	if err != nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: localVarHTTPResponse.Status,
+		}
+			var v Error
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+					newErr.model = v
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	if err != nil {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: err.Error(),
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, nil
+}
+
+type ApiListPayloadSignaturesRequest struct {
+	ctx context.Context
+	ApiService AddressesAPI
+	walletId string
+	addressId string
+	limit *int32
+	page *string
+}
+
+// A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default is 10.
+func (r ApiListPayloadSignaturesRequest) Limit(limit int32) ApiListPayloadSignaturesRequest {
+	r.limit = &limit
+	return r
+}
+
+// A cursor for pagination across multiple pages of results. Don&#39;t include this parameter on the first call. Use the next_page value returned in a previous response to request subsequent results.
+func (r ApiListPayloadSignaturesRequest) Page(page string) ApiListPayloadSignaturesRequest {
+	r.page = &page
+	return r
+}
+
+func (r ApiListPayloadSignaturesRequest) Execute() (*PayloadSignatureList, *http.Response, error) {
+	return r.ApiService.ListPayloadSignaturesExecute(r)
+}
+
+/*
+ListPayloadSignatures List payload signatures for an address.
+
+List payload signatures for an address.
+
+ @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ @param walletId The ID of the wallet the address belongs to.
+ @param addressId The onchain address of the address whose payload signatures to fetch.
+ @return ApiListPayloadSignaturesRequest
+*/
+func (a *AddressesAPIService) ListPayloadSignatures(ctx context.Context, walletId string, addressId string) ApiListPayloadSignaturesRequest {
+	return ApiListPayloadSignaturesRequest{
+		ApiService: a,
+		ctx: ctx,
+		walletId: walletId,
+		addressId: addressId,
+	}
+}
+
+// Execute executes the request
+//  @return PayloadSignatureList
+func (a *AddressesAPIService) ListPayloadSignaturesExecute(r ApiListPayloadSignaturesRequest) (*PayloadSignatureList, *http.Response, error) {
+	var (
+		localVarHTTPMethod   = http.MethodGet
+		localVarPostBody     interface{}
+		formFiles            []formFile
+		localVarReturnValue  *PayloadSignatureList
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "AddressesAPIService.ListPayloadSignatures")
+	if err != nil {
+		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/v1/wallets/{wallet_id}/addresses/{address_id}/payload_signatures"
+	localVarPath = strings.Replace(localVarPath, "{"+"wallet_id"+"}", url.PathEscape(parameterValueToString(r.walletId, "walletId")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"address_id"+"}", url.PathEscape(parameterValueToString(r.addressId, "addressId")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	if r.limit != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "limit", r.limit, "form", "")
+	}
+	if r.page != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "page", r.page, "form", "")
 	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
@@ -735,6 +1161,13 @@ type ApiRequestFaucetFundsRequest struct {
 	ApiService AddressesAPI
 	walletId string
 	addressId string
+	assetId *string
+}
+
+// The ID of the asset to transfer from the faucet.
+func (r ApiRequestFaucetFundsRequest) AssetId(assetId string) ApiRequestFaucetFundsRequest {
+	r.assetId = &assetId
+	return r
 }
 
 func (r ApiRequestFaucetFundsRequest) Execute() (*FaucetTransaction, *http.Response, error) {
@@ -783,6 +1216,9 @@ func (a *AddressesAPIService) RequestFaucetFundsExecute(r ApiRequestFaucetFundsR
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
+	if r.assetId != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "asset_id", r.assetId, "form", "")
+	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
 

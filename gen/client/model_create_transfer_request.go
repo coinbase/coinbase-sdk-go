@@ -27,7 +27,7 @@ type CreateTransferRequest struct {
 	NetworkId string `json:"network_id"`
 	// The ID of the asset to transfer
 	AssetId string `json:"asset_id"`
-	// The destination address
+	// The destination address, which can be a 0x address, Basename, or ENS name
 	Destination string `json:"destination"`
 	// Whether the transfer uses sponsored gas
 	Gasless *bool `json:"gasless,omitempty"`

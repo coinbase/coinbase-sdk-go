@@ -261,13 +261,13 @@ func TestAmount(t *testing.T) {
 func TestDate(t *testing.T) {
 	stakingReward := StakingReward{
 		model: api.StakingReward{
-			Date: "2024-08-10T00:00:11Z",
+			Date: time.Date(2024, 8, 10, 0, 0, 00, 0, time.UTC),
 		},
 	}
 
 	resp, err := stakingReward.Date()
 	assert.NoError(t, err, "error should be nil")
-	assert.Equal(t, "2024-08-10T00:00:11Z", resp.Format(timestampFormat))
+	assert.Equal(t, "2024-08-10 00:00:00 +0000 UTC", resp.String())
 }
 
 func mockFetchAsset(t *testing.T, assetsAPI *mocks.AssetsAPI, statusCode int) {
@@ -301,7 +301,7 @@ func mockFetchStakingRewards(t *testing.T, stakeAPI *mocks.StakeAPI, statusCode 
 			Data: []api.StakingReward{
 				{
 					AddressId: "test-address-id",
-					Date:      "2024-08-10",
+					Date:      time.Date(2024, 8, 10, 0, 0, 00, 0, time.UTC),
 					Amount:    "1",
 					State:     "pending",
 					Format:    "usd",
@@ -333,7 +333,7 @@ func mockFetchStakingRewardsWithPage(t *testing.T, stakeAPI *mocks.StakeAPI) {
 			Data: []api.StakingReward{
 				{
 					AddressId: "test-address-id",
-					Date:      "2024-08-10",
+					Date:      time.Date(2024, 8, 10, 0, 0, 00, 0, time.UTC),
 					Amount:    "1",
 					State:     "pending",
 					Format:    "usd",
@@ -361,7 +361,7 @@ func mockFetchStakingRewardsWithPage(t *testing.T, stakeAPI *mocks.StakeAPI) {
 			Data: []api.StakingReward{
 				{
 					AddressId: "test-address-id",
-					Date:      "2024-08-11",
+					Date:      time.Date(2024, 8, 10, 0, 0, 00, 0, time.UTC),
 					Amount:    "1",
 					State:     "pending",
 					Format:    "usd",

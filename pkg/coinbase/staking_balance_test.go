@@ -60,7 +60,7 @@ func TestListHistoricalStakingBalances(t *testing.T) {
 					Data: []client.StakingBalance{
 						{
 							ParticipantType: "participantType",
-							Date:            parsedTime.Format(timestampFormat),
+							Date:            parsedTime,
 							BondedStake: client.Balance{
 								Amount: "123",
 								Asset: client.Asset{
