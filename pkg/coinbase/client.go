@@ -83,7 +83,6 @@ func NewClient(o ...ClientOption) (*Client, error) {
 		cfg: client.NewConfiguration(),
 	}
 
-	// Setting some default values.
 	if c.baseHTTPClient == nil {
 		c.baseHTTPClient = &http.Client{
 			Timeout: time.Second * 5,
