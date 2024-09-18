@@ -148,8 +148,6 @@ func broadcastSolTransaction(ctx context.Context, signedTx string) (string, erro
 		return "", err
 	}
 
-	fmt.Println("Blockhash: ", tx.Message.RecentBlockhash)
-
 	opts := rpc.TransactionOpts{
 		SkipPreflight:       false,
 		PreflightCommitment: rpc.CommitmentFinalized,
@@ -159,6 +157,7 @@ func broadcastSolTransaction(ctx context.Context, signedTx string) (string, erro
 
 	maxRetries := 5
 
+	var sig solana.Signature
 	for i := 0; i < maxRetries; i++ {
 		fmt.Printf("Sending transaction attempt [%d]...\n", i)
 
