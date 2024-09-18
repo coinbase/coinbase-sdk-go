@@ -32,7 +32,7 @@ func main() {
 
 	client, err := coinbase.NewClient(
 		coinbase.WithAPIKeyFromJSON(os.Args[1]),
-		coinbase.WithTimeout(20*time.Second),
+		coinbase.WithTimeout(10*time.Second),
 	)
 	if err != nil {
 		log.Fatalf("error creating coinbase client: %v", err)
