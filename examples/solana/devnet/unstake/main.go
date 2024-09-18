@@ -18,13 +18,13 @@ import (
 
 var (
 	networkID = client.NETWORKIDENTIFIER_SOLANA_DEVNET
-	amount    = big.NewFloat(0.1)
+	amount    = big.NewFloat(0.01)
 	rpcURL    = "https://api.devnet.solana.com"
 )
 
 /*
  * This example code stakes SOL on the devnet network.
- * Run the code with 'go run examples/solana/build-staking-operation/main.go <api_key_file_path> <wallet_address> <wallet_private_key>'
+ * Run the code with 'go run examples/solana/devnet/unstake/main.go <api_key_file_path> <wallet_address> <wallet_private_key>'
  */
 
 func main() {
@@ -40,14 +40,14 @@ func main() {
 
 	address := coinbase.NewExternalAddress(string(networkID), os.Args[2])
 
-	balance, err := client.GetStakeableBalance(ctx, coinbase.Sol, address)
+	balance, err := client.GetUnstakeableBalance(ctx, coinbase.Sol, address)
 	if err != nil {
 		log.Fatalf("error getting balance: %v", err)
 	}
 
-	log.Printf("Stakeable balance: %s\n\n", balance.Amount().String())
+	log.Printf("Unstakeable balance: %s\n\n", balance.Amount().String())
 
-	stakingOperation, err := client.BuildStakeOperation(ctx, amount, coinbase.Sol, address)
+	stakingOperation, err := client.BuildUnstakeOperation(ctx, amount, coinbase.Sol, address)
 	if err != nil {
 		log.Fatalf("error building staking operation: %v", err)
 	}
@@ -128,11 +128,6 @@ func signSolTransaction(unsignedTx string, privateKeys []string) (string, error)
 }
 
 func broadcastSolTransaction(ctx context.Context, signedTx string) (string, error) {
-	var (
-		sig solana.Signature
-		err error
-	)
-
 	cluster := rpc.Cluster{
 		Name: "solana-staking-demo-rpc",
 		RPC:  rpcURL,

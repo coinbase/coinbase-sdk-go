@@ -13,7 +13,7 @@ import (
 
 /*
  * This example code stakes ETH on the Holesky network.
- * Run the code with 'go run examples/ethereum/build-staking-operation/main.go <api_key_file_path> <wallet_address>'
+ * Run the code with 'go run examples/ethereum/stake/main.go <api_key_file_path> <wallet_address>'
  */
 
 func main() {
