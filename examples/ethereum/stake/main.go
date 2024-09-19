@@ -13,7 +13,7 @@ import (
 )
 
 /*
- * This example code stakes ETH on the Holesky network.
+ * This example code stakes ETH on the Holesky network via Shared ETH Staking.
  * Run the code with 'go run examples/ethereum/stake/main.go <api_key_file_path> <wallet_address> <wallet_private_key>'
  */
 
@@ -80,5 +80,4 @@ func main() {
 
 		log.Printf("Broadcasted transaction hash: %s", ethTx.Hash().Hex())
 	}
-
 }

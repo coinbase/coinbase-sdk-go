@@ -14,7 +14,7 @@ import (
  * This example code list historical staking rewards for any ETH validator or Shared ETH Staking wallet address.
  * For example: the addresses:
  *   * Shared ETH Staking wallet address: 0xddb00798137e9e7cc89f1e9679e6ce6ea580b8f9
- *   * ETH Validator: 0xadbf3776d60b3f9dd30cb3257b50583898745deb40cb6cb842120753bf055f6c3863e0f5bdb5c403d9aa5a275ce165e8
+ *   * ETH Validator: 0xa1d1ad0714035353258038e964ae9675dc0252ee22cea896825c01458e1807bfad2f9969338798548d9858a571f7425c
  * Run the code with 'go run examples/ethereum/list-staking-rewards/main.go <api_key_file_path> <wallet_address>'
  */
 
