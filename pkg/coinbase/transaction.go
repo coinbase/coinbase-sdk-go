@@ -121,7 +121,6 @@ func newTransactionFromModel(m *client.Transaction) (*Transaction, error) {
 	} else if strings.HasPrefix(m.NetworkId, "solana") {
 		data := base58.Decode(m.UnsignedPayload)
 
-		tx := &solana.Transaction{}
 		tx, err := solana.TransactionFromDecoder(bin.NewBinDecoder(data))
 		if err != nil {
 			return nil, err

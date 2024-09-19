@@ -13,7 +13,7 @@ import (
 	"github.com/gagliardetto/solana-go"
 )
 
-// This struct implements the Signable interface
+// SolanaSignable implements the Signable interface
 type SolanaSignable struct {
 	raw *solana.Transaction
 }
@@ -81,6 +81,7 @@ func (s *SolanaSignable) Raw() interface{} {
 	return s.raw
 }
 
+// EthereumSignable implements the Signable interface
 type EthereumSignable struct {
 	raw *types.Transaction
 }
