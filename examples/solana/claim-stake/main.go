@@ -12,6 +12,8 @@ import (
 	"github.com/btcsuite/btcutil/base58"
 	"github.com/coinbase/coinbase-sdk-go/gen/client"
 	"github.com/coinbase/coinbase-sdk-go/pkg/coinbase"
+	"github.com/gagliardetto/solana-go"
+	"github.com/gagliardetto/solana-go/rpc"
 )
 
 var (
@@ -64,6 +66,13 @@ func main() {
 		log.Fatalf("error signing transaction: %v", err)
 	}
 
+	rpcClient := rpc.New(rpcURL)
+
+	opts := rpc.TransactionOpts{
+		SkipPreflight:       false,
+		PreflightCommitment: rpc.CommitmentFinalized,
+	}
+
 	for _, transaction := range stakingOperation.Transactions() {
 		unsignedTx := transaction.UnsignedPayload()
 		signedTx := transaction.SignedPayload()
@@ -71,12 +80,18 @@ func main() {
 		log.Printf("Unsigned tx payload: %s\n\n", unsignedTx)
 		log.Printf("Signed tx payload: %s\n\n", signedTx)
 
-		broadcastedTx, err := coinbase.BroadcastSolanaTransaction(ctx, signedTx, rpcURL)
-		if err != nil {
-			log.Fatalf("error broadcasting transaction: %v", err)
+		rawTx := transaction.Raw()
+		solanaTx, ok := rawTx.(*solana.Transaction)
+		if !ok {
+			log.Fatal("failed to cast raw transaction to solana.Transaction")
 		}
 
-		log.Printf("Broadcasted tx: %s\n\n", getTxLink(stakingOperation.NetworkID(), broadcastedTx))
+		sig, err := rpcClient.SendTransactionWithOpts(ctx, solanaTx, opts)
+		if err != nil {
+			log.Fatalf("failed to send transaction: %v", err)
+		}
+
+		log.Printf("Broadcasted tx: %s\n\n", getTxLink(stakingOperation.NetworkID(), sig.String()))
 	}
 }
 
