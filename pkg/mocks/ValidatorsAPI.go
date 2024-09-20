@@ -21,10 +21,6 @@ type ValidatorsAPI struct {
 func (_m *ValidatorsAPI) GetValidator(ctx context.Context, networkId string, assetId string, validatorId string) client.ApiGetValidatorRequest {
 	ret := _m.Called(ctx, networkId, assetId, validatorId)
 
-	if len(ret) == 0 {
-		panic("no return value specified for GetValidator")
-	}
-
 	var r0 client.ApiGetValidatorRequest
 	if rf, ok := ret.Get(0).(func(context.Context, string, string, string) client.ApiGetValidatorRequest); ok {
 		r0 = rf(ctx, networkId, assetId, validatorId)
@@ -38,10 +34,6 @@ func (_m *ValidatorsAPI) GetValidator(ctx context.Context, networkId string, ass
 // GetValidatorExecute provides a mock function with given fields: r
 func (_m *ValidatorsAPI) GetValidatorExecute(r client.ApiGetValidatorRequest) (*client.Validator, *http.Response, error) {
 	ret := _m.Called(r)
-
-	if len(ret) == 0 {
-		panic("no return value specified for GetValidatorExecute")
-	}
 
 	var r0 *client.Validator
 	var r1 *http.Response
@@ -78,10 +70,6 @@ func (_m *ValidatorsAPI) GetValidatorExecute(r client.ApiGetValidatorRequest) (*
 func (_m *ValidatorsAPI) ListValidators(ctx context.Context, networkId string, assetId string) client.ApiListValidatorsRequest {
 	ret := _m.Called(ctx, networkId, assetId)
 
-	if len(ret) == 0 {
-		panic("no return value specified for ListValidators")
-	}
-
 	var r0 client.ApiListValidatorsRequest
 	if rf, ok := ret.Get(0).(func(context.Context, string, string) client.ApiListValidatorsRequest); ok {
 		r0 = rf(ctx, networkId, assetId)
@@ -95,10 +83,6 @@ func (_m *ValidatorsAPI) ListValidators(ctx context.Context, networkId string, a
 // ListValidatorsExecute provides a mock function with given fields: r
 func (_m *ValidatorsAPI) ListValidatorsExecute(r client.ApiListValidatorsRequest) (*client.ValidatorList, *http.Response, error) {
 	ret := _m.Called(r)
-
-	if len(ret) == 0 {
-		panic("no return value specified for ListValidatorsExecute")
-	}
 
 	var r0 *client.ValidatorList
 	var r1 *http.Response

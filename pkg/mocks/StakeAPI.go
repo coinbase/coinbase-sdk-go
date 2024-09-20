@@ -17,55 +17,6 @@ type StakeAPI struct {
 	mock.Mock
 }
 
-// BroadcastStakingOperation provides a mock function with given fields: ctx, walletId, addressId, stakingOperationId
-func (_m *StakeAPI) BroadcastStakingOperation(ctx context.Context, walletId string, addressId string, stakingOperationId string) client.ApiBroadcastStakingOperationRequest {
-	ret := _m.Called(ctx, walletId, addressId, stakingOperationId)
-
-	var r0 client.ApiBroadcastStakingOperationRequest
-	if rf, ok := ret.Get(0).(func(context.Context, string, string, string) client.ApiBroadcastStakingOperationRequest); ok {
-		r0 = rf(ctx, walletId, addressId, stakingOperationId)
-	} else {
-		r0 = ret.Get(0).(client.ApiBroadcastStakingOperationRequest)
-	}
-
-	return r0
-}
-
-// BroadcastStakingOperationExecute provides a mock function with given fields: r
-func (_m *StakeAPI) BroadcastStakingOperationExecute(r client.ApiBroadcastStakingOperationRequest) (*client.StakingOperation, *http.Response, error) {
-	ret := _m.Called(r)
-
-	var r0 *client.StakingOperation
-	var r1 *http.Response
-	var r2 error
-	if rf, ok := ret.Get(0).(func(client.ApiBroadcastStakingOperationRequest) (*client.StakingOperation, *http.Response, error)); ok {
-		return rf(r)
-	}
-	if rf, ok := ret.Get(0).(func(client.ApiBroadcastStakingOperationRequest) *client.StakingOperation); ok {
-		r0 = rf(r)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*client.StakingOperation)
-		}
-	}
-
-	if rf, ok := ret.Get(1).(func(client.ApiBroadcastStakingOperationRequest) *http.Response); ok {
-		r1 = rf(r)
-	} else {
-		if ret.Get(1) != nil {
-			r1 = ret.Get(1).(*http.Response)
-		}
-	}
-
-	if rf, ok := ret.Get(2).(func(client.ApiBroadcastStakingOperationRequest) error); ok {
-		r2 = rf(r)
-	} else {
-		r2 = ret.Error(2)
-	}
-
-	return r0, r1, r2
-}
-
 // BuildStakingOperation provides a mock function with given fields: ctx
 func (_m *StakeAPI) BuildStakingOperation(ctx context.Context) client.ApiBuildStakingOperationRequest {
 	ret := _m.Called(ctx)
@@ -107,55 +58,6 @@ func (_m *StakeAPI) BuildStakingOperationExecute(r client.ApiBuildStakingOperati
 	}
 
 	if rf, ok := ret.Get(2).(func(client.ApiBuildStakingOperationRequest) error); ok {
-		r2 = rf(r)
-	} else {
-		r2 = ret.Error(2)
-	}
-
-	return r0, r1, r2
-}
-
-// CreateStakingOperation provides a mock function with given fields: ctx, walletId, addressId
-func (_m *StakeAPI) CreateStakingOperation(ctx context.Context, walletId string, addressId string) client.ApiCreateStakingOperationRequest {
-	ret := _m.Called(ctx, walletId, addressId)
-
-	var r0 client.ApiCreateStakingOperationRequest
-	if rf, ok := ret.Get(0).(func(context.Context, string, string) client.ApiCreateStakingOperationRequest); ok {
-		r0 = rf(ctx, walletId, addressId)
-	} else {
-		r0 = ret.Get(0).(client.ApiCreateStakingOperationRequest)
-	}
-
-	return r0
-}
-
-// CreateStakingOperationExecute provides a mock function with given fields: r
-func (_m *StakeAPI) CreateStakingOperationExecute(r client.ApiCreateStakingOperationRequest) (*client.StakingOperation, *http.Response, error) {
-	ret := _m.Called(r)
-
-	var r0 *client.StakingOperation
-	var r1 *http.Response
-	var r2 error
-	if rf, ok := ret.Get(0).(func(client.ApiCreateStakingOperationRequest) (*client.StakingOperation, *http.Response, error)); ok {
-		return rf(r)
-	}
-	if rf, ok := ret.Get(0).(func(client.ApiCreateStakingOperationRequest) *client.StakingOperation); ok {
-		r0 = rf(r)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*client.StakingOperation)
-		}
-	}
-
-	if rf, ok := ret.Get(1).(func(client.ApiCreateStakingOperationRequest) *http.Response); ok {
-		r1 = rf(r)
-	} else {
-		if ret.Get(1) != nil {
-			r1 = ret.Get(1).(*http.Response)
-		}
-	}
-
-	if rf, ok := ret.Get(2).(func(client.ApiCreateStakingOperationRequest) error); ok {
 		r2 = rf(r)
 	} else {
 		r2 = ret.Error(2)
@@ -352,55 +254,6 @@ func (_m *StakeAPI) GetStakingContextExecute(r client.ApiGetStakingContextReques
 	}
 
 	if rf, ok := ret.Get(2).(func(client.ApiGetStakingContextRequest) error); ok {
-		r2 = rf(r)
-	} else {
-		r2 = ret.Error(2)
-	}
-
-	return r0, r1, r2
-}
-
-// GetStakingOperation provides a mock function with given fields: ctx, walletId, addressId, stakingOperationId
-func (_m *StakeAPI) GetStakingOperation(ctx context.Context, walletId string, addressId string, stakingOperationId string) client.ApiGetStakingOperationRequest {
-	ret := _m.Called(ctx, walletId, addressId, stakingOperationId)
-
-	var r0 client.ApiGetStakingOperationRequest
-	if rf, ok := ret.Get(0).(func(context.Context, string, string, string) client.ApiGetStakingOperationRequest); ok {
-		r0 = rf(ctx, walletId, addressId, stakingOperationId)
-	} else {
-		r0 = ret.Get(0).(client.ApiGetStakingOperationRequest)
-	}
-
-	return r0
-}
-
-// GetStakingOperationExecute provides a mock function with given fields: r
-func (_m *StakeAPI) GetStakingOperationExecute(r client.ApiGetStakingOperationRequest) (*client.StakingOperation, *http.Response, error) {
-	ret := _m.Called(r)
-
-	var r0 *client.StakingOperation
-	var r1 *http.Response
-	var r2 error
-	if rf, ok := ret.Get(0).(func(client.ApiGetStakingOperationRequest) (*client.StakingOperation, *http.Response, error)); ok {
-		return rf(r)
-	}
-	if rf, ok := ret.Get(0).(func(client.ApiGetStakingOperationRequest) *client.StakingOperation); ok {
-		r0 = rf(r)
-	} else {
-		if ret.Get(0) != nil {
-			r0 = ret.Get(0).(*client.StakingOperation)
-		}
-	}
-
-	if rf, ok := ret.Get(1).(func(client.ApiGetStakingOperationRequest) *http.Response); ok {
-		r1 = rf(r)
-	} else {
-		if ret.Get(1) != nil {
-			r1 = ret.Get(1).(*http.Response)
-		}
-	}
-
-	if rf, ok := ret.Get(2).(func(client.ApiGetStakingOperationRequest) error); ok {
 		r2 = rf(r)
 	} else {
 		r2 = ret.Error(2)

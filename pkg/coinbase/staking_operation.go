@@ -2,7 +2,7 @@ package coinbase
 
 import (
 	"context"
-	"crypto/ecdsa"
+	"crypto"
 	"encoding/base64"
 	"fmt"
 	"math/big"
@@ -159,10 +159,9 @@ func (s *StakingOperation) Transactions() []*Transaction {
 	return s.transactions
 }
 
-// Sign will sign each transaction using the supplied key
-// This will halt and return an error if any of the transactions
-// fail to sign.
-func (s *StakingOperation) Sign(k *ecdsa.PrivateKey) error {
+// Sign will sign each transaction using the supplied key if it isn't already signed.
+// This will halt and return an error if any of the transactions fail to sign.
+func (s *StakingOperation) Sign(k crypto.Signer) error {
 	for _, tx := range s.Transactions() {
 		if !tx.IsSigned() {
 			err := tx.Sign(k)

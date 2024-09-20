@@ -2,51 +2,35 @@ package coinbase
 
 import (
 	"context"
+	"crypto/ecdsa"
+	"crypto/elliptic"
+	"crypto/rand"
+	"errors"
 	"fmt"
 	"net/http"
 	"testing"
 
+	"github.com/coinbase/coinbase-sdk-go/gen/client"
 	api "github.com/coinbase/coinbase-sdk-go/gen/client"
 	"github.com/coinbase/coinbase-sdk-go/pkg/mocks"
 	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	"github.com/stretchr/testify/require"
+	"github.com/stretchr/testify/suite"
 )
 
-func TestStakingOperation_Wait_Success(t *testing.T) {
-	mc := &mockController{
-		stakeAPI: mocks.NewStakeAPI(t),
-	}
-	mockGetExternalStakingOperation(t, mc.stakeAPI, http.StatusOK, "pending")
-
-	c := &Client{
-		client: &api.APIClient{
-			StakeAPI:  mc.stakeAPI,
-			AssetsAPI: mc.assetsAPI,
-		},
-	}
-
-	so, err := mockStakingOperation(t, "pending")
-	require.NoError(t, err, "failed to create staking operation")
-	key, err := crypto.GenerateKey()
-	require.NoError(t, err, "failed to generate ecdsa key")
-	err = so.Sign(key)
-	require.NoError(t, err, "failed to sign staking operation")
-	signedPayload := so.Transactions()[0].SignedPayload()
-	require.NotEmpty(t, signedPayload, "signed payload should not be empty")
-	so, err = c.Wait(context.Background(), so)
-	assert.NoError(t, err, "staking operation wait should not error")
-	assert.Equal(t, "complete", so.Status(), "staking operation status should be complete")
-	assert.Equal(t, 1, len(so.Transactions()), "staking operation should have 1 transaction")
-	assert.Equal(t, signedPayload, so.Transactions()[0].SignedPayload(), "staking operation signed payload should not have changed")
+type StakingOperationSuite struct {
+	suite.Suite
 }
 
-func TestStakingOperation_Wait_Success_CustomOptions(t *testing.T) {
+func TestStakingOperationSuite(t *testing.T) {
+	suite.Run(t, new(StakingOperationSuite))
+}
+
+func (s *StakingOperationSuite) TestStakingOperation_Wait_Success() {
 	mc := &mockController{
-		stakeAPI: mocks.NewStakeAPI(t),
+		stakeAPI: mocks.NewStakeAPI(s.T()),
 	}
-	mockGetExternalStakingOperation(t, mc.stakeAPI, http.StatusOK, "pending")
+	mockGetExternalStakingOperation(s.T(), mc.stakeAPI, http.StatusOK, "pending")
 
 	c := &Client{
 		client: &api.APIClient{
@@ -55,20 +39,48 @@ func TestStakingOperation_Wait_Success_CustomOptions(t *testing.T) {
 		},
 	}
 
-	so, err := mockStakingOperation(t, "pending")
-	assert.NoError(t, err, "staking operation creation should not error")
+	so, err := mockStakingOperation(s.T(), "pending")
+	s.NoError(err, "failed to create staking operation")
+	key, err := crypto.GenerateKey()
+	s.NoError(err, "failed to generate ecdsa key")
+	err = so.Sign(key)
+	s.NoError(err, "failed to sign staking operation")
+	signedPayload := so.Transactions()[0].SignedPayload()
+	s.NotEmpty(signedPayload, "signed payload should not be empty")
+	so, err = c.Wait(context.Background(), so)
+	s.NoError(err, "staking operation wait should not error")
+	s.Equal("complete", so.Status(), "staking operation status should be complete")
+	s.Equal(1, len(so.Transactions()), "staking operation should have 1 transaction")
+	s.Equal(signedPayload, so.Transactions()[0].SignedPayload(), "staking operation signed payload should not have changed")
+}
+
+func (s *StakingOperationSuite) TestStakingOperation_Wait_Success_CustomOptions() {
+	mc := &mockController{
+		stakeAPI: mocks.NewStakeAPI(s.T()),
+	}
+	mockGetExternalStakingOperation(s.T(), mc.stakeAPI, http.StatusOK, "pending")
+
+	c := &Client{
+		client: &api.APIClient{
+			StakeAPI:  mc.stakeAPI,
+			AssetsAPI: mc.assetsAPI,
+		},
+	}
+
+	so, err := mockStakingOperation(s.T(), "pending")
+	s.NoError(err, "staking operation creation should not error")
 	so, err = c.Wait(
 		context.Background(),
 		so,
 		WithWaitIntervalSeconds(1),
 		WithWaitTimeoutSeconds(3),
 	)
-	assert.NoError(t, err, "staking operation wait should not error")
-	assert.Equal(t, "complete", so.Status(), "staking operation status should be complete")
-	assert.Equal(t, 1, len(so.Transactions()), "staking operation should have 1 transaction")
+	s.NoError(err, "staking operation wait should not error")
+	s.Equal("complete", so.Status(), "staking operation status should be complete")
+	s.Equal(1, len(so.Transactions()), "staking operation should have 1 transaction")
 }
 
-func TestStakingOperation_Wait_Failure(t *testing.T) {
+func (s *StakingOperationSuite) TestStakingOperation_Wait_Failure() {
 	tests := map[string]struct {
 		soStatus      string
 		setup         func(*mockController)
@@ -90,7 +102,7 @@ func TestStakingOperation_Wait_Failure(t *testing.T) {
 	}
 
 	for name, tt := range tests {
-		t.Run(name, func(t *testing.T) {
+		s.T().Run(name, func(t *testing.T) {
 			mc := &mockController{
 				stakeAPI: mocks.NewStakeAPI(t),
 			}
@@ -104,22 +116,22 @@ func TestStakingOperation_Wait_Failure(t *testing.T) {
 			}
 
 			so, err := mockStakingOperation(t, tt.soStatus)
-			assert.NoError(t, err, "staking operation creation should not error")
+			s.NoError(err, "staking operation creation should not error")
 			_, err = c.Wait(context.Background(), so)
-			assert.Error(t, err, "staking operation wait should error")
+			s.Error(err, "staking operation wait should error")
 		})
 	}
 }
 
-func TestStakingOperation_GetSignedVoluntaryExitMessages(t *testing.T) {
-	stakingOperation, err := mockStakingOperation(t, "pending")
-	assert.NoError(t, err, "staking operation creation should not error")
+func (s *StakingOperationSuite) TestStakingOperation_GetSignedVoluntaryExitMessages() {
+	stakingOperation, err := mockStakingOperation(s.T(), "pending")
+	s.NoError(err, "staking operation creation should not error")
 
 	SignedVoluntaryExitMessages, err := stakingOperation.GetSignedVoluntaryExitMessages()
-	assert.NoError(t, err, "get signed voluntary exit messages should not error")
+	s.NoError(err, "get signed voluntary exit messages should not error")
 
-	assert.Equal(t, 1, len(SignedVoluntaryExitMessages), "signed voluntary exit messages should have length 1")
-	assert.Equal(t, "test-data", SignedVoluntaryExitMessages[0], "signed voluntary exit messages should match")
+	s.Equal(1, len(SignedVoluntaryExitMessages), "signed voluntary exit messages should have length 1")
+	s.Equal("test-data", SignedVoluntaryExitMessages[0], "signed voluntary exit messages should match")
 }
 
 func mockStakingOperation(t *testing.T, status string) (*StakingOperation, error) {
@@ -213,4 +225,111 @@ func mockGetExternalStakingOperation(t *testing.T, stakeAPI *mocks.StakeAPI, sta
 		&http.Response{StatusCode: statusCode},
 		nil,
 	).Once()
+}
+
+func (s *StakingOperationSuite) TestSign_AllTransactionsSigned() {
+	// Create mock transactions
+	signable1 := new(mocks.Signable)
+	signable2 := new(mocks.Signable)
+
+	// Set expectations
+	signable1.On("IsSigned").Return(true)
+	signable2.On("IsSigned").Return(true)
+
+	stakingOp := &StakingOperation{}
+	signer, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
+	s.NoError(err)
+
+	// Set up the staking operation to return these transactions
+	stakingOp.transactions = []*Transaction{
+		{
+			model:    &client.Transaction{},
+			signable: signable1,
+		},
+		{
+			model:    &client.Transaction{},
+			signable: signable2,
+		},
+	}
+
+	// Call the Sign method
+	err = stakingOp.Sign(signer)
+
+	// Assert no error and that no transactions were signed
+	s.NoError(err)
+	signable1.AssertNotCalled(s.T(), "Sign", mock.Anything)
+	signable2.AssertNotCalled(s.T(), "Sign", mock.Anything)
+}
+
+func (s *StakingOperationSuite) TestSign_SomeTransactionsNotSigned() {
+	// Create mock transactions
+	signable1 := new(mocks.Signable)
+	signable2 := new(mocks.Signable)
+
+	signer, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
+	s.NoError(err)
+
+	// Set expectations
+	signable1.On("IsSigned").Return(true)
+	signable2.On("IsSigned").Return(false)
+	signable2.On("Sign", signer).Return("", nil)
+
+	stakingOp := &StakingOperation{}
+
+	// Set up the staking operation to return these transactions
+	stakingOp.transactions = []*Transaction{
+		{
+			model:    &client.Transaction{},
+			signable: signable1,
+		},
+		{
+			model:    &client.Transaction{},
+			signable: signable2,
+		},
+	}
+
+	// Call the Sign method
+	err = stakingOp.Sign(signer)
+
+	// Assert no error and that the second transaction was signed
+	s.NoError(err)
+	signable1.AssertNotCalled(s.T(), "Sign", mock.Anything)
+	signable2.AssertCalled(s.T(), "Sign", signer)
+}
+
+func (s *StakingOperationSuite) TestSign_SignTransactionFails() {
+	// Create mock transactions
+	signable1 := new(mocks.Signable)
+	signable2 := new(mocks.Signable)
+
+	signer, err := ecdsa.GenerateKey(elliptic.P256(), rand.Reader)
+	s.NoError(err)
+
+	// Set expectations
+	signable1.On("IsSigned").Return(true)
+	signable2.On("IsSigned").Return(false)
+	signable2.On("Sign", signer).Return("", errors.New("signing failed"))
+
+	stakingOp := &StakingOperation{}
+
+	// Set up the staking operation to return these transactions
+	stakingOp.transactions = []*Transaction{
+		{
+			model:    &client.Transaction{},
+			signable: signable1,
+		},
+		{
+			model:    &client.Transaction{},
+			signable: signable2,
+		},
+	}
+
+	// Call the Sign method
+	err = stakingOp.Sign(signer)
+
+	// Assert error and that the second transaction was not signed
+	s.Error(err)
+	s.EqualError(err, "signing failed")
+	signable1.AssertNotCalled(s.T(), "Sign", mock.Anything)
+	signable2.AssertCalled(s.T(), "Sign", signer)
 }

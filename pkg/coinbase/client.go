@@ -69,24 +69,32 @@ func WithDebug() ClientOption {
 	}
 }
 
+// WithTimeout sets the timeout for the client
+func WithTimeout(timeout time.Duration) ClientOption {
+	return func(c *Client) error {
+		c.baseHTTPClient.Timeout = timeout
+		return nil
+	}
+}
+
 // NewClient creates a new coinbase client with the supplied options.
 func NewClient(o ...ClientOption) (*Client, error) {
 	c := &Client{
 		cfg: client.NewConfiguration(),
 	}
 
-	for _, opt := range o {
-		if err := opt(c); err != nil {
-			return nil, err
-		}
-	}
-
 	if c.baseHTTPClient == nil {
 		c.baseHTTPClient = &http.Client{
-			Timeout: time.Second * 10,
+			Timeout: time.Second * 5,
 			Transport: &http.Transport{
 				TLSHandshakeTimeout: 5 * time.Second,
 			},
+		}
+	}
+
+	for _, opt := range o {
+		if err := opt(c); err != nil {
+			return nil, err
 		}
 	}
 

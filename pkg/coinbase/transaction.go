@@ -1,20 +1,28 @@
 package coinbase
 
 import (
-	"crypto/ecdsa"
+	"crypto"
 	"encoding/hex"
 	"fmt"
-	"math/big"
 	"strings"
 
+	"github.com/btcsuite/btcutil/base58"
 	"github.com/coinbase/coinbase-sdk-go/gen/client"
 	"github.com/ethereum/go-ethereum/core/types"
+	bin "github.com/gagliardetto/binary"
+	"github.com/gagliardetto/solana-go"
 )
 
 // Transaction represents an onchain transaction
 type Transaction struct {
-	model *client.Transaction
-	raw   *types.Transaction
+	model    *client.Transaction
+	signable Signable
+}
+
+type Signable interface {
+	Sign(crypto.Signer) (string, error)
+	IsSigned() bool
+	Raw() interface{}
 }
 
 // UnsignedPayload returns the unsigned payload of the transaction
@@ -59,24 +67,14 @@ func (t *Transaction) FromAddressID() string {
 	return t.model.FromAddressId
 }
 
-// Raw returns the raw transaction in types.Transaction format
-func (t *Transaction) Raw() *types.Transaction {
-	return t.raw
+// Raw returns the raw transaction in the underlying blockchain's format
+func (t *Transaction) Raw() interface{} {
+	return t.signable.Raw()
 }
 
 // IsSigned returns true if the transaction is signed
 func (t *Transaction) IsSigned() bool {
-	v, r, s := t.Raw().RawSignatureValues()
-	if v != nil && v.Cmp(big.NewInt(0)) != 0 {
-		return true
-	}
-	if r != nil && r.Cmp(big.NewInt(0)) != 0 {
-		return true
-	}
-	if s != nil && s.Cmp(big.NewInt(0)) != 0 {
-		return true
-	}
-	return false
+	return t.signable.IsSigned()
 }
 
 // String returns a string representation of the transaction
@@ -85,25 +83,18 @@ func (t *Transaction) String() string {
 }
 
 // Sign will sign the transaction using the supplied key
-func (t *Transaction) Sign(k *ecdsa.PrivateKey) error {
+func (t *Transaction) Sign(k crypto.Signer) error {
 	if t.IsSigned() {
 		return nil
 	}
 
-	signer := types.LatestSignerForChainID(t.Raw().ChainId())
-	signedTx, err := types.SignTx(t.Raw(), signer, k)
+	signedTx, err := t.signable.Sign(k)
 	if err != nil {
 		return err
 	}
 
-	bytes, err := signedTx.MarshalBinary()
-	if err != nil {
-		return err
-	}
+	t.model.SignedPayload = &signedTx
 
-	signedPayload := hex.EncodeToString(bytes)
-	t.model.SignedPayload = &signedPayload
-	t.raw = signedTx
 	return nil
 }
 
@@ -126,7 +117,18 @@ func newTransactionFromModel(m *client.Transaction) (*Transaction, error) {
 			return nil, err
 		}
 
-		resp.raw = t
+		resp.signable = &EthereumSignable{raw: t}
+	} else if strings.HasPrefix(m.NetworkId, "solana") {
+		data := base58.Decode(m.UnsignedPayload)
+
+		tx, err := solana.TransactionFromDecoder(bin.NewBinDecoder(data))
+		if err != nil {
+			return nil, err
+		}
+
+		resp.signable = &SolanaSignable{raw: tx}
+	} else {
+		return nil, fmt.Errorf("unsupported network id: %s", m.NetworkId)
 	}
 
 	resp.model = m
