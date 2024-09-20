@@ -61,7 +61,7 @@ func main() {
 	}
 
 	// For Holesky, publicly available RPC URL's can be found here https://chainlist.org/chain/17000
-	ethClient, err := ethclient.Dial("https://ethereum-holesky-rpc.publicnode.com")
+	ethClient, err := ethclient.Dial("<RPC_NODE_URL>")
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -18,6 +18,10 @@ type SolanaSignable struct {
 	raw *solana.Transaction
 }
 
+func NewSolanaSignable(raw *solana.Transaction) *SolanaSignable {
+	return &SolanaSignable{raw: raw}
+}
+
 func (s *SolanaSignable) Sign(k crypto.Signer) (string, error) {
 	if s.IsSigned() {
 		bytes, err := s.raw.MarshalBinary()
@@ -84,6 +88,10 @@ func (s *SolanaSignable) Raw() interface{} {
 // EthereumSignable implements the Signable interface
 type EthereumSignable struct {
 	raw *types.Transaction
+}
+
+func NewEthereumSignable(raw *types.Transaction) *EthereumSignable {
+	return &EthereumSignable{raw: raw}
 }
 
 func (e *EthereumSignable) Sign(k crypto.Signer) (string, error) {
