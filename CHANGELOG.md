@@ -2,9 +2,13 @@
 
 ## Unreleased
 
+## [0.0.10] - 2024-09-17
+
+- Add Solana signing functionality
+- Add and refactor examples.
+
 ## [0.0.9] - 2024-09-17
 - Update SDK with latest generated client code.
-
 
 ## [0.0.8] - 2024-09-17
 
