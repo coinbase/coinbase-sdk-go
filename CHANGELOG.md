@@ -2,12 +2,13 @@
 
 ## Unreleased
 
-## [0.0.10] - 2024-09-17
+## [0.0.10] - 2024-09-20
 
 - Add Solana signing functionality
 - Add and refactor examples.
 
 ## [0.0.9] - 2024-09-17
+
 - Update SDK with latest generated client code.
 
 ## [0.0.8] - 2024-09-17
@@ -58,9 +59,9 @@
 Initial release of the Coinbase Go SDK
 
 - Support for Staking on External Wallets
-    - Full support for Shared ETH Staking
-    - Partial support for Dedicated ETH Staking
-      - Only stake is supported, unstake will be coming soon
-    - On networks `holesky` and `mainnet`
+  - Full support for Shared ETH Staking
+  - Partial support for Dedicated ETH Staking
+    - Only stake is supported, unstake will be coming soon
+  - On networks `holesky` and `mainnet`
 - Support for getting stakeable balances on External Wallets
 - Support for Listing Rewards on External Wallets
