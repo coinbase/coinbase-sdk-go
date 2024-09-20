@@ -30,6 +30,7 @@ func (s *SolanaSignableSuite) SetupTest() {
 	var err error
 	var pubKey ed25519.PublicKey
 	pubKey, s.privateKey, err = ed25519.GenerateKey(rand.Reader)
+	s.NoError(err)
 
 	// Use a fake blockhash
 	fakeBlockhash := solana.MustHashFromBase58("11111111111111111111111111111111")
