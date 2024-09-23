@@ -2,7 +2,11 @@
 
 ## Unreleased
 
+## [0.0.11] - 2024-09-23
+
 - Fix a bug where correlation id returned from backend wasn't being relayed to the user
+- Add FetchStakingOperation to fetch a staking operation by networkID, addressID and stakingOperationID
+- Add ReloadStakingOperation to reload a given staking operation with latest data from the backend
 
 ## [0.0.10] - 2024-09-20
 

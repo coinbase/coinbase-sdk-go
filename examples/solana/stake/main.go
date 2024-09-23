@@ -54,7 +54,7 @@ func main() {
 
 	log.Printf("Staking operation ID: %s\n\n", stakingOperation.ID())
 
-	stakingOperation, err = client.Wait(ctx, stakingOperation, coinbase.WithWaitTimeoutSeconds(60))
+	err = client.Wait(ctx, stakingOperation, coinbase.WithWaitTimeoutSeconds(60))
 	if err != nil {
 		log.Fatalf("error waiting for staking operation: %v", err)
 	}

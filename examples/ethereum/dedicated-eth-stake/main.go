@@ -52,8 +52,7 @@ func main() {
 		log.Fatalf("error building staking operation: %v", err)
 	}
 
-	stakeOperation, err = client.Wait(ctx, stakeOperation, coinbase.WithWaitTimeoutSeconds(600))
-	if err != nil {
+	if err := client.Wait(ctx, stakeOperation, coinbase.WithWaitTimeoutSeconds(600)); err != nil {
 		log.Fatalf("error waiting for staking operation: %v", err)
 	}
 
