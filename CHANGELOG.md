@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Fix a bug where correlation id returned from backend wasn't being relayed to the user
+
 ## [0.0.10] - 2024-09-20
 
 - Add Solana signing functionality

@@ -58,6 +58,10 @@ func MapToUserFacing(err error, resp *http.Response) error {
 
 		apiError.Message = clientError.Message
 		apiError.Code = clientError.Code
+		if clientError.CorrelationId != nil {
+			apiError.CorrelationId = *clientError.CorrelationId
+		}
+
 		return apiError
 	}
 
