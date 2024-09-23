@@ -26,7 +26,7 @@ func (suite *MapErrorsTestSuite) TestMapToUserFacing_NilError() {
 }
 
 func (suite *MapErrorsTestSuite) TestMapToUserFacing_GenericOpenAPIError() {
-	body := []byte(`{"code": "test_code", "message": "test_message"}`)
+	body := []byte(`{"code": "test_code", "message": "test_message", "correlation_id": "test_correlation_id"}`)
 	openAPIError := createGenericOpenAPIError(body)
 	resp := &http.Response{StatusCode: http.StatusBadRequest}
 
@@ -37,6 +37,7 @@ func (suite *MapErrorsTestSuite) TestMapToUserFacing_GenericOpenAPIError() {
 	assert.True(suite.T(), ok)
 	assert.Equal(suite.T(), "test_code", apiErr.Code)
 	assert.Equal(suite.T(), "test_message", apiErr.Message)
+	assert.Equal(suite.T(), "test_correlation_id", apiErr.CorrelationId)
 	assert.Equal(suite.T(), http.StatusBadRequest, apiErr.HttpStatusCode)
 }
 
