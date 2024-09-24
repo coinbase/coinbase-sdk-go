@@ -68,9 +68,12 @@ func main() {
 
 	rpcClient := rpc.New(rpcURL)
 
+	maxRetries := uint(5)
 	opts := rpc.TransactionOpts{
-		SkipPreflight:       false,
-		PreflightCommitment: rpc.CommitmentFinalized,
+		SkipPreflight: false,
+		MaxRetries:    &maxRetries,
+		// NOTE: In production, consider using rpc.CommitmentFinalized instead to ensure the block is included.
+		PreflightCommitment: rpc.CommitmentProcessed,
 	}
 
 	for _, transaction := range stakingOperation.Transactions() {
