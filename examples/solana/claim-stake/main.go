@@ -70,8 +70,9 @@ func main() {
 
 	maxRetries := uint(5)
 	opts := rpc.TransactionOpts{
-		SkipPreflight:       false,
-		MaxRetries:          &maxRetries,
+		SkipPreflight: false,
+		MaxRetries:    &maxRetries,
+		// NOTE: In production, consider using rpc.CommitmentFinalized instead to ensure the block is included.
 		PreflightCommitment: rpc.CommitmentProcessed,
 	}
 
