@@ -112,8 +112,7 @@ func newTransactionFromModel(m *client.Transaction) (*Transaction, error) {
 		}
 
 		t := &types.Transaction{}
-		err = t.UnmarshalJSON(rawHex)
-		if err != nil {
+		if err := t.UnmarshalJSON(rawHex); err != nil {
 			return nil, err
 		}
 

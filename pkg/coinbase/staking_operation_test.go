@@ -34,8 +34,7 @@ func (s *StakingOperationSuite) TestStakingOperation_Wait_Success() {
 
 	c := &Client{
 		client: &api.APIClient{
-			StakeAPI:  mc.stakeAPI,
-			AssetsAPI: mc.assetsAPI,
+			StakeAPI: mc.stakeAPI,
 		},
 	}
 
@@ -47,7 +46,7 @@ func (s *StakingOperationSuite) TestStakingOperation_Wait_Success() {
 	s.NoError(err, "failed to sign staking operation")
 	signedPayload := so.Transactions()[0].SignedPayload()
 	s.NotEmpty(signedPayload, "signed payload should not be empty")
-	so, err = c.Wait(context.Background(), so)
+	err = c.Wait(context.Background(), so)
 	s.NoError(err, "staking operation wait should not error")
 	s.Equal("complete", so.Status(), "staking operation status should be complete")
 	s.Equal(1, len(so.Transactions()), "staking operation should have 1 transaction")
@@ -62,14 +61,13 @@ func (s *StakingOperationSuite) TestStakingOperation_Wait_Success_CustomOptions(
 
 	c := &Client{
 		client: &api.APIClient{
-			StakeAPI:  mc.stakeAPI,
-			AssetsAPI: mc.assetsAPI,
+			StakeAPI: mc.stakeAPI,
 		},
 	}
 
 	so, err := mockStakingOperation(s.T(), "pending")
 	s.NoError(err, "staking operation creation should not error")
-	so, err = c.Wait(
+	err = c.Wait(
 		context.Background(),
 		so,
 		WithWaitIntervalSeconds(1),
@@ -110,14 +108,13 @@ func (s *StakingOperationSuite) TestStakingOperation_Wait_Failure() {
 
 			c := &Client{
 				client: &api.APIClient{
-					StakeAPI:  mc.stakeAPI,
-					AssetsAPI: mc.assetsAPI,
+					StakeAPI: mc.stakeAPI,
 				},
 			}
 
 			so, err := mockStakingOperation(t, tt.soStatus)
 			s.NoError(err, "staking operation creation should not error")
-			_, err = c.Wait(context.Background(), so)
+			err = c.Wait(context.Background(), so)
 			s.Error(err, "staking operation wait should error")
 		})
 	}
@@ -167,6 +164,7 @@ func mockStakingOperation(t *testing.T, status string) (*StakingOperation, error
 
 func mockGetExternalStakingOperation(t *testing.T, stakeAPI *mocks.StakeAPI, statusCode int, soStatus string) {
 	t.Helper()
+
 	stakeAPI.On("GetExternalStakingOperation", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(
 		api.ApiGetExternalStakingOperationRequest{ApiService: stakeAPI},
 	).Once()
@@ -224,6 +222,18 @@ func mockGetExternalStakingOperation(t *testing.T, stakeAPI *mocks.StakeAPI, sta
 		},
 		&http.Response{StatusCode: statusCode},
 		nil,
+	).Once()
+}
+
+func mockGetExternalStakingOperationWithData(t *testing.T, stakingAPI *mocks.StakeAPI, statusCode int, op *api.StakingOperation) {
+	t.Helper()
+
+	stakingAPI.On("GetExternalStakingOperation", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(
+		api.ApiGetExternalStakingOperationRequest{ApiService: stakingAPI},
+	).Once()
+
+	stakingAPI.On("GetExternalStakingOperationExecute", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(
+		op, &http.Response{StatusCode: statusCode}, nil,
 	).Once()
 }
 
@@ -332,4 +342,179 @@ func (s *StakingOperationSuite) TestSign_SignTransactionFails() {
 	s.EqualError(err, "signing failed")
 	signable1.AssertNotCalled(s.T(), "Sign", mock.Anything)
 	signable2.AssertCalled(s.T(), "Sign", signer)
+}
+
+func (s *StakingOperationSuite) TestReloadStakingOperation_ExistingTransactionsNotOverwritten() {
+	var (
+		networkID               = "ethereum-holesky"
+		addressID               = "0x14a34"
+		stakingOperationID      = "staking-operation-id"
+		stakingOperationStatus  = "pending"
+		existingUnsignedPayload = dummyEthereumUnsignedPayload(s.T(), 0)
+		newUnsignedPayload      = dummyEthereumUnsignedPayload(s.T(), 1)
+		stakingAPIMock          = mocks.NewStakeAPI(s.T())
+
+		newStakingOperation = &api.StakingOperation{
+			Id:        stakingOperationID,
+			NetworkId: networkID,
+			AddressId: addressID,
+			Status:    stakingOperationStatus,
+			Transactions: []api.Transaction{
+				{
+					NetworkId:       networkID,
+					Status:          "pending",
+					UnsignedPayload: existingUnsignedPayload,
+				},
+				{
+					NetworkId:       networkID,
+					Status:          "pending",
+					UnsignedPayload: newUnsignedPayload,
+				},
+			},
+		}
+	)
+
+	mockGetExternalStakingOperationWithData(s.T(), stakingAPIMock, http.StatusOK, newStakingOperation)
+
+	c := &Client{
+		client: &api.APIClient{
+			StakeAPI: stakingAPIMock,
+		},
+	}
+
+	// Create a staking operation with an existing transaction
+	stakingOp := &StakingOperation{
+		model: &client.StakingOperation{
+			Id:        stakingOperationID,
+			NetworkId: networkID,
+			AddressId: addressID,
+			Status:    stakingOperationStatus,
+		},
+		transactions: []*Transaction{
+			{
+				model: &client.Transaction{
+					UnsignedPayload: existingUnsignedPayload,
+				},
+			},
+		},
+	}
+
+	err := c.ReloadStakingOperation(context.Background(), stakingOp)
+	s.NoError(err, "reload staking operation should not error")
+
+	// Ensure the existing transaction is not overwritten
+	s.Equal(2, len(stakingOp.transactions), "staking operation should have 1 transaction")
+	s.Equal(existingUnsignedPayload, stakingOp.transactions[0].UnsignedPayload(), "existing transaction should not be overwritten")
+	s.Equal(newUnsignedPayload, stakingOp.transactions[1].UnsignedPayload(), "new transaction should be added")
+}
+
+func (s *StakingOperationSuite) TestReloadStakingOperation_ErrorFormatting() {
+	var (
+		networkID              = "ethereum-holesky"
+		addressID              = "0x14a34"
+		stakingOperationID     = "staking-operation-id"
+		stakingOperationStatus = "pending"
+		stakingAPIMock         = mocks.NewStakeAPI(s.T())
+	)
+
+	stakingAPIMock.On("GetExternalStakingOperation", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(
+		api.ApiGetExternalStakingOperationRequest{ApiService: stakingAPIMock},
+	).Once()
+
+	stakingAPIMock.On("GetExternalStakingOperationExecute", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(
+		nil, nil, fmt.Errorf("backend error"),
+	).Once()
+
+	c := &Client{
+		client: &api.APIClient{
+			StakeAPI: stakingAPIMock,
+		},
+	}
+
+	// Create a staking operation with an existing transaction
+	stakingOp := &StakingOperation{
+		model: &client.StakingOperation{
+			Id:        stakingOperationID,
+			NetworkId: networkID,
+			AddressId: addressID,
+			Status:    stakingOperationStatus,
+		},
+	}
+
+	// Call ReloadStakingOperation
+	err := c.ReloadStakingOperation(context.Background(), stakingOp)
+	s.Error(err, "reload staking operation should error")
+	s.Contains(err.Error(), "backend error", "error message should be user-facing")
+}
+
+func (s *StakingOperationSuite) TestFetchStakingOperation_Success() {
+	var (
+		networkID              = "ethereum-holesky"
+		addressID              = "0x14a34"
+		stakingOperationID     = "staking-operation-id"
+		stakingOperationStatus = "pending"
+		unsignedPayload        = dummyEthereumUnsignedPayload(s.T(), 0)
+		stakingAPIMock         = mocks.NewStakeAPI(s.T())
+
+		fetchedStakingOperation = &api.StakingOperation{
+			Id:        stakingOperationID,
+			NetworkId: networkID,
+			AddressId: addressID,
+			Status:    stakingOperationStatus,
+			Transactions: []api.Transaction{
+				{
+					NetworkId:       networkID,
+					Status:          "pending",
+					UnsignedPayload: unsignedPayload,
+				},
+			},
+		}
+	)
+
+	mockGetExternalStakingOperationWithData(s.T(), stakingAPIMock, http.StatusOK, fetchedStakingOperation)
+
+	c := &Client{
+		client: &api.APIClient{
+			StakeAPI: stakingAPIMock,
+		},
+	}
+
+	stakingOp, err := c.FetchStakingOperation(context.Background(), networkID, addressID, stakingOperationID)
+	s.NoError(err, "fetch staking operation should not error")
+
+	// Ensure the fetched staking operation is correct
+	s.Equal(stakingOperationID, stakingOp.ID(), "staking operation ID should match")
+	s.Equal(networkID, stakingOp.NetworkID(), "network ID should match")
+	s.Equal(addressID, stakingOp.AddressID(), "address ID should match")
+	s.Equal(stakingOperationStatus, stakingOp.Status(), "status should match")
+	s.Equal(1, len(stakingOp.Transactions()), "staking operation should have 1 transaction")
+	s.Equal(unsignedPayload, stakingOp.Transactions()[0].UnsignedPayload(), "transaction unsigned payload should match")
+}
+
+func (s *StakingOperationSuite) TestFetchStakingOperation_Error() {
+	var (
+		networkID          = "ethereum-holesky"
+		addressID          = "0x14a34"
+		stakingOperationID = "staking-operation-id"
+		stakingAPIMock     = mocks.NewStakeAPI(s.T())
+	)
+
+	stakingAPIMock.On("GetExternalStakingOperation", mock.Anything, networkID, addressID, stakingOperationID).Return(
+		api.ApiGetExternalStakingOperationRequest{ApiService: stakingAPIMock},
+	).Once()
+
+	stakingAPIMock.On("GetExternalStakingOperationExecute", mock.Anything, mock.Anything, mock.Anything, mock.Anything).Return(
+		nil, nil, fmt.Errorf("backend error"),
+	).Once()
+
+	c := &Client{
+		client: &api.APIClient{
+			StakeAPI: stakingAPIMock,
+		},
+	}
+
+	stakingOp, err := c.FetchStakingOperation(context.Background(), networkID, addressID, stakingOperationID)
+	s.Error(err, "fetch staking operation should error")
+	s.Nil(stakingOp, "staking operation should be nil on error")
+	s.Contains(err.Error(), "backend error", "error message should be user-facing")
 }
