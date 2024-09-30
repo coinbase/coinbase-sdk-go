@@ -1,7 +1,17 @@
 # Coinbase Go SDK Changelog
 
 ## Unreleased
+
+## [0.0.12] - 2024-09-30
+
+### Added
+
 - Added constants for supported network names
+- Added `IsFailedState` and `IsCompleteState` methods to `StakingOperation` to check if the operation is in a failed or complete state
+
+### Changes
+
+- Exposed `IsTerminalState` method on `StakingOperation` to check if the operation is in a terminal state.
 
 ## [0.0.11] - 2024-09-23
 
