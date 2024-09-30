@@ -210,7 +210,7 @@ func (c *Client) Wait(ctx context.Context, stakingOperation *StakingOperation, o
 			return err
 		}
 
-		if stakingOperation.isTerminalState() {
+		if stakingOperation.IsTerminalState() {
 			return nil
 		}
 
@@ -271,8 +271,16 @@ func (s *StakingOperation) hasTransactionByUnsignedPayload(unsignedPayload strin
 	return false
 }
 
-func (s *StakingOperation) isTerminalState() bool {
+func (s *StakingOperation) IsTerminalState() bool {
 	return s.Status() == "complete" || s.Status() == "failed"
+}
+
+func (s *StakingOperation) IsFailedState() bool {
+	return s.Status() == "failed"
+}
+
+func (s *StakingOperation) IsCompleteState() bool {
+	return s.Status() == "complete"
 }
 
 func newStakingOperationFromModel(m *client.StakingOperation) (*StakingOperation, error) {
