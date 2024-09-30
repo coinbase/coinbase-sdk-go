@@ -346,7 +346,7 @@ func (s *StakingOperationSuite) TestSign_SignTransactionFails() {
 
 func (s *StakingOperationSuite) TestReloadStakingOperation_ExistingTransactionsNotOverwritten() {
 	var (
-		networkID               = "ethereum-holesky"
+		networkID               = EthereumHolesky
 		addressID               = "0x14a34"
 		stakingOperationID      = "staking-operation-id"
 		stakingOperationStatus  = "pending"
@@ -410,7 +410,7 @@ func (s *StakingOperationSuite) TestReloadStakingOperation_ExistingTransactionsN
 
 func (s *StakingOperationSuite) TestReloadStakingOperation_ErrorFormatting() {
 	var (
-		networkID              = "ethereum-holesky"
+		networkID              = EthereumHolesky
 		addressID              = "0x14a34"
 		stakingOperationID     = "staking-operation-id"
 		stakingOperationStatus = "pending"
@@ -449,7 +449,7 @@ func (s *StakingOperationSuite) TestReloadStakingOperation_ErrorFormatting() {
 
 func (s *StakingOperationSuite) TestFetchStakingOperation_Success() {
 	var (
-		networkID              = "ethereum-holesky"
+		networkID              = EthereumHolesky
 		addressID              = "0x14a34"
 		stakingOperationID     = "staking-operation-id"
 		stakingOperationStatus = "pending"
@@ -493,7 +493,7 @@ func (s *StakingOperationSuite) TestFetchStakingOperation_Success() {
 
 func (s *StakingOperationSuite) TestFetchStakingOperation_Error() {
 	var (
-		networkID          = "ethereum-holesky"
+		networkID          = EthereumHolesky
 		addressID          = "0x14a34"
 		stakingOperationID = "staking-operation-id"
 		stakingAPIMock     = mocks.NewStakeAPI(s.T())

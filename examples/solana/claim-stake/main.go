@@ -10,14 +10,13 @@ import (
 	"time"
 
 	"github.com/btcsuite/btcutil/base58"
-	"github.com/coinbase/coinbase-sdk-go/gen/client"
 	"github.com/coinbase/coinbase-sdk-go/pkg/coinbase"
 	"github.com/gagliardetto/solana-go"
 	"github.com/gagliardetto/solana-go/rpc"
 )
 
 var (
-	networkID = client.NETWORKIDENTIFIER_SOLANA_DEVNET
+	networkID = coinbase.SolanaDevnet
 	amount    = big.NewFloat(0.01)
 	rpcURL    = "https://api.devnet.solana.com"
 )
@@ -112,9 +111,9 @@ func decodePrivateKey(privateKeyString string) (*ed25519.PrivateKey, error) {
 }
 
 func getTxLink(networkID, signature string) string {
-	if networkID == "solana-mainnet" {
+	if networkID == coinbase.SolanaMainnet {
 		return fmt.Sprintf("https://explorer.solana.com/tx/%s", signature)
-	} else if networkID == "solana-devnet" {
+	} else if networkID == coinbase.SolanaDevnet {
 		return fmt.Sprintf("https://explorer.solana.com/tx/%s?cluster=devnet", signature)
 	}
 

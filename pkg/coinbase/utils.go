@@ -8,11 +8,16 @@ const (
 	Gwei         = "gwei"
 	GweiDecimals = 9
 	Sol          = "sol"
-	Lamport      = "lamport"
 
 	StakingOperationModePartial = "partial"
 	StakingOperationModeDefault = "default"
 	StakingOperationModeNative  = "native"
+
+	EthereumHolesky = "ethereum-holesky"
+	EthereumMainnet = "ethereum-mainnet"
+
+	SolanaDevnet  = "solana-devnet"
+	SolanaMainnet = "solana-mainnet"
 )
 
 func normalizeNetwork(network string) string {

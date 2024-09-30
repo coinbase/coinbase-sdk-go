@@ -27,7 +27,10 @@ func main() {
 		log.Fatalf("error creating coinbase client: %v", err)
 	}
 
-	address := coinbase.NewExternalAddress("ethereum-holesky", os.Args[2])
+	address := coinbase.NewExternalAddress(
+		coinbase.EthereumHolesky,
+		os.Args[2],
+	)
 
 	stakeableBalance, err := client.GetStakeableBalance(ctx, coinbase.Eth, address, coinbase.WithStakingBalanceMode(coinbase.StakingOperationModePartial))
 	if err != nil {

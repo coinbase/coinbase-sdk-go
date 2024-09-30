@@ -29,7 +29,7 @@ func main() {
 	}
 
 	address := coinbase.NewExternalAddress(
-		"ethereum-mainnet",
+		coinbase.EthereumMainnet,
 		os.Args[1],
 	)
 
