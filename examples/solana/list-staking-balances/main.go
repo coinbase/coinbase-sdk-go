@@ -10,7 +10,7 @@ import (
 )
 
 var (
-	networkID = "solana-mainnet"
+	networkID = coinbase.SolanaMainnet
 )
 
 /*

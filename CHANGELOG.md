@@ -1,6 +1,7 @@
 # Coinbase Go SDK Changelog
 
 ## Unreleased
+- Added constants for supported network names
 
 ## [0.0.11] - 2024-09-23
 
