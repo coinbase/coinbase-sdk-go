@@ -85,7 +85,7 @@ func NewClient(o ...ClientOption) (*Client, error) {
 
 	if c.baseHTTPClient == nil {
 		c.baseHTTPClient = &http.Client{
-			Timeout: time.Second * 5,
+			Timeout: time.Second * 10,
 			Transport: &http.Transport{
 				TLSHandshakeTimeout: 5 * time.Second,
 			},
