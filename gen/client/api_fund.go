@@ -20,123 +20,106 @@ import (
 )
 
 
-type SmartContractsAPI interface {
+type FundAPI interface {
 
 	/*
-	CreateSmartContract Create a new smart contract
+	CreateFundOperation Create a new fund operation.
 
-	Create a new smart contract
+	Create a new fund operation with an address.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	@param walletId The ID of the wallet the address belongs to.
-	@param addressId The ID of the address to deploy the smart contract from.
-	@return ApiCreateSmartContractRequest
+	@param addressId The onchain address to be funded.
+	@return ApiCreateFundOperationRequest
 	*/
-	CreateSmartContract(ctx context.Context, walletId string, addressId string) ApiCreateSmartContractRequest
+	CreateFundOperation(ctx context.Context, walletId string, addressId string) ApiCreateFundOperationRequest
 
-	// CreateSmartContractExecute executes the request
-	//  @return SmartContract
-	CreateSmartContractExecute(r ApiCreateSmartContractRequest) (*SmartContract, *http.Response, error)
+	// CreateFundOperationExecute executes the request
+	//  @return FundOperation
+	CreateFundOperationExecute(r ApiCreateFundOperationRequest) (*FundOperation, *http.Response, error)
 
 	/*
-	DeploySmartContract Deploy a smart contract
+	CreateFundQuote Create a Fund Operation quote.
 
-	Deploys a smart contract, by broadcasting the transaction to the network.
+	Create a new fund operation with an address.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	@param walletId The ID of the wallet the address belongs to.
-	@param addressId The ID of the address to broadcast the transaction from.
-	@param smartContractId The UUID of the smart contract to broadcast the transaction to.
-	@return ApiDeploySmartContractRequest
+	@param addressId The onchain address to be funded.
+	@return ApiCreateFundQuoteRequest
 	*/
-	DeploySmartContract(ctx context.Context, walletId string, addressId string, smartContractId string) ApiDeploySmartContractRequest
+	CreateFundQuote(ctx context.Context, walletId string, addressId string) ApiCreateFundQuoteRequest
 
-	// DeploySmartContractExecute executes the request
-	//  @return SmartContract
-	DeploySmartContractExecute(r ApiDeploySmartContractRequest) (*SmartContract, *http.Response, error)
+	// CreateFundQuoteExecute executes the request
+	//  @return FundQuote
+	CreateFundQuoteExecute(r ApiCreateFundQuoteRequest) (*FundQuote, *http.Response, error)
 
 	/*
-	GetSmartContract Get a specific smart contract deployed by address
+	GetFundOperation Get fund operation.
 
-	Get a specific smart contract deployed by address.
+	Get fund operation.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	@param walletId The ID of the wallet the address belongs to.
-	@param addressId The ID of the address to fetch the smart contract for.
-	@param smartContractId The UUID of the smart contract to fetch.
-	@return ApiGetSmartContractRequest
+	@param addressId The onchain address of the address that created the fund operation.
+	@param fundOperationId The ID of the fund operation to fetch.
+	@return ApiGetFundOperationRequest
 	*/
-	GetSmartContract(ctx context.Context, walletId string, addressId string, smartContractId string) ApiGetSmartContractRequest
+	GetFundOperation(ctx context.Context, walletId string, addressId string, fundOperationId string) ApiGetFundOperationRequest
 
-	// GetSmartContractExecute executes the request
-	//  @return SmartContract
-	GetSmartContractExecute(r ApiGetSmartContractRequest) (*SmartContract, *http.Response, error)
+	// GetFundOperationExecute executes the request
+	//  @return FundOperation
+	GetFundOperationExecute(r ApiGetFundOperationRequest) (*FundOperation, *http.Response, error)
 
 	/*
-	ListSmartContracts List smart contracts deployed by address
+	ListFundOperations List fund operations for an address.
 
-	List all smart contracts deployed by address.
+	List fund operations for an address.
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	@param walletId The ID of the wallet the address belongs to.
-	@param addressId The ID of the address to fetch the smart contracts for.
-	@return ApiListSmartContractsRequest
+	@param addressId The onchain address of the address to list fund operations for.
+	@return ApiListFundOperationsRequest
 	*/
-	ListSmartContracts(ctx context.Context, walletId string, addressId string) ApiListSmartContractsRequest
+	ListFundOperations(ctx context.Context, walletId string, addressId string) ApiListFundOperationsRequest
 
-	// ListSmartContractsExecute executes the request
-	//  @return SmartContractList
-	ListSmartContractsExecute(r ApiListSmartContractsRequest) (*SmartContractList, *http.Response, error)
-
-	/*
-	ReadContract Read data from a smart contract
-
-	Perform a read operation on a smart contract without creating a transaction
-
-	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	@param networkId
-	@param contractAddress
-	@return ApiReadContractRequest
-	*/
-	ReadContract(ctx context.Context, networkId string, contractAddress string) ApiReadContractRequest
-
-	// ReadContractExecute executes the request
-	//  @return SolidityValue
-	ReadContractExecute(r ApiReadContractRequest) (*SolidityValue, *http.Response, error)
+	// ListFundOperationsExecute executes the request
+	//  @return FundOperationList
+	ListFundOperationsExecute(r ApiListFundOperationsRequest) (*FundOperationList, *http.Response, error)
 }
 
-// SmartContractsAPIService SmartContractsAPI service
-type SmartContractsAPIService service
+// FundAPIService FundAPI service
+type FundAPIService service
 
-type ApiCreateSmartContractRequest struct {
+type ApiCreateFundOperationRequest struct {
 	ctx context.Context
-	ApiService SmartContractsAPI
+	ApiService FundAPI
 	walletId string
 	addressId string
-	createSmartContractRequest *CreateSmartContractRequest
+	createFundOperationRequest *CreateFundOperationRequest
 }
 
-func (r ApiCreateSmartContractRequest) CreateSmartContractRequest(createSmartContractRequest CreateSmartContractRequest) ApiCreateSmartContractRequest {
-	r.createSmartContractRequest = &createSmartContractRequest
+func (r ApiCreateFundOperationRequest) CreateFundOperationRequest(createFundOperationRequest CreateFundOperationRequest) ApiCreateFundOperationRequest {
+	r.createFundOperationRequest = &createFundOperationRequest
 	return r
 }
 
-func (r ApiCreateSmartContractRequest) Execute() (*SmartContract, *http.Response, error) {
-	return r.ApiService.CreateSmartContractExecute(r)
+func (r ApiCreateFundOperationRequest) Execute() (*FundOperation, *http.Response, error) {
+	return r.ApiService.CreateFundOperationExecute(r)
 }
 
 /*
-CreateSmartContract Create a new smart contract
+CreateFundOperation Create a new fund operation.
 
-Create a new smart contract
+Create a new fund operation with an address.
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  @param walletId The ID of the wallet the address belongs to.
- @param addressId The ID of the address to deploy the smart contract from.
- @return ApiCreateSmartContractRequest
+ @param addressId The onchain address to be funded.
+ @return ApiCreateFundOperationRequest
 */
-func (a *SmartContractsAPIService) CreateSmartContract(ctx context.Context, walletId string, addressId string) ApiCreateSmartContractRequest {
-	return ApiCreateSmartContractRequest{
+func (a *FundAPIService) CreateFundOperation(ctx context.Context, walletId string, addressId string) ApiCreateFundOperationRequest {
+	return ApiCreateFundOperationRequest{
 		ApiService: a,
 		ctx: ctx,
 		walletId: walletId,
@@ -145,29 +128,29 @@ func (a *SmartContractsAPIService) CreateSmartContract(ctx context.Context, wall
 }
 
 // Execute executes the request
-//  @return SmartContract
-func (a *SmartContractsAPIService) CreateSmartContractExecute(r ApiCreateSmartContractRequest) (*SmartContract, *http.Response, error) {
+//  @return FundOperation
+func (a *FundAPIService) CreateFundOperationExecute(r ApiCreateFundOperationRequest) (*FundOperation, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodPost
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *SmartContract
+		localVarReturnValue  *FundOperation
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SmartContractsAPIService.CreateSmartContract")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "FundAPIService.CreateFundOperation")
 	if err != nil {
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/v1/wallets/{wallet_id}/addresses/{address_id}/smart_contracts"
+	localVarPath := localBasePath + "/v1/wallets/{wallet_id}/addresses/{address_id}/fund_operations"
 	localVarPath = strings.Replace(localVarPath, "{"+"wallet_id"+"}", url.PathEscape(parameterValueToString(r.walletId, "walletId")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"address_id"+"}", url.PathEscape(parameterValueToString(r.addressId, "addressId")), -1)
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
-	if r.createSmartContractRequest == nil {
-		return localVarReturnValue, nil, reportError("createSmartContractRequest is required and must be specified")
+	if r.createFundOperationRequest == nil {
+		return localVarReturnValue, nil, reportError("createFundOperationRequest is required and must be specified")
 	}
 
 	// to determine the Content-Type header
@@ -188,7 +171,7 @@ func (a *SmartContractsAPIService) CreateSmartContractExecute(r ApiCreateSmartCo
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
 	// body params
-	localVarPostBody = r.createSmartContractRequest
+	localVarPostBody = r.createFundOperationRequest
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
 	if err != nil {
 		return localVarReturnValue, nil, err
@@ -234,70 +217,66 @@ func (a *SmartContractsAPIService) CreateSmartContractExecute(r ApiCreateSmartCo
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
-type ApiDeploySmartContractRequest struct {
+type ApiCreateFundQuoteRequest struct {
 	ctx context.Context
-	ApiService SmartContractsAPI
+	ApiService FundAPI
 	walletId string
 	addressId string
-	smartContractId string
-	deploySmartContractRequest *DeploySmartContractRequest
+	createFundQuoteRequest *CreateFundQuoteRequest
 }
 
-func (r ApiDeploySmartContractRequest) DeploySmartContractRequest(deploySmartContractRequest DeploySmartContractRequest) ApiDeploySmartContractRequest {
-	r.deploySmartContractRequest = &deploySmartContractRequest
+func (r ApiCreateFundQuoteRequest) CreateFundQuoteRequest(createFundQuoteRequest CreateFundQuoteRequest) ApiCreateFundQuoteRequest {
+	r.createFundQuoteRequest = &createFundQuoteRequest
 	return r
 }
 
-func (r ApiDeploySmartContractRequest) Execute() (*SmartContract, *http.Response, error) {
-	return r.ApiService.DeploySmartContractExecute(r)
+func (r ApiCreateFundQuoteRequest) Execute() (*FundQuote, *http.Response, error) {
+	return r.ApiService.CreateFundQuoteExecute(r)
 }
 
 /*
-DeploySmartContract Deploy a smart contract
+CreateFundQuote Create a Fund Operation quote.
 
-Deploys a smart contract, by broadcasting the transaction to the network.
+Create a new fund operation with an address.
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  @param walletId The ID of the wallet the address belongs to.
- @param addressId The ID of the address to broadcast the transaction from.
- @param smartContractId The UUID of the smart contract to broadcast the transaction to.
- @return ApiDeploySmartContractRequest
+ @param addressId The onchain address to be funded.
+ @return ApiCreateFundQuoteRequest
 */
-func (a *SmartContractsAPIService) DeploySmartContract(ctx context.Context, walletId string, addressId string, smartContractId string) ApiDeploySmartContractRequest {
-	return ApiDeploySmartContractRequest{
+func (a *FundAPIService) CreateFundQuote(ctx context.Context, walletId string, addressId string) ApiCreateFundQuoteRequest {
+	return ApiCreateFundQuoteRequest{
 		ApiService: a,
 		ctx: ctx,
 		walletId: walletId,
 		addressId: addressId,
-		smartContractId: smartContractId,
 	}
 }
 
 // Execute executes the request
-//  @return SmartContract
-func (a *SmartContractsAPIService) DeploySmartContractExecute(r ApiDeploySmartContractRequest) (*SmartContract, *http.Response, error) {
+//  @return FundQuote
+func (a *FundAPIService) CreateFundQuoteExecute(r ApiCreateFundQuoteRequest) (*FundQuote, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodPost
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *SmartContract
+		localVarReturnValue  *FundQuote
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SmartContractsAPIService.DeploySmartContract")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "FundAPIService.CreateFundQuote")
 	if err != nil {
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/v1/wallets/{wallet_id}/addresses/{address_id}/smart_contracts/{smart_contract_id}/deploy"
+	localVarPath := localBasePath + "/v1/wallets/{wallet_id}/addresses/{address_id}/fund_operations/quote"
 	localVarPath = strings.Replace(localVarPath, "{"+"wallet_id"+"}", url.PathEscape(parameterValueToString(r.walletId, "walletId")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"address_id"+"}", url.PathEscape(parameterValueToString(r.addressId, "addressId")), -1)
-	localVarPath = strings.Replace(localVarPath, "{"+"smart_contract_id"+"}", url.PathEscape(parameterValueToString(r.smartContractId, "smartContractId")), -1)
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
-	if r.deploySmartContractRequest == nil {
-		return localVarReturnValue, nil, reportError("deploySmartContractRequest is required and must be specified")
+	if r.createFundQuoteRequest == nil {
+		return localVarReturnValue, nil, reportError("createFundQuoteRequest is required and must be specified")
 	}
 
 	// to determine the Content-Type header
@@ -318,7 +297,7 @@ func (a *SmartContractsAPIService) DeploySmartContractExecute(r ApiDeploySmartCo
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
 	// body params
-	localVarPostBody = r.deploySmartContractRequest
+	localVarPostBody = r.createFundQuoteRequest
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
 	if err != nil {
 		return localVarReturnValue, nil, err
@@ -364,58 +343,58 @@ func (a *SmartContractsAPIService) DeploySmartContractExecute(r ApiDeploySmartCo
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
-type ApiGetSmartContractRequest struct {
+type ApiGetFundOperationRequest struct {
 	ctx context.Context
-	ApiService SmartContractsAPI
+	ApiService FundAPI
 	walletId string
 	addressId string
-	smartContractId string
+	fundOperationId string
 }
 
-func (r ApiGetSmartContractRequest) Execute() (*SmartContract, *http.Response, error) {
-	return r.ApiService.GetSmartContractExecute(r)
+func (r ApiGetFundOperationRequest) Execute() (*FundOperation, *http.Response, error) {
+	return r.ApiService.GetFundOperationExecute(r)
 }
 
 /*
-GetSmartContract Get a specific smart contract deployed by address
+GetFundOperation Get fund operation.
 
-Get a specific smart contract deployed by address.
+Get fund operation.
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  @param walletId The ID of the wallet the address belongs to.
- @param addressId The ID of the address to fetch the smart contract for.
- @param smartContractId The UUID of the smart contract to fetch.
- @return ApiGetSmartContractRequest
+ @param addressId The onchain address of the address that created the fund operation.
+ @param fundOperationId The ID of the fund operation to fetch.
+ @return ApiGetFundOperationRequest
 */
-func (a *SmartContractsAPIService) GetSmartContract(ctx context.Context, walletId string, addressId string, smartContractId string) ApiGetSmartContractRequest {
-	return ApiGetSmartContractRequest{
+func (a *FundAPIService) GetFundOperation(ctx context.Context, walletId string, addressId string, fundOperationId string) ApiGetFundOperationRequest {
+	return ApiGetFundOperationRequest{
 		ApiService: a,
 		ctx: ctx,
 		walletId: walletId,
 		addressId: addressId,
-		smartContractId: smartContractId,
+		fundOperationId: fundOperationId,
 	}
 }
 
 // Execute executes the request
-//  @return SmartContract
-func (a *SmartContractsAPIService) GetSmartContractExecute(r ApiGetSmartContractRequest) (*SmartContract, *http.Response, error) {
+//  @return FundOperation
+func (a *FundAPIService) GetFundOperationExecute(r ApiGetFundOperationRequest) (*FundOperation, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodGet
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *SmartContract
+		localVarReturnValue  *FundOperation
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SmartContractsAPIService.GetSmartContract")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "FundAPIService.GetFundOperation")
 	if err != nil {
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/v1/wallets/{wallet_id}/addresses/{address_id}/smart_contracts/{smart_contract_id}"
+	localVarPath := localBasePath + "/v1/wallets/{wallet_id}/addresses/{address_id}/fund_operations/{fund_operation_id}"
 	localVarPath = strings.Replace(localVarPath, "{"+"wallet_id"+"}", url.PathEscape(parameterValueToString(r.walletId, "walletId")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"address_id"+"}", url.PathEscape(parameterValueToString(r.addressId, "addressId")), -1)
-	localVarPath = strings.Replace(localVarPath, "{"+"smart_contract_id"+"}", url.PathEscape(parameterValueToString(r.smartContractId, "smartContractId")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"fund_operation_id"+"}", url.PathEscape(parameterValueToString(r.fundOperationId, "fundOperationId")), -1)
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -483,29 +462,43 @@ func (a *SmartContractsAPIService) GetSmartContractExecute(r ApiGetSmartContract
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
-type ApiListSmartContractsRequest struct {
+type ApiListFundOperationsRequest struct {
 	ctx context.Context
-	ApiService SmartContractsAPI
+	ApiService FundAPI
 	walletId string
 	addressId string
+	limit *int32
+	page *string
 }
 
-func (r ApiListSmartContractsRequest) Execute() (*SmartContractList, *http.Response, error) {
-	return r.ApiService.ListSmartContractsExecute(r)
+// A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default is 10.
+func (r ApiListFundOperationsRequest) Limit(limit int32) ApiListFundOperationsRequest {
+	r.limit = &limit
+	return r
+}
+
+// A cursor for pagination across multiple pages of results. Don&#39;t include this parameter on the first call. Use the next_page value returned in a previous response to request subsequent results.
+func (r ApiListFundOperationsRequest) Page(page string) ApiListFundOperationsRequest {
+	r.page = &page
+	return r
+}
+
+func (r ApiListFundOperationsRequest) Execute() (*FundOperationList, *http.Response, error) {
+	return r.ApiService.ListFundOperationsExecute(r)
 }
 
 /*
-ListSmartContracts List smart contracts deployed by address
+ListFundOperations List fund operations for an address.
 
-List all smart contracts deployed by address.
+List fund operations for an address.
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  @param walletId The ID of the wallet the address belongs to.
- @param addressId The ID of the address to fetch the smart contracts for.
- @return ApiListSmartContractsRequest
+ @param addressId The onchain address of the address to list fund operations for.
+ @return ApiListFundOperationsRequest
 */
-func (a *SmartContractsAPIService) ListSmartContracts(ctx context.Context, walletId string, addressId string) ApiListSmartContractsRequest {
-	return ApiListSmartContractsRequest{
+func (a *FundAPIService) ListFundOperations(ctx context.Context, walletId string, addressId string) ApiListFundOperationsRequest {
+	return ApiListFundOperationsRequest{
 		ApiService: a,
 		ctx: ctx,
 		walletId: walletId,
@@ -514,21 +507,21 @@ func (a *SmartContractsAPIService) ListSmartContracts(ctx context.Context, walle
 }
 
 // Execute executes the request
-//  @return SmartContractList
-func (a *SmartContractsAPIService) ListSmartContractsExecute(r ApiListSmartContractsRequest) (*SmartContractList, *http.Response, error) {
+//  @return FundOperationList
+func (a *FundAPIService) ListFundOperationsExecute(r ApiListFundOperationsRequest) (*FundOperationList, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodGet
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *SmartContractList
+		localVarReturnValue  *FundOperationList
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SmartContractsAPIService.ListSmartContracts")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "FundAPIService.ListFundOperations")
 	if err != nil {
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/v1/wallets/{wallet_id}/addresses/{address_id}/smart_contracts"
+	localVarPath := localBasePath + "/v1/wallets/{wallet_id}/addresses/{address_id}/fund_operations"
 	localVarPath = strings.Replace(localVarPath, "{"+"wallet_id"+"}", url.PathEscape(parameterValueToString(r.walletId, "walletId")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"address_id"+"}", url.PathEscape(parameterValueToString(r.addressId, "addressId")), -1)
 
@@ -536,6 +529,12 @@ func (a *SmartContractsAPIService) ListSmartContractsExecute(r ApiListSmartContr
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
+	if r.limit != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "limit", r.limit, "form", "")
+	}
+	if r.page != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "page", r.page, "form", "")
+	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
 
@@ -553,132 +552,6 @@ func (a *SmartContractsAPIService) ListSmartContractsExecute(r ApiListSmartContr
 	if localVarHTTPHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
-	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
-	if err != nil {
-		return localVarReturnValue, nil, err
-	}
-
-	localVarHTTPResponse, err := a.client.callAPI(req)
-	if err != nil || localVarHTTPResponse == nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
-
-	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
-	localVarHTTPResponse.Body.Close()
-	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
-	if err != nil {
-		return localVarReturnValue, localVarHTTPResponse, err
-	}
-
-	if localVarHTTPResponse.StatusCode >= 300 {
-		newErr := &GenericOpenAPIError{
-			body:  localVarBody,
-			error: localVarHTTPResponse.Status,
-		}
-			var v Error
-			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-			if err != nil {
-				newErr.error = err.Error()
-				return localVarReturnValue, localVarHTTPResponse, newErr
-			}
-					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
-					newErr.model = v
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-
-	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
-	if err != nil {
-		newErr := &GenericOpenAPIError{
-			body:  localVarBody,
-			error: err.Error(),
-		}
-		return localVarReturnValue, localVarHTTPResponse, newErr
-	}
-
-	return localVarReturnValue, localVarHTTPResponse, nil
-}
-
-type ApiReadContractRequest struct {
-	ctx context.Context
-	ApiService SmartContractsAPI
-	networkId string
-	contractAddress string
-	readContractRequest *ReadContractRequest
-}
-
-func (r ApiReadContractRequest) ReadContractRequest(readContractRequest ReadContractRequest) ApiReadContractRequest {
-	r.readContractRequest = &readContractRequest
-	return r
-}
-
-func (r ApiReadContractRequest) Execute() (*SolidityValue, *http.Response, error) {
-	return r.ApiService.ReadContractExecute(r)
-}
-
-/*
-ReadContract Read data from a smart contract
-
-Perform a read operation on a smart contract without creating a transaction
-
- @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- @param networkId
- @param contractAddress
- @return ApiReadContractRequest
-*/
-func (a *SmartContractsAPIService) ReadContract(ctx context.Context, networkId string, contractAddress string) ApiReadContractRequest {
-	return ApiReadContractRequest{
-		ApiService: a,
-		ctx: ctx,
-		networkId: networkId,
-		contractAddress: contractAddress,
-	}
-}
-
-// Execute executes the request
-//  @return SolidityValue
-func (a *SmartContractsAPIService) ReadContractExecute(r ApiReadContractRequest) (*SolidityValue, *http.Response, error) {
-	var (
-		localVarHTTPMethod   = http.MethodPost
-		localVarPostBody     interface{}
-		formFiles            []formFile
-		localVarReturnValue  *SolidityValue
-	)
-
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SmartContractsAPIService.ReadContract")
-	if err != nil {
-		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
-	}
-
-	localVarPath := localBasePath + "/v1/networks/{network_id}/smart_contracts/{contract_address}/read"
-	localVarPath = strings.Replace(localVarPath, "{"+"network_id"+"}", url.PathEscape(parameterValueToString(r.networkId, "networkId")), -1)
-	localVarPath = strings.Replace(localVarPath, "{"+"contract_address"+"}", url.PathEscape(parameterValueToString(r.contractAddress, "contractAddress")), -1)
-
-	localVarHeaderParams := make(map[string]string)
-	localVarQueryParams := url.Values{}
-	localVarFormParams := url.Values{}
-	if r.readContractRequest == nil {
-		return localVarReturnValue, nil, reportError("readContractRequest is required and must be specified")
-	}
-
-	// to determine the Content-Type header
-	localVarHTTPContentTypes := []string{"application/json"}
-
-	// set Content-Type header
-	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
-	if localVarHTTPContentType != "" {
-		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
-	}
-
-	// to determine the Accept header
-	localVarHTTPHeaderAccepts := []string{"application/json"}
-
-	// set Accept header
-	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
-	if localVarHTTPHeaderAccept != "" {
-		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
-	}
-	// body params
-	localVarPostBody = r.readContractRequest
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
 	if err != nil {
 		return localVarReturnValue, nil, err

@@ -25,6 +25,7 @@ type FaucetTransaction struct {
 	TransactionHash string `json:"transaction_hash"`
 	// Link to the transaction on the blockchain explorer.
 	TransactionLink string `json:"transaction_link"`
+	Transaction Transaction `json:"transaction"`
 }
 
 type _FaucetTransaction FaucetTransaction
@@ -33,10 +34,11 @@ type _FaucetTransaction FaucetTransaction
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewFaucetTransaction(transactionHash string, transactionLink string) *FaucetTransaction {
+func NewFaucetTransaction(transactionHash string, transactionLink string, transaction Transaction) *FaucetTransaction {
 	this := FaucetTransaction{}
 	this.TransactionHash = transactionHash
 	this.TransactionLink = transactionLink
+	this.Transaction = transaction
 	return &this
 }
 
@@ -96,6 +98,30 @@ func (o *FaucetTransaction) SetTransactionLink(v string) {
 	o.TransactionLink = v
 }
 
+// GetTransaction returns the Transaction field value
+func (o *FaucetTransaction) GetTransaction() Transaction {
+	if o == nil {
+		var ret Transaction
+		return ret
+	}
+
+	return o.Transaction
+}
+
+// GetTransactionOk returns a tuple with the Transaction field value
+// and a boolean to check if the value has been set.
+func (o *FaucetTransaction) GetTransactionOk() (*Transaction, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.Transaction, true
+}
+
+// SetTransaction sets field value
+func (o *FaucetTransaction) SetTransaction(v Transaction) {
+	o.Transaction = v
+}
+
 func (o FaucetTransaction) MarshalJSON() ([]byte, error) {
 	toSerialize,err := o.ToMap()
 	if err != nil {
@@ -108,6 +134,7 @@ func (o FaucetTransaction) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["transaction_hash"] = o.TransactionHash
 	toSerialize["transaction_link"] = o.TransactionLink
+	toSerialize["transaction"] = o.Transaction
 	return toSerialize, nil
 }
 
@@ -118,6 +145,7 @@ func (o *FaucetTransaction) UnmarshalJSON(data []byte) (err error) {
 	requiredProperties := []string{
 		"transaction_hash",
 		"transaction_link",
+		"transaction",
 	}
 
 	allProperties := make(map[string]interface{})
