@@ -12,8 +12,6 @@ package client
 
 import (
 	"encoding/json"
-	"bytes"
-	"fmt"
 )
 
 // checks if the UpdateWebhookRequest type satisfies the MappedNullable interface at compile time
@@ -25,18 +23,15 @@ type UpdateWebhookRequest struct {
 	// Webhook will monitor all events that matches any one of the event filters.
 	EventFilters []WebhookEventFilter `json:"event_filters,omitempty"`
 	// The Webhook uri that updates to
-	NotificationUri string `json:"notification_uri"`
+	NotificationUri *string `json:"notification_uri,omitempty"`
 }
-
-type _UpdateWebhookRequest UpdateWebhookRequest
 
 // NewUpdateWebhookRequest instantiates a new UpdateWebhookRequest object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewUpdateWebhookRequest(notificationUri string) *UpdateWebhookRequest {
+func NewUpdateWebhookRequest() *UpdateWebhookRequest {
 	this := UpdateWebhookRequest{}
-	this.NotificationUri = notificationUri
 	return &this
 }
 
@@ -112,28 +107,36 @@ func (o *UpdateWebhookRequest) SetEventFilters(v []WebhookEventFilter) {
 	o.EventFilters = v
 }
 
-// GetNotificationUri returns the NotificationUri field value
+// GetNotificationUri returns the NotificationUri field value if set, zero value otherwise.
 func (o *UpdateWebhookRequest) GetNotificationUri() string {
-	if o == nil {
+	if o == nil || IsNil(o.NotificationUri) {
 		var ret string
 		return ret
 	}
-
-	return o.NotificationUri
+	return *o.NotificationUri
 }
 
-// GetNotificationUriOk returns a tuple with the NotificationUri field value
+// GetNotificationUriOk returns a tuple with the NotificationUri field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *UpdateWebhookRequest) GetNotificationUriOk() (*string, bool) {
-	if o == nil {
+	if o == nil || IsNil(o.NotificationUri) {
 		return nil, false
 	}
-	return &o.NotificationUri, true
+	return o.NotificationUri, true
 }
 
-// SetNotificationUri sets field value
+// HasNotificationUri returns a boolean if a field has been set.
+func (o *UpdateWebhookRequest) HasNotificationUri() bool {
+	if o != nil && !IsNil(o.NotificationUri) {
+		return true
+	}
+
+	return false
+}
+
+// SetNotificationUri gets a reference to the given string and assigns it to the NotificationUri field.
 func (o *UpdateWebhookRequest) SetNotificationUri(v string) {
-	o.NotificationUri = v
+	o.NotificationUri = &v
 }
 
 func (o UpdateWebhookRequest) MarshalJSON() ([]byte, error) {
@@ -152,45 +155,10 @@ func (o UpdateWebhookRequest) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.EventFilters) {
 		toSerialize["event_filters"] = o.EventFilters
 	}
-	toSerialize["notification_uri"] = o.NotificationUri
+	if !IsNil(o.NotificationUri) {
+		toSerialize["notification_uri"] = o.NotificationUri
+	}
 	return toSerialize, nil
-}
-
-func (o *UpdateWebhookRequest) UnmarshalJSON(data []byte) (err error) {
-	// This validates that all required properties are included in the JSON object
-	// by unmarshalling the object into a generic map with string keys and checking
-	// that every required field exists as a key in the generic map.
-	requiredProperties := []string{
-		"notification_uri",
-	}
-
-	allProperties := make(map[string]interface{})
-
-	err = json.Unmarshal(data, &allProperties)
-
-	if err != nil {
-		return err;
-	}
-
-	for _, requiredProperty := range(requiredProperties) {
-		if _, exists := allProperties[requiredProperty]; !exists {
-			return fmt.Errorf("no value given for required property %v", requiredProperty)
-		}
-	}
-
-	varUpdateWebhookRequest := _UpdateWebhookRequest{}
-
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varUpdateWebhookRequest)
-
-	if err != nil {
-		return err
-	}
-
-	*o = UpdateWebhookRequest(varUpdateWebhookRequest)
-
-	return err
 }
 
 type NullableUpdateWebhookRequest struct {

@@ -59,11 +59,14 @@ type ServerSignersAPI interface {
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	@param serverSignerId The ID of the server signer to fetch events for
 	@return ApiListServerSignerEventsRequest
+
+	Deprecated
 	*/
 	ListServerSignerEvents(ctx context.Context, serverSignerId string) ApiListServerSignerEventsRequest
 
 	// ListServerSignerEventsExecute executes the request
 	//  @return ServerSignerEventList
+	// Deprecated
 	ListServerSignerEventsExecute(r ApiListServerSignerEventsRequest) (*ServerSignerEventList, *http.Response, error)
 
 	/*
@@ -372,6 +375,8 @@ List events for a server signer
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  @param serverSignerId The ID of the server signer to fetch events for
  @return ApiListServerSignerEventsRequest
+
+Deprecated
 */
 func (a *ServerSignersAPIService) ListServerSignerEvents(ctx context.Context, serverSignerId string) ApiListServerSignerEventsRequest {
 	return ApiListServerSignerEventsRequest{
@@ -383,6 +388,7 @@ func (a *ServerSignersAPIService) ListServerSignerEvents(ctx context.Context, se
 
 // Execute executes the request
 //  @return ServerSignerEventList
+// Deprecated
 func (a *ServerSignersAPIService) ListServerSignerEventsExecute(r ApiListServerSignerEventsRequest) (*ServerSignerEventList, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodGet

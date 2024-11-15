@@ -40,20 +40,21 @@ type ExternalAddressesAPI interface {
 	GetExternalAddressBalanceExecute(r ApiGetExternalAddressBalanceRequest) (*Balance, *http.Response, error)
 
 	/*
-	ListAddressTransactions List transactions for an address.
+	GetFaucetTransaction Get the status of a faucet transaction
 
-	List all transactions that interact with the address.
+	Get the status of a faucet transaction
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	@param networkId The ID of the blockchain network
-	@param addressId The ID of the address to fetch the transactions for.
-	@return ApiListAddressTransactionsRequest
+	@param addressId The ID of the address to fetch the faucet transaction for
+	@param txHash The hash of the faucet transaction
+	@return ApiGetFaucetTransactionRequest
 	*/
-	ListAddressTransactions(ctx context.Context, networkId string, addressId string) ApiListAddressTransactionsRequest
+	GetFaucetTransaction(ctx context.Context, networkId string, addressId string, txHash string) ApiGetFaucetTransactionRequest
 
-	// ListAddressTransactionsExecute executes the request
-	//  @return AddressTransactionList
-	ListAddressTransactionsExecute(r ApiListAddressTransactionsRequest) (*AddressTransactionList, *http.Response, error)
+	// GetFaucetTransactionExecute executes the request
+	//  @return FaucetTransaction
+	GetFaucetTransactionExecute(r ApiGetFaucetTransactionRequest) (*FaucetTransaction, *http.Response, error)
 
 	/*
 	ListExternalAddressBalances Get the balances of an external address
@@ -210,79 +211,63 @@ func (a *ExternalAddressesAPIService) GetExternalAddressBalanceExecute(r ApiGetE
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
-type ApiListAddressTransactionsRequest struct {
+type ApiGetFaucetTransactionRequest struct {
 	ctx context.Context
 	ApiService ExternalAddressesAPI
 	networkId string
 	addressId string
-	limit *int32
-	page *string
+	txHash string
 }
 
-// A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default is 10.
-func (r ApiListAddressTransactionsRequest) Limit(limit int32) ApiListAddressTransactionsRequest {
-	r.limit = &limit
-	return r
-}
-
-// A cursor for pagination across multiple pages of results. Don&#39;t include this parameter on the first call. Use the next_page value returned in a previous response to request subsequent results.
-func (r ApiListAddressTransactionsRequest) Page(page string) ApiListAddressTransactionsRequest {
-	r.page = &page
-	return r
-}
-
-func (r ApiListAddressTransactionsRequest) Execute() (*AddressTransactionList, *http.Response, error) {
-	return r.ApiService.ListAddressTransactionsExecute(r)
+func (r ApiGetFaucetTransactionRequest) Execute() (*FaucetTransaction, *http.Response, error) {
+	return r.ApiService.GetFaucetTransactionExecute(r)
 }
 
 /*
-ListAddressTransactions List transactions for an address.
+GetFaucetTransaction Get the status of a faucet transaction
 
-List all transactions that interact with the address.
+Get the status of a faucet transaction
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  @param networkId The ID of the blockchain network
- @param addressId The ID of the address to fetch the transactions for.
- @return ApiListAddressTransactionsRequest
+ @param addressId The ID of the address to fetch the faucet transaction for
+ @param txHash The hash of the faucet transaction
+ @return ApiGetFaucetTransactionRequest
 */
-func (a *ExternalAddressesAPIService) ListAddressTransactions(ctx context.Context, networkId string, addressId string) ApiListAddressTransactionsRequest {
-	return ApiListAddressTransactionsRequest{
+func (a *ExternalAddressesAPIService) GetFaucetTransaction(ctx context.Context, networkId string, addressId string, txHash string) ApiGetFaucetTransactionRequest {
+	return ApiGetFaucetTransactionRequest{
 		ApiService: a,
 		ctx: ctx,
 		networkId: networkId,
 		addressId: addressId,
+		txHash: txHash,
 	}
 }
 
 // Execute executes the request
-//  @return AddressTransactionList
-func (a *ExternalAddressesAPIService) ListAddressTransactionsExecute(r ApiListAddressTransactionsRequest) (*AddressTransactionList, *http.Response, error) {
+//  @return FaucetTransaction
+func (a *ExternalAddressesAPIService) GetFaucetTransactionExecute(r ApiGetFaucetTransactionRequest) (*FaucetTransaction, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodGet
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *AddressTransactionList
+		localVarReturnValue  *FaucetTransaction
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "ExternalAddressesAPIService.ListAddressTransactions")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "ExternalAddressesAPIService.GetFaucetTransaction")
 	if err != nil {
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/v1/networks/{network_id}/addresses/{address_id}/transactions"
+	localVarPath := localBasePath + "/v1/networks/{network_id}/addresses/{address_id}/faucet/{tx_hash}"
 	localVarPath = strings.Replace(localVarPath, "{"+"network_id"+"}", url.PathEscape(parameterValueToString(r.networkId, "networkId")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"address_id"+"}", url.PathEscape(parameterValueToString(r.addressId, "addressId")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"tx_hash"+"}", url.PathEscape(parameterValueToString(r.txHash, "txHash")), -1)
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
-	if r.limit != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "limit", r.limit, "form", "")
-	}
-	if r.page != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "page", r.page, "form", "")
-	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
 
@@ -476,11 +461,18 @@ type ApiRequestExternalFaucetFundsRequest struct {
 	networkId string
 	addressId string
 	assetId *string
+	skipWait *bool
 }
 
 // The ID of the asset to transfer from the faucet.
 func (r ApiRequestExternalFaucetFundsRequest) AssetId(assetId string) ApiRequestExternalFaucetFundsRequest {
 	r.assetId = &assetId
+	return r
+}
+
+// Whether to skip waiting for the transaction to be mined. This will become the default behavior in the future.
+func (r ApiRequestExternalFaucetFundsRequest) SkipWait(skipWait bool) ApiRequestExternalFaucetFundsRequest {
+	r.skipWait = &skipWait
 	return r
 }
 
@@ -532,6 +524,9 @@ func (a *ExternalAddressesAPIService) RequestExternalFaucetFundsExecute(r ApiReq
 
 	if r.assetId != nil {
 		parameterAddToHeaderOrQuery(localVarQueryParams, "asset_id", r.assetId, "form", "")
+	}
+	if r.skipWait != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "skip_wait", r.skipWait, "form", "")
 	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}

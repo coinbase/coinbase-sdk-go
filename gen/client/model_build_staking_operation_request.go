@@ -29,6 +29,7 @@ type BuildStakingOperationRequest struct {
 	AddressId string `json:"address_id"`
 	// The type of staking operation
 	Action string `json:"action"`
+	// Additional options for the staking operation.
 	Options map[string]string `json:"options"`
 }
 

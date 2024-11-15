@@ -18,8 +18,16 @@ import (
 
 // SmartContractOptions - Options for smart contract creation
 type SmartContractOptions struct {
+	MultiTokenContractOptions *MultiTokenContractOptions
 	NFTContractOptions *NFTContractOptions
 	TokenContractOptions *TokenContractOptions
+}
+
+// MultiTokenContractOptionsAsSmartContractOptions is a convenience function that returns MultiTokenContractOptions wrapped in SmartContractOptions
+func MultiTokenContractOptionsAsSmartContractOptions(v *MultiTokenContractOptions) SmartContractOptions {
+	return SmartContractOptions{
+		MultiTokenContractOptions: v,
+	}
 }
 
 // NFTContractOptionsAsSmartContractOptions is a convenience function that returns NFTContractOptions wrapped in SmartContractOptions
@@ -41,6 +49,23 @@ func TokenContractOptionsAsSmartContractOptions(v *TokenContractOptions) SmartCo
 func (dst *SmartContractOptions) UnmarshalJSON(data []byte) error {
 	var err error
 	match := 0
+	// try to unmarshal data into MultiTokenContractOptions
+	err = newStrictDecoder(data).Decode(&dst.MultiTokenContractOptions)
+	if err == nil {
+		jsonMultiTokenContractOptions, _ := json.Marshal(dst.MultiTokenContractOptions)
+		if string(jsonMultiTokenContractOptions) == "{}" { // empty struct
+			dst.MultiTokenContractOptions = nil
+		} else {
+			if err = validator.Validate(dst.MultiTokenContractOptions); err != nil {
+				dst.MultiTokenContractOptions = nil
+			} else {
+				match++
+			}
+		}
+	} else {
+		dst.MultiTokenContractOptions = nil
+	}
+
 	// try to unmarshal data into NFTContractOptions
 	err = newStrictDecoder(data).Decode(&dst.NFTContractOptions)
 	if err == nil {
@@ -77,6 +102,7 @@ func (dst *SmartContractOptions) UnmarshalJSON(data []byte) error {
 
 	if match > 1 { // more than 1 match
 		// reset to nil
+		dst.MultiTokenContractOptions = nil
 		dst.NFTContractOptions = nil
 		dst.TokenContractOptions = nil
 
@@ -90,6 +116,10 @@ func (dst *SmartContractOptions) UnmarshalJSON(data []byte) error {
 
 // Marshal data from the first non-nil pointers in the struct to JSON
 func (src SmartContractOptions) MarshalJSON() ([]byte, error) {
+	if src.MultiTokenContractOptions != nil {
+		return json.Marshal(&src.MultiTokenContractOptions)
+	}
+
 	if src.NFTContractOptions != nil {
 		return json.Marshal(&src.NFTContractOptions)
 	}
@@ -106,6 +136,10 @@ func (obj *SmartContractOptions) GetActualInstance() (interface{}) {
 	if obj == nil {
 		return nil
 	}
+	if obj.MultiTokenContractOptions != nil {
+		return obj.MultiTokenContractOptions
+	}
+
 	if obj.NFTContractOptions != nil {
 		return obj.NFTContractOptions
 	}

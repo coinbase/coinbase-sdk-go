@@ -15,8 +15,8 @@ import (
 type ValidatorSuite struct {
 	suite.Suite
 
-	mockValidatorsAPI *mocks.ValidatorsAPI
-	client            *Client
+	mockStakeAPI *mocks.StakeAPI
+	client       *Client
 }
 
 func TestValidatorTestSuite(t *testing.T) {
@@ -24,14 +24,14 @@ func TestValidatorTestSuite(t *testing.T) {
 }
 
 func (s *ValidatorSuite) SetupTest() {
-	s.mockValidatorsAPI = mocks.NewValidatorsAPI(s.T())
+	s.mockStakeAPI = mocks.NewStakeAPI(s.T())
 	s.client = &Client{client: &api.APIClient{
-		ValidatorsAPI: s.mockValidatorsAPI,
+		StakeAPI: s.mockStakeAPI,
 	}}
 }
 
 func (s *ValidatorSuite) TearDownTest() {
-	s.mockValidatorsAPI.AssertExpectations(s.T())
+	s.mockStakeAPI.AssertExpectations(s.T())
 }
 
 func (s *ValidatorSuite) TestListValidators_Success() {
@@ -134,41 +134,41 @@ func (s *ValidatorSuite) TestGetValidator_Failure() {
 func (s *ValidatorSuite) mockSuccessfulListValidators(ctx context.Context, networkId string, assetId string, mockValidators *api.ValidatorList) {
 	s.T().Helper()
 
-	s.mockValidatorsAPI.On("ListValidators", ctx, networkId, assetId).Return(api.ApiListValidatorsRequest{
-		ApiService: s.mockValidatorsAPI,
+	s.mockStakeAPI.On("ListValidators", ctx, networkId, assetId).Return(api.ApiListValidatorsRequest{
+		ApiService: s.mockStakeAPI,
 	}, nil, nil).Once()
 
-	s.mockValidatorsAPI.On("ListValidatorsExecute", mock.Anything).Return(mockValidators, nil, nil).Once()
+	s.mockStakeAPI.On("ListValidatorsExecute", mock.Anything).Return(mockValidators, nil, nil).Once()
 }
 
 func (s *ValidatorSuite) mockFailedListValidators(ctx context.Context, networkId string, assetId string, err error) {
 	s.T().Helper()
 
-	s.mockValidatorsAPI.On("ListValidators", ctx, networkId, assetId).Return(api.ApiListValidatorsRequest{
-		ApiService: s.mockValidatorsAPI,
+	s.mockStakeAPI.On("ListValidators", ctx, networkId, assetId).Return(api.ApiListValidatorsRequest{
+		ApiService: s.mockStakeAPI,
 	}, nil, nil).Once()
 
-	s.mockValidatorsAPI.On("ListValidatorsExecute", mock.Anything).Return(nil, internalFailureHttpResponse(), err).Once()
+	s.mockStakeAPI.On("ListValidatorsExecute", mock.Anything).Return(nil, internalFailureHttpResponse(), err).Once()
 }
 
 func (s *ValidatorSuite) mockSuccessfulGetValidator(ctx context.Context, networkId string, assetId string, validatorId string, validator *api.Validator) {
 	s.T().Helper()
 
-	s.mockValidatorsAPI.On("GetValidator", ctx, networkId, assetId, validatorId).Return(api.ApiGetValidatorRequest{
-		ApiService: s.mockValidatorsAPI,
+	s.mockStakeAPI.On("GetValidator", ctx, networkId, assetId, validatorId).Return(api.ApiGetValidatorRequest{
+		ApiService: s.mockStakeAPI,
 	}, nil, nil)
 
-	s.mockValidatorsAPI.On("GetValidatorExecute", mock.Anything).Return(validator, nil, nil)
+	s.mockStakeAPI.On("GetValidatorExecute", mock.Anything).Return(validator, nil, nil)
 }
 
 func (s *ValidatorSuite) mockFailedGetValidator(ctx context.Context, networkId string, assetId string, validatorId string, err error) {
 	s.T().Helper()
 
-	s.mockValidatorsAPI.On("GetValidator", ctx, networkId, assetId, validatorId).Return(api.ApiGetValidatorRequest{
-		ApiService: s.mockValidatorsAPI,
+	s.mockStakeAPI.On("GetValidator", ctx, networkId, assetId, validatorId).Return(api.ApiGetValidatorRequest{
+		ApiService: s.mockStakeAPI,
 	}, nil, nil)
 
-	s.mockValidatorsAPI.On("GetValidatorExecute", mock.Anything).Return(nil, internalFailureHttpResponse(), err)
+	s.mockStakeAPI.On("GetValidatorExecute", mock.Anything).Return(nil, internalFailureHttpResponse(), err)
 }
 
 func internalFailureHttpResponse() *http.Response {

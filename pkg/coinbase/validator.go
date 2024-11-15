@@ -108,7 +108,7 @@ func (c *Client) ListValidators(
 	assetId string,
 	o ...ListValidatorsOption,
 ) ([]Validator, error) {
-	listValidatorReq := c.client.ValidatorsAPI.ListValidators(ctx, normalizeNetwork(networkId), assetId)
+	listValidatorReq := c.client.StakeAPI.ListValidators(ctx, normalizeNetwork(networkId), assetId)
 
 	for _, f := range o {
 		if f == nil {
@@ -132,7 +132,7 @@ func (c *Client) ListValidators(
 }
 
 func (c *Client) GetValidator(ctx context.Context, networkId string, assetId string, validatorId string) (Validator, error) {
-	validator, httpResp, err := c.client.ValidatorsAPI.GetValidator(
+	validator, httpResp, err := c.client.StakeAPI.GetValidator(
 		ctx,
 		normalizeNetwork(networkId),
 		assetId,

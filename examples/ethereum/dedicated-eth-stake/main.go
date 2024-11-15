@@ -58,7 +58,11 @@ func main() {
 
 	log.Printf("staking operation ID: %s\n", stakeOperation.ID())
 
-	for index, tx := range stakeOperation.Transactions() {
+	for index, stakingTransactionDetail := range stakeOperation.StakingTransactionDetails() {
+		log.Printf("metadata: %s", stakingTransactionDetail.GetMetadata())
+
+		tx := stakeOperation.Transaction(index)
+
 		log.Printf("Deposit tx %d: %s\n", index+1, tx.UnsignedPayload())
 	}
 

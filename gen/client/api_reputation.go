@@ -20,97 +20,92 @@ import (
 )
 
 
-type ValidatorsAPI interface {
+type ReputationAPI interface {
 
 	/*
-	GetValidator Get a validator belonging to the CDP project
+	GetAddressReputation Get the onchain reputation of an external address
 
-	Get a validator belonging to the user for a given network, asset and id.
+	Get the onchain reputation of an external address
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	@param networkId The ID of the blockchain network.
-	@param assetId The symbol of the asset to get the validator for.
-	@param validatorId The unique id of the validator to fetch details for.
-	@return ApiGetValidatorRequest
+	@param addressId The ID of the address to fetch the reputation for.
+	@return ApiGetAddressReputationRequest
 	*/
-	GetValidator(ctx context.Context, networkId string, assetId string, validatorId string) ApiGetValidatorRequest
+	GetAddressReputation(ctx context.Context, networkId string, addressId string) ApiGetAddressReputationRequest
 
-	// GetValidatorExecute executes the request
-	//  @return Validator
-	GetValidatorExecute(r ApiGetValidatorRequest) (*Validator, *http.Response, error)
+	// GetAddressReputationExecute executes the request
+	//  @return AddressReputation
+	GetAddressReputationExecute(r ApiGetAddressReputationRequest) (*AddressReputation, *http.Response, error)
 
 	/*
-	ListValidators List validators belonging to the CDP project
+	GetAddressRisk Get the risk of an address
 
-	List validators belonging to the user for a given network and asset.
+	Get the risk of an address
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	@param networkId The ID of the blockchain network.
-	@param assetId The symbol of the asset to get the validators for.
-	@return ApiListValidatorsRequest
+	@param addressId The ID of the address to fetch the risk for.
+	@return ApiGetAddressRiskRequest
 	*/
-	ListValidators(ctx context.Context, networkId string, assetId string) ApiListValidatorsRequest
+	GetAddressRisk(ctx context.Context, networkId string, addressId string) ApiGetAddressRiskRequest
 
-	// ListValidatorsExecute executes the request
-	//  @return ValidatorList
-	ListValidatorsExecute(r ApiListValidatorsRequest) (*ValidatorList, *http.Response, error)
+	// GetAddressRiskExecute executes the request
+	//  @return AddressRisk
+	GetAddressRiskExecute(r ApiGetAddressRiskRequest) (*AddressRisk, *http.Response, error)
 }
 
-// ValidatorsAPIService ValidatorsAPI service
-type ValidatorsAPIService service
+// ReputationAPIService ReputationAPI service
+type ReputationAPIService service
 
-type ApiGetValidatorRequest struct {
+type ApiGetAddressReputationRequest struct {
 	ctx context.Context
-	ApiService ValidatorsAPI
+	ApiService ReputationAPI
 	networkId string
-	assetId string
-	validatorId string
+	addressId string
 }
 
-func (r ApiGetValidatorRequest) Execute() (*Validator, *http.Response, error) {
-	return r.ApiService.GetValidatorExecute(r)
+func (r ApiGetAddressReputationRequest) Execute() (*AddressReputation, *http.Response, error) {
+	return r.ApiService.GetAddressReputationExecute(r)
 }
 
 /*
-GetValidator Get a validator belonging to the CDP project
+GetAddressReputation Get the onchain reputation of an external address
 
-Get a validator belonging to the user for a given network, asset and id.
+Get the onchain reputation of an external address
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  @param networkId The ID of the blockchain network.
- @param assetId The symbol of the asset to get the validator for.
- @param validatorId The unique id of the validator to fetch details for.
- @return ApiGetValidatorRequest
+ @param addressId The ID of the address to fetch the reputation for.
+ @return ApiGetAddressReputationRequest
 */
-func (a *ValidatorsAPIService) GetValidator(ctx context.Context, networkId string, assetId string, validatorId string) ApiGetValidatorRequest {
-	return ApiGetValidatorRequest{
+func (a *ReputationAPIService) GetAddressReputation(ctx context.Context, networkId string, addressId string) ApiGetAddressReputationRequest {
+	return ApiGetAddressReputationRequest{
 		ApiService: a,
 		ctx: ctx,
 		networkId: networkId,
-		assetId: assetId,
-		validatorId: validatorId,
+		addressId: addressId,
 	}
 }
 
 // Execute executes the request
-//  @return Validator
-func (a *ValidatorsAPIService) GetValidatorExecute(r ApiGetValidatorRequest) (*Validator, *http.Response, error) {
+//  @return AddressReputation
+func (a *ReputationAPIService) GetAddressReputationExecute(r ApiGetAddressReputationRequest) (*AddressReputation, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodGet
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *Validator
+		localVarReturnValue  *AddressReputation
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "ValidatorsAPIService.GetValidator")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "ReputationAPIService.GetAddressReputation")
 	if err != nil {
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/v1/networks/{network_id}/assets/{asset_id}/validators/{validator_id}"
+	localVarPath := localBasePath + "/v1/networks/{network_id}/addresses/{address_id}/reputation"
 	localVarPath = strings.Replace(localVarPath, "{"+"network_id"+"}", url.PathEscape(parameterValueToString(r.networkId, "networkId")), -1)
-	localVarPath = strings.Replace(localVarPath, "{"+"asset_id"+"}", url.PathEscape(parameterValueToString(r.assetId, "assetId")), -1)
-	localVarPath = strings.Replace(localVarPath, "{"+"validator_id"+"}", url.PathEscape(parameterValueToString(r.validatorId, "validatorId")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"address_id"+"}", url.PathEscape(parameterValueToString(r.addressId, "addressId")), -1)
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -178,89 +173,59 @@ func (a *ValidatorsAPIService) GetValidatorExecute(r ApiGetValidatorRequest) (*V
 	return localVarReturnValue, localVarHTTPResponse, nil
 }
 
-type ApiListValidatorsRequest struct {
+type ApiGetAddressRiskRequest struct {
 	ctx context.Context
-	ApiService ValidatorsAPI
+	ApiService ReputationAPI
 	networkId string
-	assetId string
-	status *ValidatorStatus
-	limit *int32
-	page *string
+	addressId string
 }
 
-// A filter to list validators based on a status.
-func (r ApiListValidatorsRequest) Status(status ValidatorStatus) ApiListValidatorsRequest {
-	r.status = &status
-	return r
-}
-
-// A limit on the number of objects to be returned. Limit can range between 1 and 100, and the default is 50.
-func (r ApiListValidatorsRequest) Limit(limit int32) ApiListValidatorsRequest {
-	r.limit = &limit
-	return r
-}
-
-// A cursor for pagination across multiple pages of results. Don&#39;t include this parameter on the first call. Use the next_page value returned in a previous response to request subsequent results.
-func (r ApiListValidatorsRequest) Page(page string) ApiListValidatorsRequest {
-	r.page = &page
-	return r
-}
-
-func (r ApiListValidatorsRequest) Execute() (*ValidatorList, *http.Response, error) {
-	return r.ApiService.ListValidatorsExecute(r)
+func (r ApiGetAddressRiskRequest) Execute() (*AddressRisk, *http.Response, error) {
+	return r.ApiService.GetAddressRiskExecute(r)
 }
 
 /*
-ListValidators List validators belonging to the CDP project
+GetAddressRisk Get the risk of an address
 
-List validators belonging to the user for a given network and asset.
+Get the risk of an address
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  @param networkId The ID of the blockchain network.
- @param assetId The symbol of the asset to get the validators for.
- @return ApiListValidatorsRequest
+ @param addressId The ID of the address to fetch the risk for.
+ @return ApiGetAddressRiskRequest
 */
-func (a *ValidatorsAPIService) ListValidators(ctx context.Context, networkId string, assetId string) ApiListValidatorsRequest {
-	return ApiListValidatorsRequest{
+func (a *ReputationAPIService) GetAddressRisk(ctx context.Context, networkId string, addressId string) ApiGetAddressRiskRequest {
+	return ApiGetAddressRiskRequest{
 		ApiService: a,
 		ctx: ctx,
 		networkId: networkId,
-		assetId: assetId,
+		addressId: addressId,
 	}
 }
 
 // Execute executes the request
-//  @return ValidatorList
-func (a *ValidatorsAPIService) ListValidatorsExecute(r ApiListValidatorsRequest) (*ValidatorList, *http.Response, error) {
+//  @return AddressRisk
+func (a *ReputationAPIService) GetAddressRiskExecute(r ApiGetAddressRiskRequest) (*AddressRisk, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodGet
 		localVarPostBody     interface{}
 		formFiles            []formFile
-		localVarReturnValue  *ValidatorList
+		localVarReturnValue  *AddressRisk
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "ValidatorsAPIService.ListValidators")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "ReputationAPIService.GetAddressRisk")
 	if err != nil {
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/v1/networks/{network_id}/assets/{asset_id}/validators"
+	localVarPath := localBasePath + "/v1/networks/{network_id}/addresses/{address_id}/risk"
 	localVarPath = strings.Replace(localVarPath, "{"+"network_id"+"}", url.PathEscape(parameterValueToString(r.networkId, "networkId")), -1)
-	localVarPath = strings.Replace(localVarPath, "{"+"asset_id"+"}", url.PathEscape(parameterValueToString(r.assetId, "assetId")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"address_id"+"}", url.PathEscape(parameterValueToString(r.addressId, "addressId")), -1)
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
-	if r.status != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "status", r.status, "form", "")
-	}
-	if r.limit != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "limit", r.limit, "form", "")
-	}
-	if r.page != nil {
-		parameterAddToHeaderOrQuery(localVarQueryParams, "page", r.page, "form", "")
-	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
 

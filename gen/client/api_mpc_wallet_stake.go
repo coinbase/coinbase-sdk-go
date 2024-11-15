@@ -20,7 +20,7 @@ import (
 )
 
 
-type WalletStakeAPI interface {
+type MPCWalletStakeAPI interface {
 
 	/*
 	BroadcastStakingOperation Broadcast a staking operation
@@ -73,12 +73,12 @@ type WalletStakeAPI interface {
 	GetStakingOperationExecute(r ApiGetStakingOperationRequest) (*StakingOperation, *http.Response, error)
 }
 
-// WalletStakeAPIService WalletStakeAPI service
-type WalletStakeAPIService service
+// MPCWalletStakeAPIService MPCWalletStakeAPI service
+type MPCWalletStakeAPIService service
 
 type ApiBroadcastStakingOperationRequest struct {
 	ctx context.Context
-	ApiService WalletStakeAPI
+	ApiService MPCWalletStakeAPI
 	walletId string
 	addressId string
 	stakingOperationId string
@@ -105,7 +105,7 @@ Broadcast a staking operation.
  @param stakingOperationId The ID of the staking operation to broadcast.
  @return ApiBroadcastStakingOperationRequest
 */
-func (a *WalletStakeAPIService) BroadcastStakingOperation(ctx context.Context, walletId string, addressId string, stakingOperationId string) ApiBroadcastStakingOperationRequest {
+func (a *MPCWalletStakeAPIService) BroadcastStakingOperation(ctx context.Context, walletId string, addressId string, stakingOperationId string) ApiBroadcastStakingOperationRequest {
 	return ApiBroadcastStakingOperationRequest{
 		ApiService: a,
 		ctx: ctx,
@@ -117,7 +117,7 @@ func (a *WalletStakeAPIService) BroadcastStakingOperation(ctx context.Context, w
 
 // Execute executes the request
 //  @return StakingOperation
-func (a *WalletStakeAPIService) BroadcastStakingOperationExecute(r ApiBroadcastStakingOperationRequest) (*StakingOperation, *http.Response, error) {
+func (a *MPCWalletStakeAPIService) BroadcastStakingOperationExecute(r ApiBroadcastStakingOperationRequest) (*StakingOperation, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodPost
 		localVarPostBody     interface{}
@@ -125,7 +125,7 @@ func (a *WalletStakeAPIService) BroadcastStakingOperationExecute(r ApiBroadcastS
 		localVarReturnValue  *StakingOperation
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "WalletStakeAPIService.BroadcastStakingOperation")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "MPCWalletStakeAPIService.BroadcastStakingOperation")
 	if err != nil {
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
@@ -208,7 +208,7 @@ func (a *WalletStakeAPIService) BroadcastStakingOperationExecute(r ApiBroadcastS
 
 type ApiCreateStakingOperationRequest struct {
 	ctx context.Context
-	ApiService WalletStakeAPI
+	ApiService MPCWalletStakeAPI
 	walletId string
 	addressId string
 	createStakingOperationRequest *CreateStakingOperationRequest
@@ -233,7 +233,7 @@ Create a new staking operation.
  @param addressId The ID of the address to create the staking operation for.
  @return ApiCreateStakingOperationRequest
 */
-func (a *WalletStakeAPIService) CreateStakingOperation(ctx context.Context, walletId string, addressId string) ApiCreateStakingOperationRequest {
+func (a *MPCWalletStakeAPIService) CreateStakingOperation(ctx context.Context, walletId string, addressId string) ApiCreateStakingOperationRequest {
 	return ApiCreateStakingOperationRequest{
 		ApiService: a,
 		ctx: ctx,
@@ -244,7 +244,7 @@ func (a *WalletStakeAPIService) CreateStakingOperation(ctx context.Context, wall
 
 // Execute executes the request
 //  @return StakingOperation
-func (a *WalletStakeAPIService) CreateStakingOperationExecute(r ApiCreateStakingOperationRequest) (*StakingOperation, *http.Response, error) {
+func (a *MPCWalletStakeAPIService) CreateStakingOperationExecute(r ApiCreateStakingOperationRequest) (*StakingOperation, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodPost
 		localVarPostBody     interface{}
@@ -252,7 +252,7 @@ func (a *WalletStakeAPIService) CreateStakingOperationExecute(r ApiCreateStaking
 		localVarReturnValue  *StakingOperation
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "WalletStakeAPIService.CreateStakingOperation")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "MPCWalletStakeAPIService.CreateStakingOperation")
 	if err != nil {
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
@@ -334,7 +334,7 @@ func (a *WalletStakeAPIService) CreateStakingOperationExecute(r ApiCreateStaking
 
 type ApiGetStakingOperationRequest struct {
 	ctx context.Context
-	ApiService WalletStakeAPI
+	ApiService MPCWalletStakeAPI
 	walletId string
 	addressId string
 	stakingOperationId string
@@ -355,7 +355,7 @@ Get the latest state of a staking operation.
  @param stakingOperationId The ID of the staking operation.
  @return ApiGetStakingOperationRequest
 */
-func (a *WalletStakeAPIService) GetStakingOperation(ctx context.Context, walletId string, addressId string, stakingOperationId string) ApiGetStakingOperationRequest {
+func (a *MPCWalletStakeAPIService) GetStakingOperation(ctx context.Context, walletId string, addressId string, stakingOperationId string) ApiGetStakingOperationRequest {
 	return ApiGetStakingOperationRequest{
 		ApiService: a,
 		ctx: ctx,
@@ -367,7 +367,7 @@ func (a *WalletStakeAPIService) GetStakingOperation(ctx context.Context, walletI
 
 // Execute executes the request
 //  @return StakingOperation
-func (a *WalletStakeAPIService) GetStakingOperationExecute(r ApiGetStakingOperationRequest) (*StakingOperation, *http.Response, error) {
+func (a *MPCWalletStakeAPIService) GetStakingOperationExecute(r ApiGetStakingOperationRequest) (*StakingOperation, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodGet
 		localVarPostBody     interface{}
@@ -375,7 +375,7 @@ func (a *WalletStakeAPIService) GetStakingOperationExecute(r ApiGetStakingOperat
 		localVarReturnValue  *StakingOperation
 	)
 
-	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "WalletStakeAPIService.GetStakingOperation")
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "MPCWalletStakeAPIService.GetStakingOperation")
 	if err != nil {
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}

@@ -21,6 +21,10 @@ type AssetsAPI struct {
 func (_m *AssetsAPI) GetAsset(ctx context.Context, networkId string, assetId string) client.ApiGetAssetRequest {
 	ret := _m.Called(ctx, networkId, assetId)
 
+	if len(ret) == 0 {
+		panic("no return value specified for GetAsset")
+	}
+
 	var r0 client.ApiGetAssetRequest
 	if rf, ok := ret.Get(0).(func(context.Context, string, string) client.ApiGetAssetRequest); ok {
 		r0 = rf(ctx, networkId, assetId)
@@ -34,6 +38,10 @@ func (_m *AssetsAPI) GetAsset(ctx context.Context, networkId string, assetId str
 // GetAssetExecute provides a mock function with given fields: r
 func (_m *AssetsAPI) GetAssetExecute(r client.ApiGetAssetRequest) (*client.Asset, *http.Response, error) {
 	ret := _m.Called(r)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetAssetExecute")
+	}
 
 	var r0 *client.Asset
 	var r1 *http.Response

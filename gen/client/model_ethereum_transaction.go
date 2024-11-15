@@ -25,35 +25,37 @@ type EthereumTransaction struct {
 	// The onchain address of the sender.
 	From string `json:"from"`
 	// The amount of gas spent in the transaction.
-	Gas *int32 `json:"gas,omitempty"`
+	Gas *int64 `json:"gas,omitempty"`
 	// The price per gas spent in the transaction in atomic units of the native asset.
-	GasPrice *int32 `json:"gas_price,omitempty"`
+	GasPrice *int64 `json:"gas_price,omitempty"`
 	// The hash of the transaction as a hexadecimal string, prefixed with 0x.
 	Hash *string `json:"hash,omitempty"`
 	// The input data of the transaction.
 	Input *string `json:"input,omitempty"`
 	// The nonce of the transaction in the source address.
-	Nonce *int32 `json:"nonce,omitempty"`
+	Nonce *int64 `json:"nonce,omitempty"`
 	// The onchain address of the receiver.
 	To string `json:"to"`
 	// The index of the transaction in the block.
-	Index *int32 `json:"index,omitempty"`
+	Index *int64 `json:"index,omitempty"`
 	// The value of the transaction in atomic units of the native asset.
 	Value *string `json:"value,omitempty"`
 	// The EIP-2718 transaction type. See https://eips.ethereum.org/EIPS/eip-2718 for more details.
-	Type *int32 `json:"type,omitempty"`
+	Type *int64 `json:"type,omitempty"`
 	// The max fee per gas as defined in EIP-1559. https://eips.ethereum.org/EIPS/eip-1559 for more details.
-	MaxFeePerGas *int32 `json:"max_fee_per_gas,omitempty"`
+	MaxFeePerGas *int64 `json:"max_fee_per_gas,omitempty"`
 	// The max priority fee per gas as defined in EIP-1559. https://eips.ethereum.org/EIPS/eip-1559 for more details.
-	MaxPriorityFeePerGas *int32 `json:"max_priority_fee_per_gas,omitempty"`
+	MaxPriorityFeePerGas *int64 `json:"max_priority_fee_per_gas,omitempty"`
 	// The confirmed priority fee per gas as defined in EIP-1559. https://eips.ethereum.org/EIPS/eip-1559 for more details.
-	PriorityFeePerGas *int32 `json:"priority_fee_per_gas,omitempty"`
+	PriorityFeePerGas *int64 `json:"priority_fee_per_gas,omitempty"`
 	TransactionAccessList *EthereumTransactionAccessList `json:"transaction_access_list,omitempty"`
+	TokenTransfers []EthereumTokenTransfer `json:"token_transfers,omitempty"`
 	FlattenedTraces []EthereumTransactionFlattenedTrace `json:"flattened_traces,omitempty"`
 	// The timestamp of the block in which the event was emitted
 	BlockTimestamp *time.Time `json:"block_timestamp,omitempty"`
 	// This is for handling optimism rollup specific EIP-2718 transaction type field.
 	Mint *string `json:"mint,omitempty"`
+	RlpEncodedTx *string `json:"rlpEncodedTx,omitempty"`
 }
 
 type _EthereumTransaction EthereumTransaction
@@ -102,9 +104,9 @@ func (o *EthereumTransaction) SetFrom(v string) {
 }
 
 // GetGas returns the Gas field value if set, zero value otherwise.
-func (o *EthereumTransaction) GetGas() int32 {
+func (o *EthereumTransaction) GetGas() int64 {
 	if o == nil || IsNil(o.Gas) {
-		var ret int32
+		var ret int64
 		return ret
 	}
 	return *o.Gas
@@ -112,7 +114,7 @@ func (o *EthereumTransaction) GetGas() int32 {
 
 // GetGasOk returns a tuple with the Gas field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *EthereumTransaction) GetGasOk() (*int32, bool) {
+func (o *EthereumTransaction) GetGasOk() (*int64, bool) {
 	if o == nil || IsNil(o.Gas) {
 		return nil, false
 	}
@@ -128,15 +130,15 @@ func (o *EthereumTransaction) HasGas() bool {
 	return false
 }
 
-// SetGas gets a reference to the given int32 and assigns it to the Gas field.
-func (o *EthereumTransaction) SetGas(v int32) {
+// SetGas gets a reference to the given int64 and assigns it to the Gas field.
+func (o *EthereumTransaction) SetGas(v int64) {
 	o.Gas = &v
 }
 
 // GetGasPrice returns the GasPrice field value if set, zero value otherwise.
-func (o *EthereumTransaction) GetGasPrice() int32 {
+func (o *EthereumTransaction) GetGasPrice() int64 {
 	if o == nil || IsNil(o.GasPrice) {
-		var ret int32
+		var ret int64
 		return ret
 	}
 	return *o.GasPrice
@@ -144,7 +146,7 @@ func (o *EthereumTransaction) GetGasPrice() int32 {
 
 // GetGasPriceOk returns a tuple with the GasPrice field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *EthereumTransaction) GetGasPriceOk() (*int32, bool) {
+func (o *EthereumTransaction) GetGasPriceOk() (*int64, bool) {
 	if o == nil || IsNil(o.GasPrice) {
 		return nil, false
 	}
@@ -160,8 +162,8 @@ func (o *EthereumTransaction) HasGasPrice() bool {
 	return false
 }
 
-// SetGasPrice gets a reference to the given int32 and assigns it to the GasPrice field.
-func (o *EthereumTransaction) SetGasPrice(v int32) {
+// SetGasPrice gets a reference to the given int64 and assigns it to the GasPrice field.
+func (o *EthereumTransaction) SetGasPrice(v int64) {
 	o.GasPrice = &v
 }
 
@@ -230,9 +232,9 @@ func (o *EthereumTransaction) SetInput(v string) {
 }
 
 // GetNonce returns the Nonce field value if set, zero value otherwise.
-func (o *EthereumTransaction) GetNonce() int32 {
+func (o *EthereumTransaction) GetNonce() int64 {
 	if o == nil || IsNil(o.Nonce) {
-		var ret int32
+		var ret int64
 		return ret
 	}
 	return *o.Nonce
@@ -240,7 +242,7 @@ func (o *EthereumTransaction) GetNonce() int32 {
 
 // GetNonceOk returns a tuple with the Nonce field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *EthereumTransaction) GetNonceOk() (*int32, bool) {
+func (o *EthereumTransaction) GetNonceOk() (*int64, bool) {
 	if o == nil || IsNil(o.Nonce) {
 		return nil, false
 	}
@@ -256,8 +258,8 @@ func (o *EthereumTransaction) HasNonce() bool {
 	return false
 }
 
-// SetNonce gets a reference to the given int32 and assigns it to the Nonce field.
-func (o *EthereumTransaction) SetNonce(v int32) {
+// SetNonce gets a reference to the given int64 and assigns it to the Nonce field.
+func (o *EthereumTransaction) SetNonce(v int64) {
 	o.Nonce = &v
 }
 
@@ -286,9 +288,9 @@ func (o *EthereumTransaction) SetTo(v string) {
 }
 
 // GetIndex returns the Index field value if set, zero value otherwise.
-func (o *EthereumTransaction) GetIndex() int32 {
+func (o *EthereumTransaction) GetIndex() int64 {
 	if o == nil || IsNil(o.Index) {
-		var ret int32
+		var ret int64
 		return ret
 	}
 	return *o.Index
@@ -296,7 +298,7 @@ func (o *EthereumTransaction) GetIndex() int32 {
 
 // GetIndexOk returns a tuple with the Index field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *EthereumTransaction) GetIndexOk() (*int32, bool) {
+func (o *EthereumTransaction) GetIndexOk() (*int64, bool) {
 	if o == nil || IsNil(o.Index) {
 		return nil, false
 	}
@@ -312,8 +314,8 @@ func (o *EthereumTransaction) HasIndex() bool {
 	return false
 }
 
-// SetIndex gets a reference to the given int32 and assigns it to the Index field.
-func (o *EthereumTransaction) SetIndex(v int32) {
+// SetIndex gets a reference to the given int64 and assigns it to the Index field.
+func (o *EthereumTransaction) SetIndex(v int64) {
 	o.Index = &v
 }
 
@@ -350,9 +352,9 @@ func (o *EthereumTransaction) SetValue(v string) {
 }
 
 // GetType returns the Type field value if set, zero value otherwise.
-func (o *EthereumTransaction) GetType() int32 {
+func (o *EthereumTransaction) GetType() int64 {
 	if o == nil || IsNil(o.Type) {
-		var ret int32
+		var ret int64
 		return ret
 	}
 	return *o.Type
@@ -360,7 +362,7 @@ func (o *EthereumTransaction) GetType() int32 {
 
 // GetTypeOk returns a tuple with the Type field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *EthereumTransaction) GetTypeOk() (*int32, bool) {
+func (o *EthereumTransaction) GetTypeOk() (*int64, bool) {
 	if o == nil || IsNil(o.Type) {
 		return nil, false
 	}
@@ -376,15 +378,15 @@ func (o *EthereumTransaction) HasType() bool {
 	return false
 }
 
-// SetType gets a reference to the given int32 and assigns it to the Type field.
-func (o *EthereumTransaction) SetType(v int32) {
+// SetType gets a reference to the given int64 and assigns it to the Type field.
+func (o *EthereumTransaction) SetType(v int64) {
 	o.Type = &v
 }
 
 // GetMaxFeePerGas returns the MaxFeePerGas field value if set, zero value otherwise.
-func (o *EthereumTransaction) GetMaxFeePerGas() int32 {
+func (o *EthereumTransaction) GetMaxFeePerGas() int64 {
 	if o == nil || IsNil(o.MaxFeePerGas) {
-		var ret int32
+		var ret int64
 		return ret
 	}
 	return *o.MaxFeePerGas
@@ -392,7 +394,7 @@ func (o *EthereumTransaction) GetMaxFeePerGas() int32 {
 
 // GetMaxFeePerGasOk returns a tuple with the MaxFeePerGas field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *EthereumTransaction) GetMaxFeePerGasOk() (*int32, bool) {
+func (o *EthereumTransaction) GetMaxFeePerGasOk() (*int64, bool) {
 	if o == nil || IsNil(o.MaxFeePerGas) {
 		return nil, false
 	}
@@ -408,15 +410,15 @@ func (o *EthereumTransaction) HasMaxFeePerGas() bool {
 	return false
 }
 
-// SetMaxFeePerGas gets a reference to the given int32 and assigns it to the MaxFeePerGas field.
-func (o *EthereumTransaction) SetMaxFeePerGas(v int32) {
+// SetMaxFeePerGas gets a reference to the given int64 and assigns it to the MaxFeePerGas field.
+func (o *EthereumTransaction) SetMaxFeePerGas(v int64) {
 	o.MaxFeePerGas = &v
 }
 
 // GetMaxPriorityFeePerGas returns the MaxPriorityFeePerGas field value if set, zero value otherwise.
-func (o *EthereumTransaction) GetMaxPriorityFeePerGas() int32 {
+func (o *EthereumTransaction) GetMaxPriorityFeePerGas() int64 {
 	if o == nil || IsNil(o.MaxPriorityFeePerGas) {
-		var ret int32
+		var ret int64
 		return ret
 	}
 	return *o.MaxPriorityFeePerGas
@@ -424,7 +426,7 @@ func (o *EthereumTransaction) GetMaxPriorityFeePerGas() int32 {
 
 // GetMaxPriorityFeePerGasOk returns a tuple with the MaxPriorityFeePerGas field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *EthereumTransaction) GetMaxPriorityFeePerGasOk() (*int32, bool) {
+func (o *EthereumTransaction) GetMaxPriorityFeePerGasOk() (*int64, bool) {
 	if o == nil || IsNil(o.MaxPriorityFeePerGas) {
 		return nil, false
 	}
@@ -440,15 +442,15 @@ func (o *EthereumTransaction) HasMaxPriorityFeePerGas() bool {
 	return false
 }
 
-// SetMaxPriorityFeePerGas gets a reference to the given int32 and assigns it to the MaxPriorityFeePerGas field.
-func (o *EthereumTransaction) SetMaxPriorityFeePerGas(v int32) {
+// SetMaxPriorityFeePerGas gets a reference to the given int64 and assigns it to the MaxPriorityFeePerGas field.
+func (o *EthereumTransaction) SetMaxPriorityFeePerGas(v int64) {
 	o.MaxPriorityFeePerGas = &v
 }
 
 // GetPriorityFeePerGas returns the PriorityFeePerGas field value if set, zero value otherwise.
-func (o *EthereumTransaction) GetPriorityFeePerGas() int32 {
+func (o *EthereumTransaction) GetPriorityFeePerGas() int64 {
 	if o == nil || IsNil(o.PriorityFeePerGas) {
-		var ret int32
+		var ret int64
 		return ret
 	}
 	return *o.PriorityFeePerGas
@@ -456,7 +458,7 @@ func (o *EthereumTransaction) GetPriorityFeePerGas() int32 {
 
 // GetPriorityFeePerGasOk returns a tuple with the PriorityFeePerGas field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *EthereumTransaction) GetPriorityFeePerGasOk() (*int32, bool) {
+func (o *EthereumTransaction) GetPriorityFeePerGasOk() (*int64, bool) {
 	if o == nil || IsNil(o.PriorityFeePerGas) {
 		return nil, false
 	}
@@ -472,8 +474,8 @@ func (o *EthereumTransaction) HasPriorityFeePerGas() bool {
 	return false
 }
 
-// SetPriorityFeePerGas gets a reference to the given int32 and assigns it to the PriorityFeePerGas field.
-func (o *EthereumTransaction) SetPriorityFeePerGas(v int32) {
+// SetPriorityFeePerGas gets a reference to the given int64 and assigns it to the PriorityFeePerGas field.
+func (o *EthereumTransaction) SetPriorityFeePerGas(v int64) {
 	o.PriorityFeePerGas = &v
 }
 
@@ -507,6 +509,38 @@ func (o *EthereumTransaction) HasTransactionAccessList() bool {
 // SetTransactionAccessList gets a reference to the given EthereumTransactionAccessList and assigns it to the TransactionAccessList field.
 func (o *EthereumTransaction) SetTransactionAccessList(v EthereumTransactionAccessList) {
 	o.TransactionAccessList = &v
+}
+
+// GetTokenTransfers returns the TokenTransfers field value if set, zero value otherwise.
+func (o *EthereumTransaction) GetTokenTransfers() []EthereumTokenTransfer {
+	if o == nil || IsNil(o.TokenTransfers) {
+		var ret []EthereumTokenTransfer
+		return ret
+	}
+	return o.TokenTransfers
+}
+
+// GetTokenTransfersOk returns a tuple with the TokenTransfers field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *EthereumTransaction) GetTokenTransfersOk() ([]EthereumTokenTransfer, bool) {
+	if o == nil || IsNil(o.TokenTransfers) {
+		return nil, false
+	}
+	return o.TokenTransfers, true
+}
+
+// HasTokenTransfers returns a boolean if a field has been set.
+func (o *EthereumTransaction) HasTokenTransfers() bool {
+	if o != nil && !IsNil(o.TokenTransfers) {
+		return true
+	}
+
+	return false
+}
+
+// SetTokenTransfers gets a reference to the given []EthereumTokenTransfer and assigns it to the TokenTransfers field.
+func (o *EthereumTransaction) SetTokenTransfers(v []EthereumTokenTransfer) {
+	o.TokenTransfers = v
 }
 
 // GetFlattenedTraces returns the FlattenedTraces field value if set, zero value otherwise.
@@ -605,6 +639,38 @@ func (o *EthereumTransaction) SetMint(v string) {
 	o.Mint = &v
 }
 
+// GetRlpEncodedTx returns the RlpEncodedTx field value if set, zero value otherwise.
+func (o *EthereumTransaction) GetRlpEncodedTx() string {
+	if o == nil || IsNil(o.RlpEncodedTx) {
+		var ret string
+		return ret
+	}
+	return *o.RlpEncodedTx
+}
+
+// GetRlpEncodedTxOk returns a tuple with the RlpEncodedTx field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *EthereumTransaction) GetRlpEncodedTxOk() (*string, bool) {
+	if o == nil || IsNil(o.RlpEncodedTx) {
+		return nil, false
+	}
+	return o.RlpEncodedTx, true
+}
+
+// HasRlpEncodedTx returns a boolean if a field has been set.
+func (o *EthereumTransaction) HasRlpEncodedTx() bool {
+	if o != nil && !IsNil(o.RlpEncodedTx) {
+		return true
+	}
+
+	return false
+}
+
+// SetRlpEncodedTx gets a reference to the given string and assigns it to the RlpEncodedTx field.
+func (o *EthereumTransaction) SetRlpEncodedTx(v string) {
+	o.RlpEncodedTx = &v
+}
+
 func (o EthereumTransaction) MarshalJSON() ([]byte, error) {
 	toSerialize,err := o.ToMap()
 	if err != nil {
@@ -653,6 +719,9 @@ func (o EthereumTransaction) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.TransactionAccessList) {
 		toSerialize["transaction_access_list"] = o.TransactionAccessList
 	}
+	if !IsNil(o.TokenTransfers) {
+		toSerialize["token_transfers"] = o.TokenTransfers
+	}
 	if !IsNil(o.FlattenedTraces) {
 		toSerialize["flattened_traces"] = o.FlattenedTraces
 	}
@@ -661,6 +730,9 @@ func (o EthereumTransaction) ToMap() (map[string]interface{}, error) {
 	}
 	if !IsNil(o.Mint) {
 		toSerialize["mint"] = o.Mint
+	}
+	if !IsNil(o.RlpEncodedTx) {
+		toSerialize["rlpEncodedTx"] = o.RlpEncodedTx
 	}
 	return toSerialize, nil
 }

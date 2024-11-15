@@ -15,19 +15,21 @@ import (
 	"fmt"
 )
 
-// SmartContractType The type of the smart contract
+// SmartContractType The type of the smart contract.
 type SmartContractType string
 
 // List of SmartContractType
 const (
 	SMARTCONTRACTTYPE_ERC20 SmartContractType = "erc20"
 	SMARTCONTRACTTYPE_ERC721 SmartContractType = "erc721"
+	SMARTCONTRACTTYPE_ERC1155 SmartContractType = "erc1155"
 )
 
 // All allowed values of SmartContractType enum
 var AllowedSmartContractTypeEnumValues = []SmartContractType{
 	"erc20",
 	"erc721",
+	"erc1155",
 }
 
 func (v *SmartContractType) UnmarshalJSON(src []byte) error {

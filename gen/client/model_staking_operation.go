@@ -32,8 +32,13 @@ type StakingOperation struct {
 	// The status of the staking operation.
 	Status string `json:"status"`
 	// The transaction(s) that will execute the staking operation onchain.
+	// Deprecated
 	Transactions []Transaction `json:"transactions"`
+	// Deprecated
 	Metadata *StakingOperationMetadata `json:"metadata,omitempty"`
+	TransactionType StakingTransactionDetailType `json:"transaction_type"`
+	// The transaction(s) along with their details that will execute the staking operation onchain.
+	TransactionDetails []StakingTransactionDetail `json:"transaction_details"`
 }
 
 type _StakingOperation StakingOperation
@@ -42,13 +47,15 @@ type _StakingOperation StakingOperation
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewStakingOperation(id string, networkId string, addressId string, status string, transactions []Transaction) *StakingOperation {
+func NewStakingOperation(id string, networkId string, addressId string, status string, transactions []Transaction, transactionType StakingTransactionDetailType, transactionDetails []StakingTransactionDetail) *StakingOperation {
 	this := StakingOperation{}
 	this.Id = id
 	this.NetworkId = networkId
 	this.AddressId = addressId
 	this.Status = status
 	this.Transactions = transactions
+	this.TransactionType = transactionType
+	this.TransactionDetails = transactionDetails
 	return &this
 }
 
@@ -189,6 +196,7 @@ func (o *StakingOperation) SetStatus(v string) {
 }
 
 // GetTransactions returns the Transactions field value
+// Deprecated
 func (o *StakingOperation) GetTransactions() []Transaction {
 	if o == nil {
 		var ret []Transaction
@@ -200,6 +208,7 @@ func (o *StakingOperation) GetTransactions() []Transaction {
 
 // GetTransactionsOk returns a tuple with the Transactions field value
 // and a boolean to check if the value has been set.
+// Deprecated
 func (o *StakingOperation) GetTransactionsOk() ([]Transaction, bool) {
 	if o == nil {
 		return nil, false
@@ -208,11 +217,13 @@ func (o *StakingOperation) GetTransactionsOk() ([]Transaction, bool) {
 }
 
 // SetTransactions sets field value
+// Deprecated
 func (o *StakingOperation) SetTransactions(v []Transaction) {
 	o.Transactions = v
 }
 
 // GetMetadata returns the Metadata field value if set, zero value otherwise.
+// Deprecated
 func (o *StakingOperation) GetMetadata() StakingOperationMetadata {
 	if o == nil || IsNil(o.Metadata) {
 		var ret StakingOperationMetadata
@@ -223,6 +234,7 @@ func (o *StakingOperation) GetMetadata() StakingOperationMetadata {
 
 // GetMetadataOk returns a tuple with the Metadata field value if set, nil otherwise
 // and a boolean to check if the value has been set.
+// Deprecated
 func (o *StakingOperation) GetMetadataOk() (*StakingOperationMetadata, bool) {
 	if o == nil || IsNil(o.Metadata) {
 		return nil, false
@@ -240,8 +252,57 @@ func (o *StakingOperation) HasMetadata() bool {
 }
 
 // SetMetadata gets a reference to the given StakingOperationMetadata and assigns it to the Metadata field.
+// Deprecated
 func (o *StakingOperation) SetMetadata(v StakingOperationMetadata) {
 	o.Metadata = &v
+}
+
+// GetTransactionType returns the TransactionType field value
+func (o *StakingOperation) GetTransactionType() StakingTransactionDetailType {
+	if o == nil {
+		var ret StakingTransactionDetailType
+		return ret
+	}
+
+	return o.TransactionType
+}
+
+// GetTransactionTypeOk returns a tuple with the TransactionType field value
+// and a boolean to check if the value has been set.
+func (o *StakingOperation) GetTransactionTypeOk() (*StakingTransactionDetailType, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.TransactionType, true
+}
+
+// SetTransactionType sets field value
+func (o *StakingOperation) SetTransactionType(v StakingTransactionDetailType) {
+	o.TransactionType = v
+}
+
+// GetTransactionDetails returns the TransactionDetails field value
+func (o *StakingOperation) GetTransactionDetails() []StakingTransactionDetail {
+	if o == nil {
+		var ret []StakingTransactionDetail
+		return ret
+	}
+
+	return o.TransactionDetails
+}
+
+// GetTransactionDetailsOk returns a tuple with the TransactionDetails field value
+// and a boolean to check if the value has been set.
+func (o *StakingOperation) GetTransactionDetailsOk() ([]StakingTransactionDetail, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return o.TransactionDetails, true
+}
+
+// SetTransactionDetails sets field value
+func (o *StakingOperation) SetTransactionDetails(v []StakingTransactionDetail) {
+	o.TransactionDetails = v
 }
 
 func (o StakingOperation) MarshalJSON() ([]byte, error) {
@@ -265,6 +326,8 @@ func (o StakingOperation) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.Metadata) {
 		toSerialize["metadata"] = o.Metadata
 	}
+	toSerialize["transaction_type"] = o.TransactionType
+	toSerialize["transaction_details"] = o.TransactionDetails
 	return toSerialize, nil
 }
 
@@ -278,6 +341,8 @@ func (o *StakingOperation) UnmarshalJSON(data []byte) (err error) {
 		"address_id",
 		"status",
 		"transactions",
+		"transaction_type",
+		"transaction_details",
 	}
 
 	allProperties := make(map[string]interface{})

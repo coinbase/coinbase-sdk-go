@@ -25,6 +25,8 @@ type NFTContractOptions struct {
 	Name string `json:"name"`
 	// The symbol of the NFT
 	Symbol string `json:"symbol"`
+	// The base URI for the NFT metadata
+	BaseUri string `json:"base_uri"`
 }
 
 type _NFTContractOptions NFTContractOptions
@@ -33,10 +35,11 @@ type _NFTContractOptions NFTContractOptions
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewNFTContractOptions(name string, symbol string) *NFTContractOptions {
+func NewNFTContractOptions(name string, symbol string, baseUri string) *NFTContractOptions {
 	this := NFTContractOptions{}
 	this.Name = name
 	this.Symbol = symbol
+	this.BaseUri = baseUri
 	return &this
 }
 
@@ -96,6 +99,30 @@ func (o *NFTContractOptions) SetSymbol(v string) {
 	o.Symbol = v
 }
 
+// GetBaseUri returns the BaseUri field value
+func (o *NFTContractOptions) GetBaseUri() string {
+	if o == nil {
+		var ret string
+		return ret
+	}
+
+	return o.BaseUri
+}
+
+// GetBaseUriOk returns a tuple with the BaseUri field value
+// and a boolean to check if the value has been set.
+func (o *NFTContractOptions) GetBaseUriOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.BaseUri, true
+}
+
+// SetBaseUri sets field value
+func (o *NFTContractOptions) SetBaseUri(v string) {
+	o.BaseUri = v
+}
+
 func (o NFTContractOptions) MarshalJSON() ([]byte, error) {
 	toSerialize,err := o.ToMap()
 	if err != nil {
@@ -108,6 +135,7 @@ func (o NFTContractOptions) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["name"] = o.Name
 	toSerialize["symbol"] = o.Symbol
+	toSerialize["base_uri"] = o.BaseUri
 	return toSerialize, nil
 }
 
@@ -118,6 +146,7 @@ func (o *NFTContractOptions) UnmarshalJSON(data []byte) (err error) {
 	requiredProperties := []string{
 		"name",
 		"symbol",
+		"base_uri",
 	}
 
 	allProperties := make(map[string]interface{})

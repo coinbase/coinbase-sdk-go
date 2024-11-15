@@ -21,6 +21,10 @@ type StakeAPI struct {
 func (_m *StakeAPI) BuildStakingOperation(ctx context.Context) client.ApiBuildStakingOperationRequest {
 	ret := _m.Called(ctx)
 
+	if len(ret) == 0 {
+		panic("no return value specified for BuildStakingOperation")
+	}
+
 	var r0 client.ApiBuildStakingOperationRequest
 	if rf, ok := ret.Get(0).(func(context.Context) client.ApiBuildStakingOperationRequest); ok {
 		r0 = rf(ctx)
@@ -34,6 +38,10 @@ func (_m *StakeAPI) BuildStakingOperation(ctx context.Context) client.ApiBuildSt
 // BuildStakingOperationExecute provides a mock function with given fields: r
 func (_m *StakeAPI) BuildStakingOperationExecute(r client.ApiBuildStakingOperationRequest) (*client.StakingOperation, *http.Response, error) {
 	ret := _m.Called(r)
+
+	if len(ret) == 0 {
+		panic("no return value specified for BuildStakingOperationExecute")
+	}
 
 	var r0 *client.StakingOperation
 	var r1 *http.Response
@@ -70,6 +78,10 @@ func (_m *StakeAPI) BuildStakingOperationExecute(r client.ApiBuildStakingOperati
 func (_m *StakeAPI) FetchHistoricalStakingBalances(ctx context.Context, networkId string, addressId string) client.ApiFetchHistoricalStakingBalancesRequest {
 	ret := _m.Called(ctx, networkId, addressId)
 
+	if len(ret) == 0 {
+		panic("no return value specified for FetchHistoricalStakingBalances")
+	}
+
 	var r0 client.ApiFetchHistoricalStakingBalancesRequest
 	if rf, ok := ret.Get(0).(func(context.Context, string, string) client.ApiFetchHistoricalStakingBalancesRequest); ok {
 		r0 = rf(ctx, networkId, addressId)
@@ -83,6 +95,10 @@ func (_m *StakeAPI) FetchHistoricalStakingBalances(ctx context.Context, networkI
 // FetchHistoricalStakingBalancesExecute provides a mock function with given fields: r
 func (_m *StakeAPI) FetchHistoricalStakingBalancesExecute(r client.ApiFetchHistoricalStakingBalancesRequest) (*client.FetchHistoricalStakingBalances200Response, *http.Response, error) {
 	ret := _m.Called(r)
+
+	if len(ret) == 0 {
+		panic("no return value specified for FetchHistoricalStakingBalancesExecute")
+	}
 
 	var r0 *client.FetchHistoricalStakingBalances200Response
 	var r1 *http.Response
@@ -119,6 +135,10 @@ func (_m *StakeAPI) FetchHistoricalStakingBalancesExecute(r client.ApiFetchHisto
 func (_m *StakeAPI) FetchStakingRewards(ctx context.Context) client.ApiFetchStakingRewardsRequest {
 	ret := _m.Called(ctx)
 
+	if len(ret) == 0 {
+		panic("no return value specified for FetchStakingRewards")
+	}
+
 	var r0 client.ApiFetchStakingRewardsRequest
 	if rf, ok := ret.Get(0).(func(context.Context) client.ApiFetchStakingRewardsRequest); ok {
 		r0 = rf(ctx)
@@ -132,6 +152,10 @@ func (_m *StakeAPI) FetchStakingRewards(ctx context.Context) client.ApiFetchStak
 // FetchStakingRewardsExecute provides a mock function with given fields: r
 func (_m *StakeAPI) FetchStakingRewardsExecute(r client.ApiFetchStakingRewardsRequest) (*client.FetchStakingRewards200Response, *http.Response, error) {
 	ret := _m.Called(r)
+
+	if len(ret) == 0 {
+		panic("no return value specified for FetchStakingRewardsExecute")
+	}
 
 	var r0 *client.FetchStakingRewards200Response
 	var r1 *http.Response
@@ -168,6 +192,10 @@ func (_m *StakeAPI) FetchStakingRewardsExecute(r client.ApiFetchStakingRewardsRe
 func (_m *StakeAPI) GetExternalStakingOperation(ctx context.Context, networkId string, addressId string, stakingOperationId string) client.ApiGetExternalStakingOperationRequest {
 	ret := _m.Called(ctx, networkId, addressId, stakingOperationId)
 
+	if len(ret) == 0 {
+		panic("no return value specified for GetExternalStakingOperation")
+	}
+
 	var r0 client.ApiGetExternalStakingOperationRequest
 	if rf, ok := ret.Get(0).(func(context.Context, string, string, string) client.ApiGetExternalStakingOperationRequest); ok {
 		r0 = rf(ctx, networkId, addressId, stakingOperationId)
@@ -181,6 +209,10 @@ func (_m *StakeAPI) GetExternalStakingOperation(ctx context.Context, networkId s
 // GetExternalStakingOperationExecute provides a mock function with given fields: r
 func (_m *StakeAPI) GetExternalStakingOperationExecute(r client.ApiGetExternalStakingOperationRequest) (*client.StakingOperation, *http.Response, error) {
 	ret := _m.Called(r)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetExternalStakingOperationExecute")
+	}
 
 	var r0 *client.StakingOperation
 	var r1 *http.Response
@@ -217,6 +249,10 @@ func (_m *StakeAPI) GetExternalStakingOperationExecute(r client.ApiGetExternalSt
 func (_m *StakeAPI) GetStakingContext(ctx context.Context) client.ApiGetStakingContextRequest {
 	ret := _m.Called(ctx)
 
+	if len(ret) == 0 {
+		panic("no return value specified for GetStakingContext")
+	}
+
 	var r0 client.ApiGetStakingContextRequest
 	if rf, ok := ret.Get(0).(func(context.Context) client.ApiGetStakingContextRequest); ok {
 		r0 = rf(ctx)
@@ -230,6 +266,10 @@ func (_m *StakeAPI) GetStakingContext(ctx context.Context) client.ApiGetStakingC
 // GetStakingContextExecute provides a mock function with given fields: r
 func (_m *StakeAPI) GetStakingContextExecute(r client.ApiGetStakingContextRequest) (*client.StakingContext, *http.Response, error) {
 	ret := _m.Called(r)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetStakingContextExecute")
+	}
 
 	var r0 *client.StakingContext
 	var r1 *http.Response
@@ -254,6 +294,120 @@ func (_m *StakeAPI) GetStakingContextExecute(r client.ApiGetStakingContextReques
 	}
 
 	if rf, ok := ret.Get(2).(func(client.ApiGetStakingContextRequest) error); ok {
+		r2 = rf(r)
+	} else {
+		r2 = ret.Error(2)
+	}
+
+	return r0, r1, r2
+}
+
+// GetValidator provides a mock function with given fields: ctx, networkId, assetId, validatorId
+func (_m *StakeAPI) GetValidator(ctx context.Context, networkId string, assetId string, validatorId string) client.ApiGetValidatorRequest {
+	ret := _m.Called(ctx, networkId, assetId, validatorId)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetValidator")
+	}
+
+	var r0 client.ApiGetValidatorRequest
+	if rf, ok := ret.Get(0).(func(context.Context, string, string, string) client.ApiGetValidatorRequest); ok {
+		r0 = rf(ctx, networkId, assetId, validatorId)
+	} else {
+		r0 = ret.Get(0).(client.ApiGetValidatorRequest)
+	}
+
+	return r0
+}
+
+// GetValidatorExecute provides a mock function with given fields: r
+func (_m *StakeAPI) GetValidatorExecute(r client.ApiGetValidatorRequest) (*client.Validator, *http.Response, error) {
+	ret := _m.Called(r)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetValidatorExecute")
+	}
+
+	var r0 *client.Validator
+	var r1 *http.Response
+	var r2 error
+	if rf, ok := ret.Get(0).(func(client.ApiGetValidatorRequest) (*client.Validator, *http.Response, error)); ok {
+		return rf(r)
+	}
+	if rf, ok := ret.Get(0).(func(client.ApiGetValidatorRequest) *client.Validator); ok {
+		r0 = rf(r)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*client.Validator)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(client.ApiGetValidatorRequest) *http.Response); ok {
+		r1 = rf(r)
+	} else {
+		if ret.Get(1) != nil {
+			r1 = ret.Get(1).(*http.Response)
+		}
+	}
+
+	if rf, ok := ret.Get(2).(func(client.ApiGetValidatorRequest) error); ok {
+		r2 = rf(r)
+	} else {
+		r2 = ret.Error(2)
+	}
+
+	return r0, r1, r2
+}
+
+// ListValidators provides a mock function with given fields: ctx, networkId, assetId
+func (_m *StakeAPI) ListValidators(ctx context.Context, networkId string, assetId string) client.ApiListValidatorsRequest {
+	ret := _m.Called(ctx, networkId, assetId)
+
+	if len(ret) == 0 {
+		panic("no return value specified for ListValidators")
+	}
+
+	var r0 client.ApiListValidatorsRequest
+	if rf, ok := ret.Get(0).(func(context.Context, string, string) client.ApiListValidatorsRequest); ok {
+		r0 = rf(ctx, networkId, assetId)
+	} else {
+		r0 = ret.Get(0).(client.ApiListValidatorsRequest)
+	}
+
+	return r0
+}
+
+// ListValidatorsExecute provides a mock function with given fields: r
+func (_m *StakeAPI) ListValidatorsExecute(r client.ApiListValidatorsRequest) (*client.ValidatorList, *http.Response, error) {
+	ret := _m.Called(r)
+
+	if len(ret) == 0 {
+		panic("no return value specified for ListValidatorsExecute")
+	}
+
+	var r0 *client.ValidatorList
+	var r1 *http.Response
+	var r2 error
+	if rf, ok := ret.Get(0).(func(client.ApiListValidatorsRequest) (*client.ValidatorList, *http.Response, error)); ok {
+		return rf(r)
+	}
+	if rf, ok := ret.Get(0).(func(client.ApiListValidatorsRequest) *client.ValidatorList); ok {
+		r0 = rf(r)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).(*client.ValidatorList)
+		}
+	}
+
+	if rf, ok := ret.Get(1).(func(client.ApiListValidatorsRequest) *http.Response); ok {
+		r1 = rf(r)
+	} else {
+		if ret.Get(1) != nil {
+			r1 = ret.Get(1).(*http.Response)
+		}
+	}
+
+	if rf, ok := ret.Get(2).(func(client.ApiListValidatorsRequest) error); ok {
 		r2 = rf(r)
 	} else {
 		r2 = ret.Error(2)
