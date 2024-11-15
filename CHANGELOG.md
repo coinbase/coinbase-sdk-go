@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## [0.0.13] - 2024-11-21
+
+### Added
+
+- Update SDK with latest generated client code. 
+
 ## [0.0.12] - 2024-09-30
 
 ### Added

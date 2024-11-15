@@ -17,6 +17,10 @@ type Signable struct {
 func (_m *Signable) IsSigned() bool {
 	ret := _m.Called()
 
+	if len(ret) == 0 {
+		panic("no return value specified for IsSigned")
+	}
+
 	var r0 bool
 	if rf, ok := ret.Get(0).(func() bool); ok {
 		r0 = rf()
@@ -30,6 +34,10 @@ func (_m *Signable) IsSigned() bool {
 // Raw provides a mock function with given fields:
 func (_m *Signable) Raw() interface{} {
 	ret := _m.Called()
+
+	if len(ret) == 0 {
+		panic("no return value specified for Raw")
+	}
 
 	var r0 interface{}
 	if rf, ok := ret.Get(0).(func() interface{}); ok {
@@ -46,6 +54,10 @@ func (_m *Signable) Raw() interface{} {
 // Sign provides a mock function with given fields: _a0
 func (_m *Signable) Sign(_a0 crypto.Signer) (string, error) {
 	ret := _m.Called(_a0)
+
+	if len(ret) == 0 {
+		panic("no return value specified for Sign")
+	}
 
 	var r0 string
 	var r1 error
