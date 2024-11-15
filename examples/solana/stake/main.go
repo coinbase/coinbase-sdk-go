@@ -60,11 +60,6 @@ func main() {
 
 	privateKey, err := decodePrivateKey(os.Args[3])
 
-	err = stakingOperation.Sign(privateKey)
-	if err != nil {
-		log.Fatalf("error signing transaction: %v", err)
-	}
-
 	rpcClient := rpc.New(rpcURL)
 
 	maxRetries := uint(5)
@@ -75,7 +70,16 @@ func main() {
 		PreflightCommitment: rpc.CommitmentProcessed,
 	}
 
-	for _, transaction := range stakingOperation.Transactions() {
+	for i, stakingTransactionDetail := range stakingOperation.StakingTransactionDetails() {
+		log.Printf("metadata: %s", stakingTransactionDetail.DedicatedEthStakeTransactionDetail.Metadata.EthereumValidatorDepositData)
+
+		transaction := stakingOperation.Transaction(i)
+
+		err = stakingOperation.Sign(privateKey)
+		if err != nil {
+			log.Fatalf("error signing transaction: %v", err)
+		}
+
 		unsignedTx := transaction.UnsignedPayload()
 		signedTx := transaction.SignedPayload()
 

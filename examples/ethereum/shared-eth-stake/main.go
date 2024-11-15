@@ -57,21 +57,28 @@ func main() {
 		log.Fatal(err)
 	}
 
-	// Sign the transactions within staking operation resource with your private key.
-	err = stakeOperation.Sign(key)
-	if err != nil {
-		log.Fatal(err)
-	}
-
 	// For Holesky, publicly available RPC URL's can be found here https://chainlist.org/chain/17000
 	ethClient, err := ethclient.Dial("<RPC_NODE_URL>")
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	// Broadcast each of the signed transactions to the network.
-	for _, transaction := range stakeOperation.Transactions() {
-		rawTx := transaction.Raw()
+	for i, stakingTransactionDetail := range stakeOperation.StakingTransactionDetails() {
+		txMetadataJson, err := stakingTransactionDetail.GetPartialEthStakingTransactionMetadata().MarshalJSON()
+		if err != nil {
+			log.Fatal(err)
+		}
+
+		log.Printf("metadata: %s", txMetadataJson)
+
+		// Sign the transactions within staking operation resource with your private key.
+		if err := stakeOperation.SignTx(i, key); err != nil {
+			log.Fatal(err)
+		}
+
+		tx := stakeOperation.Transaction(i)
+
+		rawTx := tx.Raw()
 		ethTx, ok := rawTx.(*types.Transaction)
 		if !ok {
 			log.Fatal("failed to cast transaction to Ethereum transaction")
