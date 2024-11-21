@@ -27,6 +27,7 @@ type GetStakingContextRequest struct {
 	AssetId string `json:"asset_id"`
 	// The onchain address for which the staking context is being fetched
 	AddressId string `json:"address_id"`
+	// Additional options for getting the staking context. This typically includes network specific fields.
 	Options map[string]string `json:"options"`
 }
 

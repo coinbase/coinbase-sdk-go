@@ -49,6 +49,7 @@ type EthereumTransaction struct {
 	// The confirmed priority fee per gas as defined in EIP-1559. https://eips.ethereum.org/EIPS/eip-1559 for more details.
 	PriorityFeePerGas *int32 `json:"priority_fee_per_gas,omitempty"`
 	TransactionAccessList *EthereumTransactionAccessList `json:"transaction_access_list,omitempty"`
+	TokenTransfers []EthereumTokenTransfer `json:"token_transfers,omitempty"`
 	FlattenedTraces []EthereumTransactionFlattenedTrace `json:"flattened_traces,omitempty"`
 	// The timestamp of the block in which the event was emitted
 	BlockTimestamp *time.Time `json:"block_timestamp,omitempty"`
@@ -509,6 +510,38 @@ func (o *EthereumTransaction) SetTransactionAccessList(v EthereumTransactionAcce
 	o.TransactionAccessList = &v
 }
 
+// GetTokenTransfers returns the TokenTransfers field value if set, zero value otherwise.
+func (o *EthereumTransaction) GetTokenTransfers() []EthereumTokenTransfer {
+	if o == nil || IsNil(o.TokenTransfers) {
+		var ret []EthereumTokenTransfer
+		return ret
+	}
+	return o.TokenTransfers
+}
+
+// GetTokenTransfersOk returns a tuple with the TokenTransfers field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *EthereumTransaction) GetTokenTransfersOk() ([]EthereumTokenTransfer, bool) {
+	if o == nil || IsNil(o.TokenTransfers) {
+		return nil, false
+	}
+	return o.TokenTransfers, true
+}
+
+// HasTokenTransfers returns a boolean if a field has been set.
+func (o *EthereumTransaction) HasTokenTransfers() bool {
+	if o != nil && !IsNil(o.TokenTransfers) {
+		return true
+	}
+
+	return false
+}
+
+// SetTokenTransfers gets a reference to the given []EthereumTokenTransfer and assigns it to the TokenTransfers field.
+func (o *EthereumTransaction) SetTokenTransfers(v []EthereumTokenTransfer) {
+	o.TokenTransfers = v
+}
+
 // GetFlattenedTraces returns the FlattenedTraces field value if set, zero value otherwise.
 func (o *EthereumTransaction) GetFlattenedTraces() []EthereumTransactionFlattenedTrace {
 	if o == nil || IsNil(o.FlattenedTraces) {
@@ -652,6 +685,9 @@ func (o EthereumTransaction) ToMap() (map[string]interface{}, error) {
 	}
 	if !IsNil(o.TransactionAccessList) {
 		toSerialize["transaction_access_list"] = o.TransactionAccessList
+	}
+	if !IsNil(o.TokenTransfers) {
+		toSerialize["token_transfers"] = o.TokenTransfers
 	}
 	if !IsNil(o.FlattenedTraces) {
 		toSerialize["flattened_traces"] = o.FlattenedTraces

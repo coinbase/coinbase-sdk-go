@@ -61,7 +61,15 @@ type APIClient struct {
 
 	ExternalAddressesAPI ExternalAddressesAPI
 
+	FundAPI FundAPI
+
+	MPCWalletStakeAPI MPCWalletStakeAPI
+
 	NetworksAPI NetworksAPI
+
+	OnchainIdentityAPI OnchainIdentityAPI
+
+	ReputationAPI ReputationAPI
 
 	ServerSignersAPI ServerSignersAPI
 
@@ -71,13 +79,11 @@ type APIClient struct {
 
 	TradesAPI TradesAPI
 
+	TransactionHistoryAPI TransactionHistoryAPI
+
 	TransfersAPI TransfersAPI
 
 	UsersAPI UsersAPI
-
-	ValidatorsAPI ValidatorsAPI
-
-	WalletStakeAPI WalletStakeAPI
 
 	WalletsAPI WalletsAPI
 
@@ -106,15 +112,18 @@ func NewAPIClient(cfg *Configuration) *APIClient {
 	c.ContractEventsAPI = (*ContractEventsAPIService)(&c.common)
 	c.ContractInvocationsAPI = (*ContractInvocationsAPIService)(&c.common)
 	c.ExternalAddressesAPI = (*ExternalAddressesAPIService)(&c.common)
+	c.FundAPI = (*FundAPIService)(&c.common)
+	c.MPCWalletStakeAPI = (*MPCWalletStakeAPIService)(&c.common)
 	c.NetworksAPI = (*NetworksAPIService)(&c.common)
+	c.OnchainIdentityAPI = (*OnchainIdentityAPIService)(&c.common)
+	c.ReputationAPI = (*ReputationAPIService)(&c.common)
 	c.ServerSignersAPI = (*ServerSignersAPIService)(&c.common)
 	c.SmartContractsAPI = (*SmartContractsAPIService)(&c.common)
 	c.StakeAPI = (*StakeAPIService)(&c.common)
 	c.TradesAPI = (*TradesAPIService)(&c.common)
+	c.TransactionHistoryAPI = (*TransactionHistoryAPIService)(&c.common)
 	c.TransfersAPI = (*TransfersAPIService)(&c.common)
 	c.UsersAPI = (*UsersAPIService)(&c.common)
-	c.ValidatorsAPI = (*ValidatorsAPIService)(&c.common)
-	c.WalletStakeAPI = (*WalletStakeAPIService)(&c.common)
 	c.WalletsAPI = (*WalletsAPIService)(&c.common)
 	c.WebhooksAPI = (*WebhooksAPIService)(&c.common)
 

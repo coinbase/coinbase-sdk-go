@@ -27,6 +27,7 @@ type CreateStakingOperationRequest struct {
 	AssetId string `json:"asset_id"`
 	// The type of staking operation.
 	Action string `json:"action"`
+	// Additional options for the staking operation.
 	Options map[string]string `json:"options"`
 }
 

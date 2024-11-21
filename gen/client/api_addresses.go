@@ -159,11 +159,14 @@ type AddressesAPI interface {
 	@param walletId The ID of the wallet the address belongs to.
 	@param addressId The onchain address of the address that is being fetched.
 	@return ApiRequestFaucetFundsRequest
+
+	Deprecated
 	*/
 	RequestFaucetFunds(ctx context.Context, walletId string, addressId string) ApiRequestFaucetFundsRequest
 
 	// RequestFaucetFundsExecute executes the request
 	//  @return FaucetTransaction
+	// Deprecated
 	RequestFaucetFundsExecute(r ApiRequestFaucetFundsRequest) (*FaucetTransaction, *http.Response, error)
 }
 
@@ -1183,6 +1186,8 @@ Request faucet funds to be sent to onchain address.
  @param walletId The ID of the wallet the address belongs to.
  @param addressId The onchain address of the address that is being fetched.
  @return ApiRequestFaucetFundsRequest
+
+Deprecated
 */
 func (a *AddressesAPIService) RequestFaucetFunds(ctx context.Context, walletId string, addressId string) ApiRequestFaucetFundsRequest {
 	return ApiRequestFaucetFundsRequest{
@@ -1195,6 +1200,7 @@ func (a *AddressesAPIService) RequestFaucetFunds(ctx context.Context, walletId s
 
 // Execute executes the request
 //  @return FaucetTransaction
+// Deprecated
 func (a *AddressesAPIService) RequestFaucetFundsExecute(r ApiRequestFaucetFundsRequest) (*FaucetTransaction, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodPost
