@@ -73,16 +73,14 @@ type SmartContractsAPI interface {
 	GetSmartContractExecute(r ApiGetSmartContractRequest) (*SmartContract, *http.Response, error)
 
 	/*
-	ListSmartContracts List smart contracts deployed by address
+	ListSmartContracts List smart contracts
 
-	List all smart contracts deployed by address.
+	List smart contracts
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	@param walletId The ID of the wallet the address belongs to.
-	@param addressId The ID of the address to fetch the smart contracts for.
 	@return ApiListSmartContractsRequest
 	*/
-	ListSmartContracts(ctx context.Context, walletId string, addressId string) ApiListSmartContractsRequest
+	ListSmartContracts(ctx context.Context) ApiListSmartContractsRequest
 
 	// ListSmartContractsExecute executes the request
 	//  @return SmartContractList
@@ -103,6 +101,21 @@ type SmartContractsAPI interface {
 	// ReadContractExecute executes the request
 	//  @return SolidityValue
 	ReadContractExecute(r ApiReadContractRequest) (*SolidityValue, *http.Response, error)
+
+	/*
+	RegisterSmartContract Register a smart contract
+
+	Register a smart contract
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@param contractAddress EVM address of the smart contract (42 characters, including '0x', in lowercase)
+	@param networkId The ID of the network to fetch.
+	@return ApiRegisterSmartContractRequest
+	*/
+	RegisterSmartContract(ctx context.Context, contractAddress string, networkId string) ApiRegisterSmartContractRequest
+
+	// RegisterSmartContractExecute executes the request
+	RegisterSmartContractExecute(r ApiRegisterSmartContractRequest) (*http.Response, error)
 }
 
 // SmartContractsAPIService SmartContractsAPI service
@@ -486,8 +499,13 @@ func (a *SmartContractsAPIService) GetSmartContractExecute(r ApiGetSmartContract
 type ApiListSmartContractsRequest struct {
 	ctx context.Context
 	ApiService SmartContractsAPI
-	walletId string
-	addressId string
+	page *string
+}
+
+// Pagination token for retrieving the next set of results
+func (r ApiListSmartContractsRequest) Page(page string) ApiListSmartContractsRequest {
+	r.page = &page
+	return r
 }
 
 func (r ApiListSmartContractsRequest) Execute() (*SmartContractList, *http.Response, error) {
@@ -495,21 +513,17 @@ func (r ApiListSmartContractsRequest) Execute() (*SmartContractList, *http.Respo
 }
 
 /*
-ListSmartContracts List smart contracts deployed by address
+ListSmartContracts List smart contracts
 
-List all smart contracts deployed by address.
+List smart contracts
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- @param walletId The ID of the wallet the address belongs to.
- @param addressId The ID of the address to fetch the smart contracts for.
  @return ApiListSmartContractsRequest
 */
-func (a *SmartContractsAPIService) ListSmartContracts(ctx context.Context, walletId string, addressId string) ApiListSmartContractsRequest {
+func (a *SmartContractsAPIService) ListSmartContracts(ctx context.Context) ApiListSmartContractsRequest {
 	return ApiListSmartContractsRequest{
 		ApiService: a,
 		ctx: ctx,
-		walletId: walletId,
-		addressId: addressId,
 	}
 }
 
@@ -528,14 +542,15 @@ func (a *SmartContractsAPIService) ListSmartContractsExecute(r ApiListSmartContr
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/v1/wallets/{wallet_id}/addresses/{address_id}/smart_contracts"
-	localVarPath = strings.Replace(localVarPath, "{"+"wallet_id"+"}", url.PathEscape(parameterValueToString(r.walletId, "walletId")), -1)
-	localVarPath = strings.Replace(localVarPath, "{"+"address_id"+"}", url.PathEscape(parameterValueToString(r.addressId, "addressId")), -1)
+	localVarPath := localBasePath + "/v1/smart_contracts"
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
 
+	if r.page != nil {
+		parameterAddToHeaderOrQuery(localVarQueryParams, "page", r.page, "form", "")
+	}
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{}
 
@@ -722,4 +737,119 @@ func (a *SmartContractsAPIService) ReadContractExecute(r ApiReadContractRequest)
 	}
 
 	return localVarReturnValue, localVarHTTPResponse, nil
+}
+
+type ApiRegisterSmartContractRequest struct {
+	ctx context.Context
+	ApiService SmartContractsAPI
+	contractAddress string
+	networkId string
+	aBI *ABI
+}
+
+func (r ApiRegisterSmartContractRequest) ABI(aBI ABI) ApiRegisterSmartContractRequest {
+	r.aBI = &aBI
+	return r
+}
+
+func (r ApiRegisterSmartContractRequest) Execute() (*http.Response, error) {
+	return r.ApiService.RegisterSmartContractExecute(r)
+}
+
+/*
+RegisterSmartContract Register a smart contract
+
+Register a smart contract
+
+ @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ @param contractAddress EVM address of the smart contract (42 characters, including '0x', in lowercase)
+ @param networkId The ID of the network to fetch.
+ @return ApiRegisterSmartContractRequest
+*/
+func (a *SmartContractsAPIService) RegisterSmartContract(ctx context.Context, contractAddress string, networkId string) ApiRegisterSmartContractRequest {
+	return ApiRegisterSmartContractRequest{
+		ApiService: a,
+		ctx: ctx,
+		contractAddress: contractAddress,
+		networkId: networkId,
+	}
+}
+
+// Execute executes the request
+func (a *SmartContractsAPIService) RegisterSmartContractExecute(r ApiRegisterSmartContractRequest) (*http.Response, error) {
+	var (
+		localVarHTTPMethod   = http.MethodPost
+		localVarPostBody     interface{}
+		formFiles            []formFile
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SmartContractsAPIService.RegisterSmartContract")
+	if err != nil {
+		return nil, &GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/v1/networks/{network_id}/smart_contracts/{contract_address}/register"
+	localVarPath = strings.Replace(localVarPath, "{"+"contract_address"+"}", url.PathEscape(parameterValueToString(r.contractAddress, "contractAddress")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"network_id"+"}", url.PathEscape(parameterValueToString(r.networkId, "networkId")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+	if r.aBI == nil {
+		return nil, reportError("aBI is required and must be specified")
+	}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{"application/json"}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	// body params
+	localVarPostBody = r.aBI
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
+	if err != nil {
+		return nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarHTTPResponse, err
+	}
+
+	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+	localVarHTTPResponse.Body.Close()
+	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	if err != nil {
+		return localVarHTTPResponse, err
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: localVarHTTPResponse.Status,
+		}
+			var v Error
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarHTTPResponse, newErr
+			}
+					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+					newErr.model = v
+		return localVarHTTPResponse, newErr
+	}
+
+	return localVarHTTPResponse, nil
 }

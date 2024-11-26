@@ -22,7 +22,7 @@ var _ MappedNullable = &AddressReputation{}
 // AddressReputation The reputation score with metadata of a blockchain address.
 type AddressReputation struct {
 	// The reputation score of a wallet address which lie between 0 to 100.
-	ReputationScore *int32 `json:"reputation_score,omitempty"`
+	ReputationScore int32 `json:"reputation_score"`
 	Metadata AddressReputationMetadata `json:"metadata"`
 }
 
@@ -32,8 +32,9 @@ type _AddressReputation AddressReputation
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewAddressReputation(metadata AddressReputationMetadata) *AddressReputation {
+func NewAddressReputation(reputationScore int32, metadata AddressReputationMetadata) *AddressReputation {
 	this := AddressReputation{}
+	this.ReputationScore = reputationScore
 	this.Metadata = metadata
 	return &this
 }
@@ -46,36 +47,28 @@ func NewAddressReputationWithDefaults() *AddressReputation {
 	return &this
 }
 
-// GetReputationScore returns the ReputationScore field value if set, zero value otherwise.
+// GetReputationScore returns the ReputationScore field value
 func (o *AddressReputation) GetReputationScore() int32 {
-	if o == nil || IsNil(o.ReputationScore) {
+	if o == nil {
 		var ret int32
 		return ret
 	}
-	return *o.ReputationScore
+
+	return o.ReputationScore
 }
 
-// GetReputationScoreOk returns a tuple with the ReputationScore field value if set, nil otherwise
+// GetReputationScoreOk returns a tuple with the ReputationScore field value
 // and a boolean to check if the value has been set.
 func (o *AddressReputation) GetReputationScoreOk() (*int32, bool) {
-	if o == nil || IsNil(o.ReputationScore) {
+	if o == nil {
 		return nil, false
 	}
-	return o.ReputationScore, true
+	return &o.ReputationScore, true
 }
 
-// HasReputationScore returns a boolean if a field has been set.
-func (o *AddressReputation) HasReputationScore() bool {
-	if o != nil && !IsNil(o.ReputationScore) {
-		return true
-	}
-
-	return false
-}
-
-// SetReputationScore gets a reference to the given int32 and assigns it to the ReputationScore field.
+// SetReputationScore sets field value
 func (o *AddressReputation) SetReputationScore(v int32) {
-	o.ReputationScore = &v
+	o.ReputationScore = v
 }
 
 // GetMetadata returns the Metadata field value
@@ -112,9 +105,7 @@ func (o AddressReputation) MarshalJSON() ([]byte, error) {
 
 func (o AddressReputation) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	if !IsNil(o.ReputationScore) {
-		toSerialize["reputation_score"] = o.ReputationScore
-	}
+	toSerialize["reputation_score"] = o.ReputationScore
 	toSerialize["metadata"] = o.Metadata
 	return toSerialize, nil
 }
@@ -124,6 +115,7 @@ func (o *AddressReputation) UnmarshalJSON(data []byte) (err error) {
 	// by unmarshalling the object into a generic map with string keys and checking
 	// that every required field exists as a key in the generic map.
 	requiredProperties := []string{
+		"reputation_score",
 		"metadata",
 	}
 

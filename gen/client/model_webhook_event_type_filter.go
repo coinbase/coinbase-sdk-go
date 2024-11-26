@@ -18,7 +18,15 @@ import (
 
 // WebhookEventTypeFilter - The event_type_filter parameter specifies the criteria to filter events based on event type.
 type WebhookEventTypeFilter struct {
+	WebhookSmartContractEventFilter *WebhookSmartContractEventFilter
 	WebhookWalletActivityFilter *WebhookWalletActivityFilter
+}
+
+// WebhookSmartContractEventFilterAsWebhookEventTypeFilter is a convenience function that returns WebhookSmartContractEventFilter wrapped in WebhookEventTypeFilter
+func WebhookSmartContractEventFilterAsWebhookEventTypeFilter(v *WebhookSmartContractEventFilter) WebhookEventTypeFilter {
+	return WebhookEventTypeFilter{
+		WebhookSmartContractEventFilter: v,
+	}
 }
 
 // WebhookWalletActivityFilterAsWebhookEventTypeFilter is a convenience function that returns WebhookWalletActivityFilter wrapped in WebhookEventTypeFilter
@@ -33,6 +41,23 @@ func WebhookWalletActivityFilterAsWebhookEventTypeFilter(v *WebhookWalletActivit
 func (dst *WebhookEventTypeFilter) UnmarshalJSON(data []byte) error {
 	var err error
 	match := 0
+	// try to unmarshal data into WebhookSmartContractEventFilter
+	err = newStrictDecoder(data).Decode(&dst.WebhookSmartContractEventFilter)
+	if err == nil {
+		jsonWebhookSmartContractEventFilter, _ := json.Marshal(dst.WebhookSmartContractEventFilter)
+		if string(jsonWebhookSmartContractEventFilter) == "{}" { // empty struct
+			dst.WebhookSmartContractEventFilter = nil
+		} else {
+			if err = validator.Validate(dst.WebhookSmartContractEventFilter); err != nil {
+				dst.WebhookSmartContractEventFilter = nil
+			} else {
+				match++
+			}
+		}
+	} else {
+		dst.WebhookSmartContractEventFilter = nil
+	}
+
 	// try to unmarshal data into WebhookWalletActivityFilter
 	err = newStrictDecoder(data).Decode(&dst.WebhookWalletActivityFilter)
 	if err == nil {
@@ -52,6 +77,7 @@ func (dst *WebhookEventTypeFilter) UnmarshalJSON(data []byte) error {
 
 	if match > 1 { // more than 1 match
 		// reset to nil
+		dst.WebhookSmartContractEventFilter = nil
 		dst.WebhookWalletActivityFilter = nil
 
 		return fmt.Errorf("data matches more than one schema in oneOf(WebhookEventTypeFilter)")
@@ -64,6 +90,10 @@ func (dst *WebhookEventTypeFilter) UnmarshalJSON(data []byte) error {
 
 // Marshal data from the first non-nil pointers in the struct to JSON
 func (src WebhookEventTypeFilter) MarshalJSON() ([]byte, error) {
+	if src.WebhookSmartContractEventFilter != nil {
+		return json.Marshal(&src.WebhookSmartContractEventFilter)
+	}
+
 	if src.WebhookWalletActivityFilter != nil {
 		return json.Marshal(&src.WebhookWalletActivityFilter)
 	}
@@ -76,6 +106,10 @@ func (obj *WebhookEventTypeFilter) GetActualInstance() (interface{}) {
 	if obj == nil {
 		return nil
 	}
+	if obj.WebhookSmartContractEventFilter != nil {
+		return obj.WebhookSmartContractEventFilter
+	}
+
 	if obj.WebhookWalletActivityFilter != nil {
 		return obj.WebhookWalletActivityFilter
 	}

@@ -23,6 +23,7 @@ const (
 	SMARTCONTRACTTYPE_ERC20 SmartContractType = "erc20"
 	SMARTCONTRACTTYPE_ERC721 SmartContractType = "erc721"
 	SMARTCONTRACTTYPE_ERC1155 SmartContractType = "erc1155"
+	SMARTCONTRACTTYPE_CUSTOM SmartContractType = "custom"
 )
 
 // All allowed values of SmartContractType enum
@@ -30,6 +31,7 @@ var AllowedSmartContractTypeEnumValues = []SmartContractType{
 	"erc20",
 	"erc721",
 	"erc1155",
+	"custom",
 }
 
 func (v *SmartContractType) UnmarshalJSON(src []byte) error {

@@ -28,7 +28,7 @@ type EthereumTokenTransfer struct {
 	Value *string `json:"value,omitempty"`
 	// The ID of ERC721 or ERC1155 token being transferred.
 	TokenId *string `json:"token_id,omitempty"`
-	LogIndex int32 `json:"log_index"`
+	LogIndex int64 `json:"log_index"`
 	TokenTransferType TokenTransferType `json:"token_transfer_type"`
 }
 
@@ -38,7 +38,7 @@ type _EthereumTokenTransfer EthereumTokenTransfer
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewEthereumTokenTransfer(contractAddress string, fromAddress string, toAddress string, logIndex int32, tokenTransferType TokenTransferType) *EthereumTokenTransfer {
+func NewEthereumTokenTransfer(contractAddress string, fromAddress string, toAddress string, logIndex int64, tokenTransferType TokenTransferType) *EthereumTokenTransfer {
 	this := EthereumTokenTransfer{}
 	this.ContractAddress = contractAddress
 	this.FromAddress = fromAddress
@@ -193,9 +193,9 @@ func (o *EthereumTokenTransfer) SetTokenId(v string) {
 }
 
 // GetLogIndex returns the LogIndex field value
-func (o *EthereumTokenTransfer) GetLogIndex() int32 {
+func (o *EthereumTokenTransfer) GetLogIndex() int64 {
 	if o == nil {
-		var ret int32
+		var ret int64
 		return ret
 	}
 
@@ -204,7 +204,7 @@ func (o *EthereumTokenTransfer) GetLogIndex() int32 {
 
 // GetLogIndexOk returns a tuple with the LogIndex field value
 // and a boolean to check if the value has been set.
-func (o *EthereumTokenTransfer) GetLogIndexOk() (*int32, bool) {
+func (o *EthereumTokenTransfer) GetLogIndexOk() (*int64, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -212,7 +212,7 @@ func (o *EthereumTokenTransfer) GetLogIndexOk() (*int32, bool) {
 }
 
 // SetLogIndex sets field value
-func (o *EthereumTokenTransfer) SetLogIndex(v int32) {
+func (o *EthereumTokenTransfer) SetLogIndex(v int64) {
 	o.LogIndex = v
 }
 

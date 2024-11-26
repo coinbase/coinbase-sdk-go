@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+## [0.0.14] - 2024-11-26
+
+### Added
+
+- Add a `Content` and `ToAddressID` method to `Transaction`.
+
 ## [0.0.13] - 2024-11-21
 
 ### Added

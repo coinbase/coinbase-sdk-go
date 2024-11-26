@@ -67,6 +67,15 @@ func (t *Transaction) FromAddressID() string {
 	return t.model.FromAddressId
 }
 
+// ToAddressID returns the to address for the transaction if it exists
+func (t *Transaction) ToAddressID() string {
+	if t.model.ToAddressId == nil {
+		return ""
+	}
+
+	return *t.model.ToAddressId
+}
+
 // Raw returns the raw transaction in the underlying blockchain's format
 func (t *Transaction) Raw() interface{} {
 	return t.signable.Raw()
@@ -75,6 +84,10 @@ func (t *Transaction) Raw() interface{} {
 // IsSigned returns true if the transaction is signed
 func (t *Transaction) IsSigned() bool {
 	return t.signable.IsSigned()
+}
+
+func (t *Transaction) Content() *client.TransactionContent {
+	return t.model.Content
 }
 
 // String returns a string representation of the transaction

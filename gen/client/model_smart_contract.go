@@ -29,6 +29,8 @@ type SmartContract struct {
 	WalletId string `json:"wallet_id"`
 	// The EVM address of the smart contract
 	ContractAddress string `json:"contract_address"`
+	// The name of the smart contract
+	ContractName string `json:"contract_name"`
 	// The EVM address of the account that deployed the smart contract
 	DeployerAddress string `json:"deployer_address"`
 	Type SmartContractType `json:"type"`
@@ -44,12 +46,13 @@ type _SmartContract SmartContract
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewSmartContract(smartContractId string, networkId string, walletId string, contractAddress string, deployerAddress string, type_ SmartContractType, options SmartContractOptions, abi string, transaction Transaction) *SmartContract {
+func NewSmartContract(smartContractId string, networkId string, walletId string, contractAddress string, contractName string, deployerAddress string, type_ SmartContractType, options SmartContractOptions, abi string, transaction Transaction) *SmartContract {
 	this := SmartContract{}
 	this.SmartContractId = smartContractId
 	this.NetworkId = networkId
 	this.WalletId = walletId
 	this.ContractAddress = contractAddress
+	this.ContractName = contractName
 	this.DeployerAddress = deployerAddress
 	this.Type = type_
 	this.Options = options
@@ -160,6 +163,30 @@ func (o *SmartContract) GetContractAddressOk() (*string, bool) {
 // SetContractAddress sets field value
 func (o *SmartContract) SetContractAddress(v string) {
 	o.ContractAddress = v
+}
+
+// GetContractName returns the ContractName field value
+func (o *SmartContract) GetContractName() string {
+	if o == nil {
+		var ret string
+		return ret
+	}
+
+	return o.ContractName
+}
+
+// GetContractNameOk returns a tuple with the ContractName field value
+// and a boolean to check if the value has been set.
+func (o *SmartContract) GetContractNameOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.ContractName, true
+}
+
+// SetContractName sets field value
+func (o *SmartContract) SetContractName(v string) {
+	o.ContractName = v
 }
 
 // GetDeployerAddress returns the DeployerAddress field value
@@ -296,6 +323,7 @@ func (o SmartContract) ToMap() (map[string]interface{}, error) {
 	toSerialize["network_id"] = o.NetworkId
 	toSerialize["wallet_id"] = o.WalletId
 	toSerialize["contract_address"] = o.ContractAddress
+	toSerialize["contract_name"] = o.ContractName
 	toSerialize["deployer_address"] = o.DeployerAddress
 	toSerialize["type"] = o.Type
 	toSerialize["options"] = o.Options
@@ -313,6 +341,7 @@ func (o *SmartContract) UnmarshalJSON(data []byte) (err error) {
 		"network_id",
 		"wallet_id",
 		"contract_address",
+		"contract_name",
 		"deployer_address",
 		"type",
 		"options",
