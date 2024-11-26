@@ -24,20 +24,20 @@ type EthereumTransactionFlattenedTrace struct {
 	From *string `json:"from,omitempty"`
 	To *string `json:"to,omitempty"`
 	Value *string `json:"value,omitempty"`
-	Gas *int32 `json:"gas,omitempty"`
-	GasUsed *int32 `json:"gas_used,omitempty"`
+	Gas *int64 `json:"gas,omitempty"`
+	GasUsed *int64 `json:"gas_used,omitempty"`
 	Input *string `json:"input,omitempty"`
 	Output *string `json:"output,omitempty"`
-	SubTraces *int32 `json:"sub_traces,omitempty"`
-	TraceAddress []int32 `json:"trace_address,omitempty"`
+	SubTraces *int64 `json:"sub_traces,omitempty"`
+	TraceAddress []int64 `json:"trace_address,omitempty"`
 	TraceType *string `json:"trace_type,omitempty"`
 	CallType *string `json:"call_type,omitempty"`
 	TraceId *string `json:"trace_id,omitempty"`
-	Status *int32 `json:"status,omitempty"`
+	Status *int64 `json:"status,omitempty"`
 	BlockHash *string `json:"block_hash,omitempty"`
-	BlockNumber *int32 `json:"block_number,omitempty"`
+	BlockNumber *int64 `json:"block_number,omitempty"`
 	TransactionHash *string `json:"transaction_hash,omitempty"`
-	TransactionIndex *int32 `json:"transaction_index,omitempty"`
+	TransactionIndex *int64 `json:"transaction_index,omitempty"`
 }
 
 // NewEthereumTransactionFlattenedTrace instantiates a new EthereumTransactionFlattenedTrace object
@@ -218,9 +218,9 @@ func (o *EthereumTransactionFlattenedTrace) SetValue(v string) {
 }
 
 // GetGas returns the Gas field value if set, zero value otherwise.
-func (o *EthereumTransactionFlattenedTrace) GetGas() int32 {
+func (o *EthereumTransactionFlattenedTrace) GetGas() int64 {
 	if o == nil || IsNil(o.Gas) {
-		var ret int32
+		var ret int64
 		return ret
 	}
 	return *o.Gas
@@ -228,7 +228,7 @@ func (o *EthereumTransactionFlattenedTrace) GetGas() int32 {
 
 // GetGasOk returns a tuple with the Gas field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *EthereumTransactionFlattenedTrace) GetGasOk() (*int32, bool) {
+func (o *EthereumTransactionFlattenedTrace) GetGasOk() (*int64, bool) {
 	if o == nil || IsNil(o.Gas) {
 		return nil, false
 	}
@@ -244,15 +244,15 @@ func (o *EthereumTransactionFlattenedTrace) HasGas() bool {
 	return false
 }
 
-// SetGas gets a reference to the given int32 and assigns it to the Gas field.
-func (o *EthereumTransactionFlattenedTrace) SetGas(v int32) {
+// SetGas gets a reference to the given int64 and assigns it to the Gas field.
+func (o *EthereumTransactionFlattenedTrace) SetGas(v int64) {
 	o.Gas = &v
 }
 
 // GetGasUsed returns the GasUsed field value if set, zero value otherwise.
-func (o *EthereumTransactionFlattenedTrace) GetGasUsed() int32 {
+func (o *EthereumTransactionFlattenedTrace) GetGasUsed() int64 {
 	if o == nil || IsNil(o.GasUsed) {
-		var ret int32
+		var ret int64
 		return ret
 	}
 	return *o.GasUsed
@@ -260,7 +260,7 @@ func (o *EthereumTransactionFlattenedTrace) GetGasUsed() int32 {
 
 // GetGasUsedOk returns a tuple with the GasUsed field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *EthereumTransactionFlattenedTrace) GetGasUsedOk() (*int32, bool) {
+func (o *EthereumTransactionFlattenedTrace) GetGasUsedOk() (*int64, bool) {
 	if o == nil || IsNil(o.GasUsed) {
 		return nil, false
 	}
@@ -276,8 +276,8 @@ func (o *EthereumTransactionFlattenedTrace) HasGasUsed() bool {
 	return false
 }
 
-// SetGasUsed gets a reference to the given int32 and assigns it to the GasUsed field.
-func (o *EthereumTransactionFlattenedTrace) SetGasUsed(v int32) {
+// SetGasUsed gets a reference to the given int64 and assigns it to the GasUsed field.
+func (o *EthereumTransactionFlattenedTrace) SetGasUsed(v int64) {
 	o.GasUsed = &v
 }
 
@@ -346,9 +346,9 @@ func (o *EthereumTransactionFlattenedTrace) SetOutput(v string) {
 }
 
 // GetSubTraces returns the SubTraces field value if set, zero value otherwise.
-func (o *EthereumTransactionFlattenedTrace) GetSubTraces() int32 {
+func (o *EthereumTransactionFlattenedTrace) GetSubTraces() int64 {
 	if o == nil || IsNil(o.SubTraces) {
-		var ret int32
+		var ret int64
 		return ret
 	}
 	return *o.SubTraces
@@ -356,7 +356,7 @@ func (o *EthereumTransactionFlattenedTrace) GetSubTraces() int32 {
 
 // GetSubTracesOk returns a tuple with the SubTraces field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *EthereumTransactionFlattenedTrace) GetSubTracesOk() (*int32, bool) {
+func (o *EthereumTransactionFlattenedTrace) GetSubTracesOk() (*int64, bool) {
 	if o == nil || IsNil(o.SubTraces) {
 		return nil, false
 	}
@@ -372,15 +372,15 @@ func (o *EthereumTransactionFlattenedTrace) HasSubTraces() bool {
 	return false
 }
 
-// SetSubTraces gets a reference to the given int32 and assigns it to the SubTraces field.
-func (o *EthereumTransactionFlattenedTrace) SetSubTraces(v int32) {
+// SetSubTraces gets a reference to the given int64 and assigns it to the SubTraces field.
+func (o *EthereumTransactionFlattenedTrace) SetSubTraces(v int64) {
 	o.SubTraces = &v
 }
 
 // GetTraceAddress returns the TraceAddress field value if set, zero value otherwise.
-func (o *EthereumTransactionFlattenedTrace) GetTraceAddress() []int32 {
+func (o *EthereumTransactionFlattenedTrace) GetTraceAddress() []int64 {
 	if o == nil || IsNil(o.TraceAddress) {
-		var ret []int32
+		var ret []int64
 		return ret
 	}
 	return o.TraceAddress
@@ -388,7 +388,7 @@ func (o *EthereumTransactionFlattenedTrace) GetTraceAddress() []int32 {
 
 // GetTraceAddressOk returns a tuple with the TraceAddress field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *EthereumTransactionFlattenedTrace) GetTraceAddressOk() ([]int32, bool) {
+func (o *EthereumTransactionFlattenedTrace) GetTraceAddressOk() ([]int64, bool) {
 	if o == nil || IsNil(o.TraceAddress) {
 		return nil, false
 	}
@@ -404,8 +404,8 @@ func (o *EthereumTransactionFlattenedTrace) HasTraceAddress() bool {
 	return false
 }
 
-// SetTraceAddress gets a reference to the given []int32 and assigns it to the TraceAddress field.
-func (o *EthereumTransactionFlattenedTrace) SetTraceAddress(v []int32) {
+// SetTraceAddress gets a reference to the given []int64 and assigns it to the TraceAddress field.
+func (o *EthereumTransactionFlattenedTrace) SetTraceAddress(v []int64) {
 	o.TraceAddress = v
 }
 
@@ -506,9 +506,9 @@ func (o *EthereumTransactionFlattenedTrace) SetTraceId(v string) {
 }
 
 // GetStatus returns the Status field value if set, zero value otherwise.
-func (o *EthereumTransactionFlattenedTrace) GetStatus() int32 {
+func (o *EthereumTransactionFlattenedTrace) GetStatus() int64 {
 	if o == nil || IsNil(o.Status) {
-		var ret int32
+		var ret int64
 		return ret
 	}
 	return *o.Status
@@ -516,7 +516,7 @@ func (o *EthereumTransactionFlattenedTrace) GetStatus() int32 {
 
 // GetStatusOk returns a tuple with the Status field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *EthereumTransactionFlattenedTrace) GetStatusOk() (*int32, bool) {
+func (o *EthereumTransactionFlattenedTrace) GetStatusOk() (*int64, bool) {
 	if o == nil || IsNil(o.Status) {
 		return nil, false
 	}
@@ -532,8 +532,8 @@ func (o *EthereumTransactionFlattenedTrace) HasStatus() bool {
 	return false
 }
 
-// SetStatus gets a reference to the given int32 and assigns it to the Status field.
-func (o *EthereumTransactionFlattenedTrace) SetStatus(v int32) {
+// SetStatus gets a reference to the given int64 and assigns it to the Status field.
+func (o *EthereumTransactionFlattenedTrace) SetStatus(v int64) {
 	o.Status = &v
 }
 
@@ -570,9 +570,9 @@ func (o *EthereumTransactionFlattenedTrace) SetBlockHash(v string) {
 }
 
 // GetBlockNumber returns the BlockNumber field value if set, zero value otherwise.
-func (o *EthereumTransactionFlattenedTrace) GetBlockNumber() int32 {
+func (o *EthereumTransactionFlattenedTrace) GetBlockNumber() int64 {
 	if o == nil || IsNil(o.BlockNumber) {
-		var ret int32
+		var ret int64
 		return ret
 	}
 	return *o.BlockNumber
@@ -580,7 +580,7 @@ func (o *EthereumTransactionFlattenedTrace) GetBlockNumber() int32 {
 
 // GetBlockNumberOk returns a tuple with the BlockNumber field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *EthereumTransactionFlattenedTrace) GetBlockNumberOk() (*int32, bool) {
+func (o *EthereumTransactionFlattenedTrace) GetBlockNumberOk() (*int64, bool) {
 	if o == nil || IsNil(o.BlockNumber) {
 		return nil, false
 	}
@@ -596,8 +596,8 @@ func (o *EthereumTransactionFlattenedTrace) HasBlockNumber() bool {
 	return false
 }
 
-// SetBlockNumber gets a reference to the given int32 and assigns it to the BlockNumber field.
-func (o *EthereumTransactionFlattenedTrace) SetBlockNumber(v int32) {
+// SetBlockNumber gets a reference to the given int64 and assigns it to the BlockNumber field.
+func (o *EthereumTransactionFlattenedTrace) SetBlockNumber(v int64) {
 	o.BlockNumber = &v
 }
 
@@ -634,9 +634,9 @@ func (o *EthereumTransactionFlattenedTrace) SetTransactionHash(v string) {
 }
 
 // GetTransactionIndex returns the TransactionIndex field value if set, zero value otherwise.
-func (o *EthereumTransactionFlattenedTrace) GetTransactionIndex() int32 {
+func (o *EthereumTransactionFlattenedTrace) GetTransactionIndex() int64 {
 	if o == nil || IsNil(o.TransactionIndex) {
-		var ret int32
+		var ret int64
 		return ret
 	}
 	return *o.TransactionIndex
@@ -644,7 +644,7 @@ func (o *EthereumTransactionFlattenedTrace) GetTransactionIndex() int32 {
 
 // GetTransactionIndexOk returns a tuple with the TransactionIndex field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *EthereumTransactionFlattenedTrace) GetTransactionIndexOk() (*int32, bool) {
+func (o *EthereumTransactionFlattenedTrace) GetTransactionIndexOk() (*int64, bool) {
 	if o == nil || IsNil(o.TransactionIndex) {
 		return nil, false
 	}
@@ -660,8 +660,8 @@ func (o *EthereumTransactionFlattenedTrace) HasTransactionIndex() bool {
 	return false
 }
 
-// SetTransactionIndex gets a reference to the given int32 and assigns it to the TransactionIndex field.
-func (o *EthereumTransactionFlattenedTrace) SetTransactionIndex(v int32) {
+// SetTransactionIndex gets a reference to the given int64 and assigns it to the TransactionIndex field.
+func (o *EthereumTransactionFlattenedTrace) SetTransactionIndex(v int64) {
 	o.TransactionIndex = &v
 }
 

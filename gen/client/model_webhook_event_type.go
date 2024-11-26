@@ -24,6 +24,7 @@ const (
 	WEBHOOKEVENTTYPE_ERC20_TRANSFER WebhookEventType = "erc20_transfer"
 	WEBHOOKEVENTTYPE_ERC721_TRANSFER WebhookEventType = "erc721_transfer"
 	WEBHOOKEVENTTYPE_WALLET_ACTIVITY WebhookEventType = "wallet_activity"
+	WEBHOOKEVENTTYPE_SMART_CONTRACT_EVENT_ACTIVITY WebhookEventType = "smart_contract_event_activity"
 )
 
 // All allowed values of WebhookEventType enum
@@ -32,6 +33,7 @@ var AllowedWebhookEventTypeEnumValues = []WebhookEventType{
 	"erc20_transfer",
 	"erc721_transfer",
 	"wallet_activity",
+	"smart_contract_event_activity",
 }
 
 func (v *WebhookEventType) UnmarshalJSON(src []byte) error {

@@ -118,8 +118,9 @@ Class | Method | HTTP request | Description
 *SmartContractsAPI* | [**CreateSmartContract**](docs/SmartContractsAPI.md#createsmartcontract) | **Post** /v1/wallets/{wallet_id}/addresses/{address_id}/smart_contracts | Create a new smart contract
 *SmartContractsAPI* | [**DeploySmartContract**](docs/SmartContractsAPI.md#deploysmartcontract) | **Post** /v1/wallets/{wallet_id}/addresses/{address_id}/smart_contracts/{smart_contract_id}/deploy | Deploy a smart contract
 *SmartContractsAPI* | [**GetSmartContract**](docs/SmartContractsAPI.md#getsmartcontract) | **Get** /v1/wallets/{wallet_id}/addresses/{address_id}/smart_contracts/{smart_contract_id} | Get a specific smart contract deployed by address
-*SmartContractsAPI* | [**ListSmartContracts**](docs/SmartContractsAPI.md#listsmartcontracts) | **Get** /v1/wallets/{wallet_id}/addresses/{address_id}/smart_contracts | List smart contracts deployed by address
+*SmartContractsAPI* | [**ListSmartContracts**](docs/SmartContractsAPI.md#listsmartcontracts) | **Get** /v1/smart_contracts | List smart contracts
 *SmartContractsAPI* | [**ReadContract**](docs/SmartContractsAPI.md#readcontract) | **Post** /v1/networks/{network_id}/smart_contracts/{contract_address}/read | Read data from a smart contract
+*SmartContractsAPI* | [**RegisterSmartContract**](docs/SmartContractsAPI.md#registersmartcontract) | **Post** /v1/networks/{network_id}/smart_contracts/{contract_address}/register | Register a smart contract
 *StakeAPI* | [**BuildStakingOperation**](docs/StakeAPI.md#buildstakingoperation) | **Post** /v1/stake/build | Build a new staking operation
 *StakeAPI* | [**FetchHistoricalStakingBalances**](docs/StakeAPI.md#fetchhistoricalstakingbalances) | **Get** /v1/networks/{network_id}/addresses/{address_id}/stake/balances | Fetch historical staking balances
 *StakeAPI* | [**FetchStakingRewards**](docs/StakeAPI.md#fetchstakingrewards) | **Post** /v1/stake/rewards/search | Fetch staking rewards
@@ -151,6 +152,7 @@ Class | Method | HTTP request | Description
 
 ## Documentation For Models
 
+ - [ABI](docs/ABI.md)
  - [Address](docs/Address.md)
  - [AddressBalanceList](docs/AddressBalanceList.md)
  - [AddressHistoricalBalanceList](docs/AddressHistoricalBalanceList.md)
@@ -227,6 +229,7 @@ Class | Method | HTTP request | Description
  - [SignatureCreationEventResult](docs/SignatureCreationEventResult.md)
  - [SignedVoluntaryExitMessageMetadata](docs/SignedVoluntaryExitMessageMetadata.md)
  - [SmartContract](docs/SmartContract.md)
+ - [SmartContractActivityEvent](docs/SmartContractActivityEvent.md)
  - [SmartContractList](docs/SmartContractList.md)
  - [SmartContractOptions](docs/SmartContractOptions.md)
  - [SmartContractType](docs/SmartContractType.md)
@@ -262,6 +265,7 @@ Class | Method | HTTP request | Description
  - [WebhookEventType](docs/WebhookEventType.md)
  - [WebhookEventTypeFilter](docs/WebhookEventTypeFilter.md)
  - [WebhookList](docs/WebhookList.md)
+ - [WebhookSmartContractEventFilter](docs/WebhookSmartContractEventFilter.md)
  - [WebhookWalletActivityFilter](docs/WebhookWalletActivityFilter.md)
 
 
