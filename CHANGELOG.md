@@ -2,6 +2,16 @@
 
 ## Unreleased
 
+## [0.0.15] - 2024-12-02
+
+### Added
+
+- Add `WithIntegratorContractAddress` to allow for setting an explicit integrator contract address for Shared ETH staking.
+
+### Fixed
+
+- Better error handling between the SDK and the API.
+
 ## [0.0.14] - 2024-11-26
 
 ### Added
@@ -21,7 +31,7 @@
 - Added constants for supported network names
 - Added `IsFailedState` and `IsCompleteState` methods to `StakingOperation` to check if the operation is in a failed or complete state
 
-### Changes
+### Changed
 
 - Exposed `IsTerminalState` method on `StakingOperation` to check if the operation is in a terminal state.
 

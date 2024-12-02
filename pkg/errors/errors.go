@@ -49,10 +49,10 @@ func MapToUserFacing(err error, resp *http.Response) error {
 	var openAPIError *client.GenericOpenAPIError
 	if errors.As(err, &openAPIError) {
 		var clientError client.Error
-		if err := clientError.UnmarshalJSON(openAPIError.Body()); err != nil {
+		if unmarshalErr := clientError.UnmarshalJSON(openAPIError.Body()); unmarshalErr != nil {
 			return &APIError{
 				Code:    "unknown",
-				Message: err.Error(),
+				Message: err.Error(), // relay back the original error message as is.
 			}
 		}
 

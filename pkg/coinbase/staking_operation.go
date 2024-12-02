@@ -22,6 +22,11 @@ func WithStakingOperationMode(mode string) StakingOperationOption {
 	return WithStakingOperationOption("mode", mode)
 }
 
+// WithIntegratorContractAddress allows for the setting of the integrator contract address for Shared ETH staking.
+func WithIntegratorContractAddress(integratorContractAddress string) StakingOperationOption {
+	return WithStakingOperationOption("integrator_contract_address", integratorContractAddress)
+}
+
 // WithStakingOperationOption allows for the passing of custom options
 // to the staking operation, like `mode` or `withdrawal_address`.
 func WithStakingOperationOption(optionKey, optionValue string) StakingOperationOption {
