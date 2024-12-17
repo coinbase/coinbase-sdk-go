@@ -2,6 +2,7 @@ package coinbase
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 
 	"github.com/coinbase/coinbase-sdk-go/gen/client"
@@ -94,12 +95,100 @@ func (v Validator) Status() client.ValidatorStatus {
 	return v.model.Status
 }
 
+func (v Validator) NetworkID() string {
+	return v.model.NetworkId
+}
+
+func (v Validator) AssetID() string {
+	return v.model.AssetId
+}
+
+func (v Validator) Index() string {
+	if !v.hasEthereumMetadata() {
+		return ""
+	}
+	return v.model.Details.EthereumValidatorMetadata.GetIndex()
+}
+
+func (v Validator) PublicKey() string {
+	if !v.hasEthereumMetadata() {
+		return ""
+	}
+	return v.model.Details.EthereumValidatorMetadata.GetPublicKey()
+}
+
+func (v Validator) WithdrawalAddress() string {
+	if !v.hasEthereumMetadata() {
+		return ""
+	}
+	return v.model.Details.EthereumValidatorMetadata.GetWithdrawalAddress()
+}
+
+func (v Validator) Slashed() bool {
+	if !v.hasEthereumMetadata() {
+		return false
+	}
+	return v.model.Details.EthereumValidatorMetadata.GetSlashed()
+}
+
+func (v Validator) ActivationEpoch() string {
+	if !v.hasEthereumMetadata() {
+		return ""
+	}
+	return v.model.Details.EthereumValidatorMetadata.GetActivationEpoch()
+}
+
+func (v Validator) ExitEpoch() string {
+	if !v.hasEthereumMetadata() {
+		return ""
+	}
+	return v.model.Details.EthereumValidatorMetadata.GetExitEpoch()
+}
+
+func (v Validator) WithdrawableEpoch() string {
+	if !v.hasEthereumMetadata() {
+		return ""
+	}
+	return v.model.Details.EthereumValidatorMetadata.GetWithdrawableEpoch()
+}
+
+func (v Validator) Balance() client.Balance {
+	if !v.hasEthereumMetadata() {
+		return client.Balance{}
+	}
+	return v.model.Details.EthereumValidatorMetadata.GetBalance()
+}
+
+func (v Validator) EffectiveBalance() client.Balance {
+	if !v.hasEthereumMetadata() {
+		return client.Balance{}
+	}
+	return v.model.Details.EthereumValidatorMetadata.GetEffectiveBalance()
+}
+
+func (v Validator) hasEthereumMetadata() bool {
+	if v.model.Details == nil || v.model.Details.EthereumValidatorMetadata == nil {
+		return false
+	}
+	return true
+}
+
 func (v Validator) ToString() string {
 	return fmt.Sprintf(
 		"Validator { Id: '%s' Status: '%s' }",
 		v.ID(),
 		v.Status(),
 	)
+}
+
+func (v Validator) ToJSON() (string, error) {
+	jsonData, err := json.Marshal(v.model)
+	if err != nil {
+		return "", err
+	}
+
+	// Print JSON as string
+	return string(jsonData), nil
 }
 
 func (c *Client) ListValidators(
