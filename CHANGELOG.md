@@ -1,6 +1,6 @@
 # Coinbase Go SDK Changelog
 
-## Unreleased
+## [0.0.16] - 2024-12-17
 
 ### Added
 
