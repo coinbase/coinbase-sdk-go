@@ -187,7 +187,6 @@ func (v Validator) ToJSON() (string, error) {
 		return "", err
 	}
 
-	// Print JSON as string
 	return string(jsonData), nil
 }
 
