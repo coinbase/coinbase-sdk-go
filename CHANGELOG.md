@@ -1,13 +1,12 @@
 # Coinbase Go SDK Changelog
 
-## [0.0.16] - 2024-12-18
+## [0.0.16] - 2025-02-05
 
 ### Added
 
 - Add getters for `Validator` object to expose more data to users.
 - Add test cases for `Validator` object.
-
-
+- Update SDK with latest generated client code.
 
 ## [0.0.15] - 2024-12-02
 
