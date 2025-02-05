@@ -23,7 +23,7 @@ var _ MappedNullable = &CreateFundOperationRequest{}
 type CreateFundOperationRequest struct {
 	// The amount of the asset to fund the address with in atomic units.
 	Amount string `json:"amount"`
-	// The ID of the asset to fund the address with.
+	// The ID of the asset to fund the address with. Can be an asset symbol or a token contract address.
 	AssetId string `json:"asset_id"`
 	// The Optional ID of the fund quote to fund the address with. If omitted we will generate a quote and immediately execute it.
 	FundQuoteId *string `json:"fund_quote_id,omitempty"`

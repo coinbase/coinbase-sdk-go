@@ -31,7 +31,8 @@ type Transfer struct {
 	Destination string `json:"destination"`
 	// The amount in the atomic units of the asset
 	Amount string `json:"amount"`
-	// The ID of the asset being transferred
+	// The ID of the asset being transferred. Use `asset.asset_id` instead.
+	// Deprecated
 	AssetId string `json:"asset_id"`
 	Asset Asset `json:"asset"`
 	// The ID of the transfer
@@ -39,12 +40,15 @@ type Transfer struct {
 	Transaction *Transaction `json:"transaction,omitempty"`
 	SponsoredSend *SponsoredSend `json:"sponsored_send,omitempty"`
 	// The unsigned payload of the transfer. This is the payload that needs to be signed by the sender.
+	// Deprecated
 	UnsignedPayload *string `json:"unsigned_payload,omitempty"`
 	// The signed payload of the transfer. This is the payload that has been signed by the sender.
+	// Deprecated
 	SignedPayload *string `json:"signed_payload,omitempty"`
 	// The hash of the transfer transaction
+	// Deprecated
 	TransactionHash *string `json:"transaction_hash,omitempty"`
-	// The status of the transfer
+	// Deprecated
 	Status *string `json:"status,omitempty"`
 	// Whether the transfer uses sponsored gas
 	Gasless bool `json:"gasless"`
@@ -199,6 +203,7 @@ func (o *Transfer) SetAmount(v string) {
 }
 
 // GetAssetId returns the AssetId field value
+// Deprecated
 func (o *Transfer) GetAssetId() string {
 	if o == nil {
 		var ret string
@@ -210,6 +215,7 @@ func (o *Transfer) GetAssetId() string {
 
 // GetAssetIdOk returns a tuple with the AssetId field value
 // and a boolean to check if the value has been set.
+// Deprecated
 func (o *Transfer) GetAssetIdOk() (*string, bool) {
 	if o == nil {
 		return nil, false
@@ -218,6 +224,7 @@ func (o *Transfer) GetAssetIdOk() (*string, bool) {
 }
 
 // SetAssetId sets field value
+// Deprecated
 func (o *Transfer) SetAssetId(v string) {
 	o.AssetId = v
 }
@@ -335,6 +342,7 @@ func (o *Transfer) SetSponsoredSend(v SponsoredSend) {
 }
 
 // GetUnsignedPayload returns the UnsignedPayload field value if set, zero value otherwise.
+// Deprecated
 func (o *Transfer) GetUnsignedPayload() string {
 	if o == nil || IsNil(o.UnsignedPayload) {
 		var ret string
@@ -345,6 +353,7 @@ func (o *Transfer) GetUnsignedPayload() string {
 
 // GetUnsignedPayloadOk returns a tuple with the UnsignedPayload field value if set, nil otherwise
 // and a boolean to check if the value has been set.
+// Deprecated
 func (o *Transfer) GetUnsignedPayloadOk() (*string, bool) {
 	if o == nil || IsNil(o.UnsignedPayload) {
 		return nil, false
@@ -362,11 +371,13 @@ func (o *Transfer) HasUnsignedPayload() bool {
 }
 
 // SetUnsignedPayload gets a reference to the given string and assigns it to the UnsignedPayload field.
+// Deprecated
 func (o *Transfer) SetUnsignedPayload(v string) {
 	o.UnsignedPayload = &v
 }
 
 // GetSignedPayload returns the SignedPayload field value if set, zero value otherwise.
+// Deprecated
 func (o *Transfer) GetSignedPayload() string {
 	if o == nil || IsNil(o.SignedPayload) {
 		var ret string
@@ -377,6 +388,7 @@ func (o *Transfer) GetSignedPayload() string {
 
 // GetSignedPayloadOk returns a tuple with the SignedPayload field value if set, nil otherwise
 // and a boolean to check if the value has been set.
+// Deprecated
 func (o *Transfer) GetSignedPayloadOk() (*string, bool) {
 	if o == nil || IsNil(o.SignedPayload) {
 		return nil, false
@@ -394,11 +406,13 @@ func (o *Transfer) HasSignedPayload() bool {
 }
 
 // SetSignedPayload gets a reference to the given string and assigns it to the SignedPayload field.
+// Deprecated
 func (o *Transfer) SetSignedPayload(v string) {
 	o.SignedPayload = &v
 }
 
 // GetTransactionHash returns the TransactionHash field value if set, zero value otherwise.
+// Deprecated
 func (o *Transfer) GetTransactionHash() string {
 	if o == nil || IsNil(o.TransactionHash) {
 		var ret string
@@ -409,6 +423,7 @@ func (o *Transfer) GetTransactionHash() string {
 
 // GetTransactionHashOk returns a tuple with the TransactionHash field value if set, nil otherwise
 // and a boolean to check if the value has been set.
+// Deprecated
 func (o *Transfer) GetTransactionHashOk() (*string, bool) {
 	if o == nil || IsNil(o.TransactionHash) {
 		return nil, false
@@ -426,11 +441,13 @@ func (o *Transfer) HasTransactionHash() bool {
 }
 
 // SetTransactionHash gets a reference to the given string and assigns it to the TransactionHash field.
+// Deprecated
 func (o *Transfer) SetTransactionHash(v string) {
 	o.TransactionHash = &v
 }
 
 // GetStatus returns the Status field value if set, zero value otherwise.
+// Deprecated
 func (o *Transfer) GetStatus() string {
 	if o == nil || IsNil(o.Status) {
 		var ret string
@@ -441,6 +458,7 @@ func (o *Transfer) GetStatus() string {
 
 // GetStatusOk returns a tuple with the Status field value if set, nil otherwise
 // and a boolean to check if the value has been set.
+// Deprecated
 func (o *Transfer) GetStatusOk() (*string, bool) {
 	if o == nil || IsNil(o.Status) {
 		return nil, false
@@ -458,6 +476,7 @@ func (o *Transfer) HasStatus() bool {
 }
 
 // SetStatus gets a reference to the given string and assigns it to the Status field.
+// Deprecated
 func (o *Transfer) SetStatus(v string) {
 	o.Status = &v
 }

@@ -94,7 +94,11 @@ Class | Method | HTTP request | Description
 *ContractInvocationsAPI* | [**CreateContractInvocation**](docs/ContractInvocationsAPI.md#createcontractinvocation) | **Post** /v1/wallets/{wallet_id}/addresses/{address_id}/contract_invocations | Create a new contract invocation for an address.
 *ContractInvocationsAPI* | [**GetContractInvocation**](docs/ContractInvocationsAPI.md#getcontractinvocation) | **Get** /v1/wallets/{wallet_id}/addresses/{address_id}/contract_invocations/{contract_invocation_id} | Get a contract invocation by ID.
 *ContractInvocationsAPI* | [**ListContractInvocations**](docs/ContractInvocationsAPI.md#listcontractinvocations) | **Get** /v1/wallets/{wallet_id}/addresses/{address_id}/contract_invocations | List contract invocations for an address.
+*ExternalAddressesAPI* | [**BroadcastExternalTransaction**](docs/ExternalAddressesAPI.md#broadcastexternaltransaction) | **Post** /v1/networks/{network_id}/addresses/{address_id}/transactions | Broadcast an arbitrary transaction.
+*ExternalAddressesAPI* | [**BroadcastExternalTransfer**](docs/ExternalAddressesAPI.md#broadcastexternaltransfer) | **Post** /v1/networks/{network_id}/addresses/{address_id}/transfers/{transfer_id}/broadcast | Broadcast an external address&#39; transfer
+*ExternalAddressesAPI* | [**CreateExternalTransfer**](docs/ExternalAddressesAPI.md#createexternaltransfer) | **Post** /v1/networks/{network_id}/addresses/{address_id}/transfers | Create a new transfer
 *ExternalAddressesAPI* | [**GetExternalAddressBalance**](docs/ExternalAddressesAPI.md#getexternaladdressbalance) | **Get** /v1/networks/{network_id}/addresses/{address_id}/balances/{asset_id} | Get the balance of an asset in an external address
+*ExternalAddressesAPI* | [**GetExternalTransfer**](docs/ExternalAddressesAPI.md#getexternaltransfer) | **Get** /v1/networks/{network_id}/addresses/{address_id}/transfers/{transfer_id} | Get a external address&#39; transfer
 *ExternalAddressesAPI* | [**GetFaucetTransaction**](docs/ExternalAddressesAPI.md#getfaucettransaction) | **Get** /v1/networks/{network_id}/addresses/{address_id}/faucet/{tx_hash} | Get the status of a faucet transaction
 *ExternalAddressesAPI* | [**ListExternalAddressBalances**](docs/ExternalAddressesAPI.md#listexternaladdressbalances) | **Get** /v1/networks/{network_id}/addresses/{address_id}/balances | Get the balances of an external address
 *ExternalAddressesAPI* | [**RequestExternalFaucetFunds**](docs/ExternalAddressesAPI.md#requestexternalfaucetfunds) | **Post** /v1/networks/{network_id}/addresses/{address_id}/faucet | Request faucet funds for external address.
@@ -108,19 +112,20 @@ Class | Method | HTTP request | Description
 *NetworksAPI* | [**GetNetwork**](docs/NetworksAPI.md#getnetwork) | **Get** /v1/networks/{network_id} | Get network by ID
 *OnchainIdentityAPI* | [**ResolveIdentityByAddress**](docs/OnchainIdentityAPI.md#resolveidentitybyaddress) | **Get** /v1/networks/{network_id}/addresses/{address_id}/identity | Obtains onchain identity for an address on a specific network
 *ReputationAPI* | [**GetAddressReputation**](docs/ReputationAPI.md#getaddressreputation) | **Get** /v1/networks/{network_id}/addresses/{address_id}/reputation | Get the onchain reputation of an external address
-*ReputationAPI* | [**GetAddressRisk**](docs/ReputationAPI.md#getaddressrisk) | **Get** /v1/networks/{network_id}/addresses/{address_id}/risk | Get the risk of an address
 *ServerSignersAPI* | [**CreateServerSigner**](docs/ServerSignersAPI.md#createserversigner) | **Post** /v1/server_signers | Create a new Server-Signer
 *ServerSignersAPI* | [**GetServerSigner**](docs/ServerSignersAPI.md#getserversigner) | **Get** /v1/server_signers/{server_signer_id} | Get a server signer by ID
 *ServerSignersAPI* | [**ListServerSignerEvents**](docs/ServerSignersAPI.md#listserversignerevents) | **Get** /v1/server_signers/{server_signer_id}/events | List events for a server signer
 *ServerSignersAPI* | [**ListServerSigners**](docs/ServerSignersAPI.md#listserversigners) | **Get** /v1/server_signers | List server signers for the current project
 *ServerSignersAPI* | [**SubmitServerSignerSeedEventResult**](docs/ServerSignersAPI.md#submitserversignerseedeventresult) | **Post** /v1/server_signers/{server_signer_id}/seed_event_result | Submit the result of a server signer event
 *ServerSignersAPI* | [**SubmitServerSignerSignatureEventResult**](docs/ServerSignersAPI.md#submitserversignersignatureeventresult) | **Post** /v1/server_signers/{server_signer_id}/signature_event_result | Submit the result of a server signer event
+*SmartContractsAPI* | [**CompileSmartContract**](docs/SmartContractsAPI.md#compilesmartcontract) | **Post** /v1/smart_contracts/compile | Compile a smart contract
 *SmartContractsAPI* | [**CreateSmartContract**](docs/SmartContractsAPI.md#createsmartcontract) | **Post** /v1/wallets/{wallet_id}/addresses/{address_id}/smart_contracts | Create a new smart contract
 *SmartContractsAPI* | [**DeploySmartContract**](docs/SmartContractsAPI.md#deploysmartcontract) | **Post** /v1/wallets/{wallet_id}/addresses/{address_id}/smart_contracts/{smart_contract_id}/deploy | Deploy a smart contract
 *SmartContractsAPI* | [**GetSmartContract**](docs/SmartContractsAPI.md#getsmartcontract) | **Get** /v1/wallets/{wallet_id}/addresses/{address_id}/smart_contracts/{smart_contract_id} | Get a specific smart contract deployed by address
 *SmartContractsAPI* | [**ListSmartContracts**](docs/SmartContractsAPI.md#listsmartcontracts) | **Get** /v1/smart_contracts | List smart contracts
 *SmartContractsAPI* | [**ReadContract**](docs/SmartContractsAPI.md#readcontract) | **Post** /v1/networks/{network_id}/smart_contracts/{contract_address}/read | Read data from a smart contract
 *SmartContractsAPI* | [**RegisterSmartContract**](docs/SmartContractsAPI.md#registersmartcontract) | **Post** /v1/networks/{network_id}/smart_contracts/{contract_address}/register | Register a smart contract
+*SmartContractsAPI* | [**UpdateSmartContract**](docs/SmartContractsAPI.md#updatesmartcontract) | **Put** /v1/networks/{network_id}/smart_contracts/{contract_address} | Update a smart contract
 *StakeAPI* | [**BuildStakingOperation**](docs/StakeAPI.md#buildstakingoperation) | **Post** /v1/stake/build | Build a new staking operation
 *StakeAPI* | [**FetchHistoricalStakingBalances**](docs/StakeAPI.md#fetchhistoricalstakingbalances) | **Get** /v1/networks/{network_id}/addresses/{address_id}/stake/balances | Fetch historical staking balances
 *StakeAPI* | [**FetchStakingRewards**](docs/StakeAPI.md#fetchstakingrewards) | **Post** /v1/stake/rewards/search | Fetch staking rewards
@@ -152,28 +157,32 @@ Class | Method | HTTP request | Description
 
 ## Documentation For Models
 
- - [ABI](docs/ABI.md)
  - [Address](docs/Address.md)
  - [AddressBalanceList](docs/AddressBalanceList.md)
  - [AddressHistoricalBalanceList](docs/AddressHistoricalBalanceList.md)
  - [AddressList](docs/AddressList.md)
  - [AddressReputation](docs/AddressReputation.md)
  - [AddressReputationMetadata](docs/AddressReputationMetadata.md)
- - [AddressRisk](docs/AddressRisk.md)
  - [AddressTransactionList](docs/AddressTransactionList.md)
  - [Asset](docs/Asset.md)
  - [Balance](docs/Balance.md)
  - [BroadcastContractInvocationRequest](docs/BroadcastContractInvocationRequest.md)
+ - [BroadcastExternalTransaction200Response](docs/BroadcastExternalTransaction200Response.md)
+ - [BroadcastExternalTransactionRequest](docs/BroadcastExternalTransactionRequest.md)
+ - [BroadcastExternalTransferRequest](docs/BroadcastExternalTransferRequest.md)
  - [BroadcastStakingOperationRequest](docs/BroadcastStakingOperationRequest.md)
  - [BroadcastTradeRequest](docs/BroadcastTradeRequest.md)
  - [BroadcastTransferRequest](docs/BroadcastTransferRequest.md)
  - [BuildStakingOperationRequest](docs/BuildStakingOperationRequest.md)
+ - [CompileSmartContractRequest](docs/CompileSmartContractRequest.md)
+ - [CompiledSmartContract](docs/CompiledSmartContract.md)
  - [ContractEvent](docs/ContractEvent.md)
  - [ContractEventList](docs/ContractEventList.md)
  - [ContractInvocation](docs/ContractInvocation.md)
  - [ContractInvocationList](docs/ContractInvocationList.md)
  - [CreateAddressRequest](docs/CreateAddressRequest.md)
  - [CreateContractInvocationRequest](docs/CreateContractInvocationRequest.md)
+ - [CreateExternalTransferRequest](docs/CreateExternalTransferRequest.md)
  - [CreateFundOperationRequest](docs/CreateFundOperationRequest.md)
  - [CreateFundQuoteRequest](docs/CreateFundQuoteRequest.md)
  - [CreatePayloadSignatureRequest](docs/CreatePayloadSignatureRequest.md)
@@ -218,6 +227,7 @@ Class | Method | HTTP request | Description
  - [PayloadSignature](docs/PayloadSignature.md)
  - [PayloadSignatureList](docs/PayloadSignatureList.md)
  - [ReadContractRequest](docs/ReadContractRequest.md)
+ - [RegisterSmartContractRequest](docs/RegisterSmartContractRequest.md)
  - [SeedCreationEvent](docs/SeedCreationEvent.md)
  - [SeedCreationEventResult](docs/SeedCreationEventResult.md)
  - [ServerSigner](docs/ServerSigner.md)
@@ -252,6 +262,7 @@ Class | Method | HTTP request | Description
  - [TransactionType](docs/TransactionType.md)
  - [Transfer](docs/Transfer.md)
  - [TransferList](docs/TransferList.md)
+ - [UpdateSmartContractRequest](docs/UpdateSmartContractRequest.md)
  - [UpdateWebhookRequest](docs/UpdateWebhookRequest.md)
  - [User](docs/User.md)
  - [Validator](docs/Validator.md)
@@ -266,12 +277,55 @@ Class | Method | HTTP request | Description
  - [WebhookEventTypeFilter](docs/WebhookEventTypeFilter.md)
  - [WebhookList](docs/WebhookList.md)
  - [WebhookSmartContractEventFilter](docs/WebhookSmartContractEventFilter.md)
+ - [WebhookStatus](docs/WebhookStatus.md)
  - [WebhookWalletActivityFilter](docs/WebhookWalletActivityFilter.md)
 
 
 ## Documentation For Authorization
 
-Endpoints do not require authorization.
+
+Authentication schemes defined for the API:
+### apiKey
+
+- **Type**: API key
+- **API key parameter name**: Jwt
+- **Location**: HTTP header
+
+Note, each API key must be added to a map of `map[string]APIKey` where the key is: apiKey and passed in as the auth context for each request.
+
+Example
+
+```go
+auth := context.WithValue(
+		context.Background(),
+		client.ContextAPIKeys,
+		map[string]client.APIKey{
+			"apiKey": {Key: "API_KEY_STRING"},
+		},
+	)
+r, err := client.Service.Operation(auth, args)
+```
+
+### session
+
+- **Type**: API key
+- **API key parameter name**: Jwt
+- **Location**: HTTP header
+
+Note, each API key must be added to a map of `map[string]APIKey` where the key is: session and passed in as the auth context for each request.
+
+Example
+
+```go
+auth := context.WithValue(
+		context.Background(),
+		client.ContextAPIKeys,
+		map[string]client.APIKey{
+			"session": {Key: "API_KEY_STRING"},
+		},
+	)
+r, err := client.Service.Operation(auth, args)
+```
 
 
 ## Documentation for Utility Methods

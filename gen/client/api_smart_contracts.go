@@ -23,6 +23,20 @@ import (
 type SmartContractsAPI interface {
 
 	/*
+	CompileSmartContract Compile a smart contract
+
+	Compile a smart contract
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@return ApiCompileSmartContractRequest
+	*/
+	CompileSmartContract(ctx context.Context) ApiCompileSmartContractRequest
+
+	// CompileSmartContractExecute executes the request
+	//  @return CompiledSmartContract
+	CompileSmartContractExecute(r ApiCompileSmartContractRequest) (*CompiledSmartContract, *http.Response, error)
+
+	/*
 	CreateSmartContract Create a new smart contract
 
 	Create a new smart contract
@@ -108,18 +122,167 @@ type SmartContractsAPI interface {
 	Register a smart contract
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
-	@param contractAddress EVM address of the smart contract (42 characters, including '0x', in lowercase)
 	@param networkId The ID of the network to fetch.
+	@param contractAddress EVM address of the smart contract (42 characters, including '0x', in lowercase)
 	@return ApiRegisterSmartContractRequest
 	*/
-	RegisterSmartContract(ctx context.Context, contractAddress string, networkId string) ApiRegisterSmartContractRequest
+	RegisterSmartContract(ctx context.Context, networkId string, contractAddress string) ApiRegisterSmartContractRequest
 
 	// RegisterSmartContractExecute executes the request
-	RegisterSmartContractExecute(r ApiRegisterSmartContractRequest) (*http.Response, error)
+	//  @return SmartContract
+	RegisterSmartContractExecute(r ApiRegisterSmartContractRequest) (*SmartContract, *http.Response, error)
+
+	/*
+	UpdateSmartContract Update a smart contract
+
+	Update a smart contract
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@param networkId The ID of the network to fetch.
+	@param contractAddress EVM address of the smart contract (42 characters, including '0x', in lowercase)
+	@return ApiUpdateSmartContractRequest
+	*/
+	UpdateSmartContract(ctx context.Context, networkId string, contractAddress string) ApiUpdateSmartContractRequest
+
+	// UpdateSmartContractExecute executes the request
+	//  @return SmartContract
+	UpdateSmartContractExecute(r ApiUpdateSmartContractRequest) (*SmartContract, *http.Response, error)
 }
 
 // SmartContractsAPIService SmartContractsAPI service
 type SmartContractsAPIService service
+
+type ApiCompileSmartContractRequest struct {
+	ctx context.Context
+	ApiService SmartContractsAPI
+	compileSmartContractRequest *CompileSmartContractRequest
+}
+
+func (r ApiCompileSmartContractRequest) CompileSmartContractRequest(compileSmartContractRequest CompileSmartContractRequest) ApiCompileSmartContractRequest {
+	r.compileSmartContractRequest = &compileSmartContractRequest
+	return r
+}
+
+func (r ApiCompileSmartContractRequest) Execute() (*CompiledSmartContract, *http.Response, error) {
+	return r.ApiService.CompileSmartContractExecute(r)
+}
+
+/*
+CompileSmartContract Compile a smart contract
+
+Compile a smart contract
+
+ @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ @return ApiCompileSmartContractRequest
+*/
+func (a *SmartContractsAPIService) CompileSmartContract(ctx context.Context) ApiCompileSmartContractRequest {
+	return ApiCompileSmartContractRequest{
+		ApiService: a,
+		ctx: ctx,
+	}
+}
+
+// Execute executes the request
+//  @return CompiledSmartContract
+func (a *SmartContractsAPIService) CompileSmartContractExecute(r ApiCompileSmartContractRequest) (*CompiledSmartContract, *http.Response, error) {
+	var (
+		localVarHTTPMethod   = http.MethodPost
+		localVarPostBody     interface{}
+		formFiles            []formFile
+		localVarReturnValue  *CompiledSmartContract
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SmartContractsAPIService.CompileSmartContract")
+	if err != nil {
+		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/v1/smart_contracts/compile"
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+	if r.compileSmartContractRequest == nil {
+		return localVarReturnValue, nil, reportError("compileSmartContractRequest is required and must be specified")
+	}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{"application/json"}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	// body params
+	localVarPostBody = r.compileSmartContractRequest
+	if r.ctx != nil {
+		// API Key Authentication
+		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
+			if apiKey, ok := auth["apiKey"]; ok {
+				var key string
+				if apiKey.Prefix != "" {
+					key = apiKey.Prefix + " " + apiKey.Key
+				} else {
+					key = apiKey.Key
+				}
+				localVarHeaderParams["Jwt"] = key
+			}
+		}
+	}
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+	localVarHTTPResponse.Body.Close()
+	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	if err != nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: localVarHTTPResponse.Status,
+		}
+			var v Error
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+					newErr.model = v
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	if err != nil {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: err.Error(),
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, nil
+}
 
 type ApiCreateSmartContractRequest struct {
 	ctx context.Context
@@ -202,6 +365,20 @@ func (a *SmartContractsAPIService) CreateSmartContractExecute(r ApiCreateSmartCo
 	}
 	// body params
 	localVarPostBody = r.createSmartContractRequest
+	if r.ctx != nil {
+		// API Key Authentication
+		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
+			if apiKey, ok := auth["apiKey"]; ok {
+				var key string
+				if apiKey.Prefix != "" {
+					key = apiKey.Prefix + " " + apiKey.Key
+				} else {
+					key = apiKey.Key
+				}
+				localVarHeaderParams["Jwt"] = key
+			}
+		}
+	}
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
 	if err != nil {
 		return localVarReturnValue, nil, err
@@ -332,6 +509,20 @@ func (a *SmartContractsAPIService) DeploySmartContractExecute(r ApiDeploySmartCo
 	}
 	// body params
 	localVarPostBody = r.deploySmartContractRequest
+	if r.ctx != nil {
+		// API Key Authentication
+		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
+			if apiKey, ok := auth["apiKey"]; ok {
+				var key string
+				if apiKey.Prefix != "" {
+					key = apiKey.Prefix + " " + apiKey.Key
+				} else {
+					key = apiKey.Key
+				}
+				localVarHeaderParams["Jwt"] = key
+			}
+		}
+	}
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
 	if err != nil {
 		return localVarReturnValue, nil, err
@@ -451,6 +642,34 @@ func (a *SmartContractsAPIService) GetSmartContractExecute(r ApiGetSmartContract
 	if localVarHTTPHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
+	if r.ctx != nil {
+		// API Key Authentication
+		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
+			if apiKey, ok := auth["apiKey"]; ok {
+				var key string
+				if apiKey.Prefix != "" {
+					key = apiKey.Prefix + " " + apiKey.Key
+				} else {
+					key = apiKey.Key
+				}
+				localVarHeaderParams["Jwt"] = key
+			}
+		}
+	}
+	if r.ctx != nil {
+		// API Key Authentication
+		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
+			if apiKey, ok := auth["session"]; ok {
+				var key string
+				if apiKey.Prefix != "" {
+					key = apiKey.Prefix + " " + apiKey.Key
+				} else {
+					key = apiKey.Key
+				}
+				localVarHeaderParams["Jwt"] = key
+			}
+		}
+	}
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
 	if err != nil {
 		return localVarReturnValue, nil, err
@@ -567,6 +786,34 @@ func (a *SmartContractsAPIService) ListSmartContractsExecute(r ApiListSmartContr
 	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
 	if localVarHTTPHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	if r.ctx != nil {
+		// API Key Authentication
+		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
+			if apiKey, ok := auth["apiKey"]; ok {
+				var key string
+				if apiKey.Prefix != "" {
+					key = apiKey.Prefix + " " + apiKey.Key
+				} else {
+					key = apiKey.Key
+				}
+				localVarHeaderParams["Jwt"] = key
+			}
+		}
+	}
+	if r.ctx != nil {
+		// API Key Authentication
+		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
+			if apiKey, ok := auth["session"]; ok {
+				var key string
+				if apiKey.Prefix != "" {
+					key = apiKey.Prefix + " " + apiKey.Key
+				} else {
+					key = apiKey.Key
+				}
+				localVarHeaderParams["Jwt"] = key
+			}
+		}
 	}
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
 	if err != nil {
@@ -694,6 +941,34 @@ func (a *SmartContractsAPIService) ReadContractExecute(r ApiReadContractRequest)
 	}
 	// body params
 	localVarPostBody = r.readContractRequest
+	if r.ctx != nil {
+		// API Key Authentication
+		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
+			if apiKey, ok := auth["apiKey"]; ok {
+				var key string
+				if apiKey.Prefix != "" {
+					key = apiKey.Prefix + " " + apiKey.Key
+				} else {
+					key = apiKey.Key
+				}
+				localVarHeaderParams["Jwt"] = key
+			}
+		}
+	}
+	if r.ctx != nil {
+		// API Key Authentication
+		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
+			if apiKey, ok := auth["session"]; ok {
+				var key string
+				if apiKey.Prefix != "" {
+					key = apiKey.Prefix + " " + apiKey.Key
+				} else {
+					key = apiKey.Key
+				}
+				localVarHeaderParams["Jwt"] = key
+			}
+		}
+	}
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
 	if err != nil {
 		return localVarReturnValue, nil, err
@@ -742,17 +1017,17 @@ func (a *SmartContractsAPIService) ReadContractExecute(r ApiReadContractRequest)
 type ApiRegisterSmartContractRequest struct {
 	ctx context.Context
 	ApiService SmartContractsAPI
-	contractAddress string
 	networkId string
-	aBI *ABI
+	contractAddress string
+	registerSmartContractRequest *RegisterSmartContractRequest
 }
 
-func (r ApiRegisterSmartContractRequest) ABI(aBI ABI) ApiRegisterSmartContractRequest {
-	r.aBI = &aBI
+func (r ApiRegisterSmartContractRequest) RegisterSmartContractRequest(registerSmartContractRequest RegisterSmartContractRequest) ApiRegisterSmartContractRequest {
+	r.registerSmartContractRequest = &registerSmartContractRequest
 	return r
 }
 
-func (r ApiRegisterSmartContractRequest) Execute() (*http.Response, error) {
+func (r ApiRegisterSmartContractRequest) Execute() (*SmartContract, *http.Response, error) {
 	return r.ApiService.RegisterSmartContractExecute(r)
 }
 
@@ -762,42 +1037,41 @@ RegisterSmartContract Register a smart contract
 Register a smart contract
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
- @param contractAddress EVM address of the smart contract (42 characters, including '0x', in lowercase)
  @param networkId The ID of the network to fetch.
+ @param contractAddress EVM address of the smart contract (42 characters, including '0x', in lowercase)
  @return ApiRegisterSmartContractRequest
 */
-func (a *SmartContractsAPIService) RegisterSmartContract(ctx context.Context, contractAddress string, networkId string) ApiRegisterSmartContractRequest {
+func (a *SmartContractsAPIService) RegisterSmartContract(ctx context.Context, networkId string, contractAddress string) ApiRegisterSmartContractRequest {
 	return ApiRegisterSmartContractRequest{
 		ApiService: a,
 		ctx: ctx,
-		contractAddress: contractAddress,
 		networkId: networkId,
+		contractAddress: contractAddress,
 	}
 }
 
 // Execute executes the request
-func (a *SmartContractsAPIService) RegisterSmartContractExecute(r ApiRegisterSmartContractRequest) (*http.Response, error) {
+//  @return SmartContract
+func (a *SmartContractsAPIService) RegisterSmartContractExecute(r ApiRegisterSmartContractRequest) (*SmartContract, *http.Response, error) {
 	var (
 		localVarHTTPMethod   = http.MethodPost
 		localVarPostBody     interface{}
 		formFiles            []formFile
+		localVarReturnValue  *SmartContract
 	)
 
 	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SmartContractsAPIService.RegisterSmartContract")
 	if err != nil {
-		return nil, &GenericOpenAPIError{error: err.Error()}
+		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
 	localVarPath := localBasePath + "/v1/networks/{network_id}/smart_contracts/{contract_address}/register"
-	localVarPath = strings.Replace(localVarPath, "{"+"contract_address"+"}", url.PathEscape(parameterValueToString(r.contractAddress, "contractAddress")), -1)
 	localVarPath = strings.Replace(localVarPath, "{"+"network_id"+"}", url.PathEscape(parameterValueToString(r.networkId, "networkId")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"contract_address"+"}", url.PathEscape(parameterValueToString(r.contractAddress, "contractAddress")), -1)
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
 	localVarFormParams := url.Values{}
-	if r.aBI == nil {
-		return nil, reportError("aBI is required and must be specified")
-	}
 
 	// to determine the Content-Type header
 	localVarHTTPContentTypes := []string{"application/json"}
@@ -817,22 +1091,50 @@ func (a *SmartContractsAPIService) RegisterSmartContractExecute(r ApiRegisterSma
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
 	}
 	// body params
-	localVarPostBody = r.aBI
+	localVarPostBody = r.registerSmartContractRequest
+	if r.ctx != nil {
+		// API Key Authentication
+		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
+			if apiKey, ok := auth["apiKey"]; ok {
+				var key string
+				if apiKey.Prefix != "" {
+					key = apiKey.Prefix + " " + apiKey.Key
+				} else {
+					key = apiKey.Key
+				}
+				localVarHeaderParams["Jwt"] = key
+			}
+		}
+	}
+	if r.ctx != nil {
+		// API Key Authentication
+		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
+			if apiKey, ok := auth["session"]; ok {
+				var key string
+				if apiKey.Prefix != "" {
+					key = apiKey.Prefix + " " + apiKey.Key
+				} else {
+					key = apiKey.Key
+				}
+				localVarHeaderParams["Jwt"] = key
+			}
+		}
+	}
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
 	if err != nil {
-		return nil, err
+		return localVarReturnValue, nil, err
 	}
 
 	localVarHTTPResponse, err := a.client.callAPI(req)
 	if err != nil || localVarHTTPResponse == nil {
-		return localVarHTTPResponse, err
+		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
 	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
 	localVarHTTPResponse.Body.Close()
 	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
 	if err != nil {
-		return localVarHTTPResponse, err
+		return localVarReturnValue, localVarHTTPResponse, err
 	}
 
 	if localVarHTTPResponse.StatusCode >= 300 {
@@ -844,12 +1146,172 @@ func (a *SmartContractsAPIService) RegisterSmartContractExecute(r ApiRegisterSma
 			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
 			if err != nil {
 				newErr.error = err.Error()
-				return localVarHTTPResponse, newErr
+				return localVarReturnValue, localVarHTTPResponse, newErr
 			}
 					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
 					newErr.model = v
-		return localVarHTTPResponse, newErr
+		return localVarReturnValue, localVarHTTPResponse, newErr
 	}
 
-	return localVarHTTPResponse, nil
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	if err != nil {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: err.Error(),
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, nil
+}
+
+type ApiUpdateSmartContractRequest struct {
+	ctx context.Context
+	ApiService SmartContractsAPI
+	networkId string
+	contractAddress string
+	updateSmartContractRequest *UpdateSmartContractRequest
+}
+
+func (r ApiUpdateSmartContractRequest) UpdateSmartContractRequest(updateSmartContractRequest UpdateSmartContractRequest) ApiUpdateSmartContractRequest {
+	r.updateSmartContractRequest = &updateSmartContractRequest
+	return r
+}
+
+func (r ApiUpdateSmartContractRequest) Execute() (*SmartContract, *http.Response, error) {
+	return r.ApiService.UpdateSmartContractExecute(r)
+}
+
+/*
+UpdateSmartContract Update a smart contract
+
+Update a smart contract
+
+ @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ @param networkId The ID of the network to fetch.
+ @param contractAddress EVM address of the smart contract (42 characters, including '0x', in lowercase)
+ @return ApiUpdateSmartContractRequest
+*/
+func (a *SmartContractsAPIService) UpdateSmartContract(ctx context.Context, networkId string, contractAddress string) ApiUpdateSmartContractRequest {
+	return ApiUpdateSmartContractRequest{
+		ApiService: a,
+		ctx: ctx,
+		networkId: networkId,
+		contractAddress: contractAddress,
+	}
+}
+
+// Execute executes the request
+//  @return SmartContract
+func (a *SmartContractsAPIService) UpdateSmartContractExecute(r ApiUpdateSmartContractRequest) (*SmartContract, *http.Response, error) {
+	var (
+		localVarHTTPMethod   = http.MethodPut
+		localVarPostBody     interface{}
+		formFiles            []formFile
+		localVarReturnValue  *SmartContract
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "SmartContractsAPIService.UpdateSmartContract")
+	if err != nil {
+		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/v1/networks/{network_id}/smart_contracts/{contract_address}"
+	localVarPath = strings.Replace(localVarPath, "{"+"network_id"+"}", url.PathEscape(parameterValueToString(r.networkId, "networkId")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"contract_address"+"}", url.PathEscape(parameterValueToString(r.contractAddress, "contractAddress")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{"application/json"}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	// body params
+	localVarPostBody = r.updateSmartContractRequest
+	if r.ctx != nil {
+		// API Key Authentication
+		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
+			if apiKey, ok := auth["apiKey"]; ok {
+				var key string
+				if apiKey.Prefix != "" {
+					key = apiKey.Prefix + " " + apiKey.Key
+				} else {
+					key = apiKey.Key
+				}
+				localVarHeaderParams["Jwt"] = key
+			}
+		}
+	}
+	if r.ctx != nil {
+		// API Key Authentication
+		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
+			if apiKey, ok := auth["session"]; ok {
+				var key string
+				if apiKey.Prefix != "" {
+					key = apiKey.Prefix + " " + apiKey.Key
+				} else {
+					key = apiKey.Key
+				}
+				localVarHeaderParams["Jwt"] = key
+			}
+		}
+	}
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+	localVarHTTPResponse.Body.Close()
+	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	if err != nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: localVarHTTPResponse.Status,
+		}
+			var v Error
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+					newErr.model = v
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	if err != nil {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: err.Error(),
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, nil
 }

@@ -13,6 +13,8 @@ package client
 import (
 	"encoding/json"
 	"time"
+	"bytes"
+	"fmt"
 )
 
 // checks if the Webhook type satisfies the MappedNullable interface at compile time
@@ -36,14 +38,18 @@ type Webhook struct {
 	UpdatedAt *time.Time `json:"updated_at,omitempty"`
 	// The header that will contain the signature of the webhook payload.
 	SignatureHeader *string `json:"signature_header,omitempty"`
+	Status WebhookStatus `json:"status"`
 }
+
+type _Webhook Webhook
 
 // NewWebhook instantiates a new Webhook object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewWebhook() *Webhook {
+func NewWebhook(status WebhookStatus) *Webhook {
 	this := Webhook{}
+	this.Status = status
 	return &this
 }
 
@@ -343,6 +349,30 @@ func (o *Webhook) SetSignatureHeader(v string) {
 	o.SignatureHeader = &v
 }
 
+// GetStatus returns the Status field value
+func (o *Webhook) GetStatus() WebhookStatus {
+	if o == nil {
+		var ret WebhookStatus
+		return ret
+	}
+
+	return o.Status
+}
+
+// GetStatusOk returns a tuple with the Status field value
+// and a boolean to check if the value has been set.
+func (o *Webhook) GetStatusOk() (*WebhookStatus, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.Status, true
+}
+
+// SetStatus sets field value
+func (o *Webhook) SetStatus(v WebhookStatus) {
+	o.Status = v
+}
+
 func (o Webhook) MarshalJSON() ([]byte, error) {
 	toSerialize,err := o.ToMap()
 	if err != nil {
@@ -380,7 +410,45 @@ func (o Webhook) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.SignatureHeader) {
 		toSerialize["signature_header"] = o.SignatureHeader
 	}
+	toSerialize["status"] = o.Status
 	return toSerialize, nil
+}
+
+func (o *Webhook) UnmarshalJSON(data []byte) (err error) {
+	// This validates that all required properties are included in the JSON object
+	// by unmarshalling the object into a generic map with string keys and checking
+	// that every required field exists as a key in the generic map.
+	requiredProperties := []string{
+		"status",
+	}
+
+	allProperties := make(map[string]interface{})
+
+	err = json.Unmarshal(data, &allProperties)
+
+	if err != nil {
+		return err;
+	}
+
+	for _, requiredProperty := range(requiredProperties) {
+		if _, exists := allProperties[requiredProperty]; !exists {
+			return fmt.Errorf("no value given for required property %v", requiredProperty)
+		}
+	}
+
+	varWebhook := _Webhook{}
+
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	decoder.DisallowUnknownFields()
+	err = decoder.Decode(&varWebhook)
+
+	if err != nil {
+		return err
+	}
+
+	*o = Webhook(varWebhook)
+
+	return err
 }
 
 type NullableWebhook struct {

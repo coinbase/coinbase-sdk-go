@@ -23,11 +23,16 @@ const (
 	NETWORKIDENTIFIER_BASE_SEPOLIA NetworkIdentifier = "base-sepolia"
 	NETWORKIDENTIFIER_BASE_MAINNET NetworkIdentifier = "base-mainnet"
 	NETWORKIDENTIFIER_ETHEREUM_HOLESKY NetworkIdentifier = "ethereum-holesky"
+	NETWORKIDENTIFIER_ETHEREUM_SEPOLIA NetworkIdentifier = "ethereum-sepolia"
 	NETWORKIDENTIFIER_ETHEREUM_MAINNET NetworkIdentifier = "ethereum-mainnet"
 	NETWORKIDENTIFIER_POLYGON_MAINNET NetworkIdentifier = "polygon-mainnet"
 	NETWORKIDENTIFIER_SOLANA_DEVNET NetworkIdentifier = "solana-devnet"
 	NETWORKIDENTIFIER_SOLANA_MAINNET NetworkIdentifier = "solana-mainnet"
 	NETWORKIDENTIFIER_ARBITRUM_MAINNET NetworkIdentifier = "arbitrum-mainnet"
+	NETWORKIDENTIFIER_ARBITRUM_SEPOLIA NetworkIdentifier = "arbitrum-sepolia"
+	NETWORKIDENTIFIER_BITCOIN_MAINNET NetworkIdentifier = "bitcoin-mainnet"
+	NETWORKIDENTIFIER_NEAR_TESTNET NetworkIdentifier = "near-testnet"
+	NETWORKIDENTIFIER_NEAR_MAINNET NetworkIdentifier = "near-mainnet"
 )
 
 // All allowed values of NetworkIdentifier enum
@@ -35,11 +40,16 @@ var AllowedNetworkIdentifierEnumValues = []NetworkIdentifier{
 	"base-sepolia",
 	"base-mainnet",
 	"ethereum-holesky",
+	"ethereum-sepolia",
 	"ethereum-mainnet",
 	"polygon-mainnet",
 	"solana-devnet",
 	"solana-mainnet",
 	"arbitrum-mainnet",
+	"arbitrum-sepolia",
+	"bitcoin-mainnet",
+	"near-testnet",
+	"near-mainnet",
 }
 
 func (v *NetworkIdentifier) UnmarshalJSON(src []byte) error {

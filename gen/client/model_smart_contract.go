@@ -21,23 +21,27 @@ var _ MappedNullable = &SmartContract{}
 
 // SmartContract Represents a smart contract on the blockchain
 type SmartContract struct {
-	// The unique identifier of the smart contract
+	// The unique identifier of the smart contract.
 	SmartContractId string `json:"smart_contract_id"`
 	// The name of the blockchain network
 	NetworkId string `json:"network_id"`
-	// The ID of the wallet that deployed the smart contract
-	WalletId string `json:"wallet_id"`
+	// The ID of the wallet that deployed the smart contract. If this smart contract was deployed externally, this will be omitted.
+	WalletId *string `json:"wallet_id,omitempty"`
 	// The EVM address of the smart contract
 	ContractAddress string `json:"contract_address"`
 	// The name of the smart contract
 	ContractName string `json:"contract_name"`
-	// The EVM address of the account that deployed the smart contract
-	DeployerAddress string `json:"deployer_address"`
+	// The EVM address of the account that deployed the smart contract. If this smart contract was deployed externally, this will be omitted.
+	DeployerAddress *string `json:"deployer_address,omitempty"`
 	Type SmartContractType `json:"type"`
-	Options SmartContractOptions `json:"options"`
+	Options *SmartContractOptions `json:"options,omitempty"`
 	// The JSON-encoded ABI of the contract
 	Abi string `json:"abi"`
-	Transaction Transaction `json:"transaction"`
+	Transaction *Transaction `json:"transaction,omitempty"`
+	// Whether the smart contract was deployed externally. If true, the deployer_address and transaction will be omitted.
+	IsExternal bool `json:"is_external"`
+	// The ID of the compiled smart contract that was used to deploy this contract
+	CompiledSmartContractId *string `json:"compiled_smart_contract_id,omitempty"`
 }
 
 type _SmartContract SmartContract
@@ -46,18 +50,15 @@ type _SmartContract SmartContract
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewSmartContract(smartContractId string, networkId string, walletId string, contractAddress string, contractName string, deployerAddress string, type_ SmartContractType, options SmartContractOptions, abi string, transaction Transaction) *SmartContract {
+func NewSmartContract(smartContractId string, networkId string, contractAddress string, contractName string, type_ SmartContractType, abi string, isExternal bool) *SmartContract {
 	this := SmartContract{}
 	this.SmartContractId = smartContractId
 	this.NetworkId = networkId
-	this.WalletId = walletId
 	this.ContractAddress = contractAddress
 	this.ContractName = contractName
-	this.DeployerAddress = deployerAddress
 	this.Type = type_
-	this.Options = options
 	this.Abi = abi
-	this.Transaction = transaction
+	this.IsExternal = isExternal
 	return &this
 }
 
@@ -117,28 +118,36 @@ func (o *SmartContract) SetNetworkId(v string) {
 	o.NetworkId = v
 }
 
-// GetWalletId returns the WalletId field value
+// GetWalletId returns the WalletId field value if set, zero value otherwise.
 func (o *SmartContract) GetWalletId() string {
-	if o == nil {
+	if o == nil || IsNil(o.WalletId) {
 		var ret string
 		return ret
 	}
-
-	return o.WalletId
+	return *o.WalletId
 }
 
-// GetWalletIdOk returns a tuple with the WalletId field value
+// GetWalletIdOk returns a tuple with the WalletId field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *SmartContract) GetWalletIdOk() (*string, bool) {
-	if o == nil {
+	if o == nil || IsNil(o.WalletId) {
 		return nil, false
 	}
-	return &o.WalletId, true
+	return o.WalletId, true
 }
 
-// SetWalletId sets field value
+// HasWalletId returns a boolean if a field has been set.
+func (o *SmartContract) HasWalletId() bool {
+	if o != nil && !IsNil(o.WalletId) {
+		return true
+	}
+
+	return false
+}
+
+// SetWalletId gets a reference to the given string and assigns it to the WalletId field.
 func (o *SmartContract) SetWalletId(v string) {
-	o.WalletId = v
+	o.WalletId = &v
 }
 
 // GetContractAddress returns the ContractAddress field value
@@ -189,28 +198,36 @@ func (o *SmartContract) SetContractName(v string) {
 	o.ContractName = v
 }
 
-// GetDeployerAddress returns the DeployerAddress field value
+// GetDeployerAddress returns the DeployerAddress field value if set, zero value otherwise.
 func (o *SmartContract) GetDeployerAddress() string {
-	if o == nil {
+	if o == nil || IsNil(o.DeployerAddress) {
 		var ret string
 		return ret
 	}
-
-	return o.DeployerAddress
+	return *o.DeployerAddress
 }
 
-// GetDeployerAddressOk returns a tuple with the DeployerAddress field value
+// GetDeployerAddressOk returns a tuple with the DeployerAddress field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *SmartContract) GetDeployerAddressOk() (*string, bool) {
-	if o == nil {
+	if o == nil || IsNil(o.DeployerAddress) {
 		return nil, false
 	}
-	return &o.DeployerAddress, true
+	return o.DeployerAddress, true
 }
 
-// SetDeployerAddress sets field value
+// HasDeployerAddress returns a boolean if a field has been set.
+func (o *SmartContract) HasDeployerAddress() bool {
+	if o != nil && !IsNil(o.DeployerAddress) {
+		return true
+	}
+
+	return false
+}
+
+// SetDeployerAddress gets a reference to the given string and assigns it to the DeployerAddress field.
 func (o *SmartContract) SetDeployerAddress(v string) {
-	o.DeployerAddress = v
+	o.DeployerAddress = &v
 }
 
 // GetType returns the Type field value
@@ -237,28 +254,36 @@ func (o *SmartContract) SetType(v SmartContractType) {
 	o.Type = v
 }
 
-// GetOptions returns the Options field value
+// GetOptions returns the Options field value if set, zero value otherwise.
 func (o *SmartContract) GetOptions() SmartContractOptions {
-	if o == nil {
+	if o == nil || IsNil(o.Options) {
 		var ret SmartContractOptions
 		return ret
 	}
-
-	return o.Options
+	return *o.Options
 }
 
-// GetOptionsOk returns a tuple with the Options field value
+// GetOptionsOk returns a tuple with the Options field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *SmartContract) GetOptionsOk() (*SmartContractOptions, bool) {
-	if o == nil {
+	if o == nil || IsNil(o.Options) {
 		return nil, false
 	}
-	return &o.Options, true
+	return o.Options, true
 }
 
-// SetOptions sets field value
+// HasOptions returns a boolean if a field has been set.
+func (o *SmartContract) HasOptions() bool {
+	if o != nil && !IsNil(o.Options) {
+		return true
+	}
+
+	return false
+}
+
+// SetOptions gets a reference to the given SmartContractOptions and assigns it to the Options field.
 func (o *SmartContract) SetOptions(v SmartContractOptions) {
-	o.Options = v
+	o.Options = &v
 }
 
 // GetAbi returns the Abi field value
@@ -285,28 +310,92 @@ func (o *SmartContract) SetAbi(v string) {
 	o.Abi = v
 }
 
-// GetTransaction returns the Transaction field value
+// GetTransaction returns the Transaction field value if set, zero value otherwise.
 func (o *SmartContract) GetTransaction() Transaction {
-	if o == nil {
+	if o == nil || IsNil(o.Transaction) {
 		var ret Transaction
 		return ret
 	}
-
-	return o.Transaction
+	return *o.Transaction
 }
 
-// GetTransactionOk returns a tuple with the Transaction field value
+// GetTransactionOk returns a tuple with the Transaction field value if set, nil otherwise
 // and a boolean to check if the value has been set.
 func (o *SmartContract) GetTransactionOk() (*Transaction, bool) {
+	if o == nil || IsNil(o.Transaction) {
+		return nil, false
+	}
+	return o.Transaction, true
+}
+
+// HasTransaction returns a boolean if a field has been set.
+func (o *SmartContract) HasTransaction() bool {
+	if o != nil && !IsNil(o.Transaction) {
+		return true
+	}
+
+	return false
+}
+
+// SetTransaction gets a reference to the given Transaction and assigns it to the Transaction field.
+func (o *SmartContract) SetTransaction(v Transaction) {
+	o.Transaction = &v
+}
+
+// GetIsExternal returns the IsExternal field value
+func (o *SmartContract) GetIsExternal() bool {
+	if o == nil {
+		var ret bool
+		return ret
+	}
+
+	return o.IsExternal
+}
+
+// GetIsExternalOk returns a tuple with the IsExternal field value
+// and a boolean to check if the value has been set.
+func (o *SmartContract) GetIsExternalOk() (*bool, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return &o.Transaction, true
+	return &o.IsExternal, true
 }
 
-// SetTransaction sets field value
-func (o *SmartContract) SetTransaction(v Transaction) {
-	o.Transaction = v
+// SetIsExternal sets field value
+func (o *SmartContract) SetIsExternal(v bool) {
+	o.IsExternal = v
+}
+
+// GetCompiledSmartContractId returns the CompiledSmartContractId field value if set, zero value otherwise.
+func (o *SmartContract) GetCompiledSmartContractId() string {
+	if o == nil || IsNil(o.CompiledSmartContractId) {
+		var ret string
+		return ret
+	}
+	return *o.CompiledSmartContractId
+}
+
+// GetCompiledSmartContractIdOk returns a tuple with the CompiledSmartContractId field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *SmartContract) GetCompiledSmartContractIdOk() (*string, bool) {
+	if o == nil || IsNil(o.CompiledSmartContractId) {
+		return nil, false
+	}
+	return o.CompiledSmartContractId, true
+}
+
+// HasCompiledSmartContractId returns a boolean if a field has been set.
+func (o *SmartContract) HasCompiledSmartContractId() bool {
+	if o != nil && !IsNil(o.CompiledSmartContractId) {
+		return true
+	}
+
+	return false
+}
+
+// SetCompiledSmartContractId gets a reference to the given string and assigns it to the CompiledSmartContractId field.
+func (o *SmartContract) SetCompiledSmartContractId(v string) {
+	o.CompiledSmartContractId = &v
 }
 
 func (o SmartContract) MarshalJSON() ([]byte, error) {
@@ -321,14 +410,26 @@ func (o SmartContract) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["smart_contract_id"] = o.SmartContractId
 	toSerialize["network_id"] = o.NetworkId
-	toSerialize["wallet_id"] = o.WalletId
+	if !IsNil(o.WalletId) {
+		toSerialize["wallet_id"] = o.WalletId
+	}
 	toSerialize["contract_address"] = o.ContractAddress
 	toSerialize["contract_name"] = o.ContractName
-	toSerialize["deployer_address"] = o.DeployerAddress
+	if !IsNil(o.DeployerAddress) {
+		toSerialize["deployer_address"] = o.DeployerAddress
+	}
 	toSerialize["type"] = o.Type
-	toSerialize["options"] = o.Options
+	if !IsNil(o.Options) {
+		toSerialize["options"] = o.Options
+	}
 	toSerialize["abi"] = o.Abi
-	toSerialize["transaction"] = o.Transaction
+	if !IsNil(o.Transaction) {
+		toSerialize["transaction"] = o.Transaction
+	}
+	toSerialize["is_external"] = o.IsExternal
+	if !IsNil(o.CompiledSmartContractId) {
+		toSerialize["compiled_smart_contract_id"] = o.CompiledSmartContractId
+	}
 	return toSerialize, nil
 }
 
@@ -339,14 +440,11 @@ func (o *SmartContract) UnmarshalJSON(data []byte) (err error) {
 	requiredProperties := []string{
 		"smart_contract_id",
 		"network_id",
-		"wallet_id",
 		"contract_address",
 		"contract_name",
-		"deployer_address",
 		"type",
-		"options",
 		"abi",
-		"transaction",
+		"is_external",
 	}
 
 	allProperties := make(map[string]interface{})

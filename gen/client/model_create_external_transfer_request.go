@@ -16,50 +16,48 @@ import (
 	"fmt"
 )
 
-// checks if the CreateTransferRequest type satisfies the MappedNullable interface at compile time
-var _ MappedNullable = &CreateTransferRequest{}
+// checks if the CreateExternalTransferRequest type satisfies the MappedNullable interface at compile time
+var _ MappedNullable = &CreateExternalTransferRequest{}
 
-// CreateTransferRequest struct for CreateTransferRequest
-type CreateTransferRequest struct {
+// CreateExternalTransferRequest struct for CreateExternalTransferRequest
+type CreateExternalTransferRequest struct {
 	// The amount to transfer
 	Amount string `json:"amount"`
-	// The ID of the blockchain network
-	NetworkId string `json:"network_id"`
 	// The ID of the asset to transfer. Can be an asset symbol or a token contract address.
 	AssetId string `json:"asset_id"`
 	// The destination address, which can be a 0x address, Basename, or ENS name
 	Destination string `json:"destination"`
 	// Whether the transfer uses sponsored gas
-	Gasless *bool `json:"gasless,omitempty"`
-	// When true, the transfer will be submitted immediately. Otherwise, the transfer will be batched. Defaults to false
+	Gasless bool `json:"gasless"`
+	// When true, the transfer will be submitted immediately. Otherwise, the transfer will be batched. Defaults to false. Note: Requires the gasless option to be set to true. 
 	SkipBatching *bool `json:"skip_batching,omitempty"`
 }
 
-type _CreateTransferRequest CreateTransferRequest
+type _CreateExternalTransferRequest CreateExternalTransferRequest
 
-// NewCreateTransferRequest instantiates a new CreateTransferRequest object
+// NewCreateExternalTransferRequest instantiates a new CreateExternalTransferRequest object
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewCreateTransferRequest(amount string, networkId string, assetId string, destination string) *CreateTransferRequest {
-	this := CreateTransferRequest{}
+func NewCreateExternalTransferRequest(amount string, assetId string, destination string, gasless bool) *CreateExternalTransferRequest {
+	this := CreateExternalTransferRequest{}
 	this.Amount = amount
-	this.NetworkId = networkId
 	this.AssetId = assetId
 	this.Destination = destination
+	this.Gasless = gasless
 	return &this
 }
 
-// NewCreateTransferRequestWithDefaults instantiates a new CreateTransferRequest object
+// NewCreateExternalTransferRequestWithDefaults instantiates a new CreateExternalTransferRequest object
 // This constructor will only assign default values to properties that have it defined,
 // but it doesn't guarantee that properties required by API are set
-func NewCreateTransferRequestWithDefaults() *CreateTransferRequest {
-	this := CreateTransferRequest{}
+func NewCreateExternalTransferRequestWithDefaults() *CreateExternalTransferRequest {
+	this := CreateExternalTransferRequest{}
 	return &this
 }
 
 // GetAmount returns the Amount field value
-func (o *CreateTransferRequest) GetAmount() string {
+func (o *CreateExternalTransferRequest) GetAmount() string {
 	if o == nil {
 		var ret string
 		return ret
@@ -70,7 +68,7 @@ func (o *CreateTransferRequest) GetAmount() string {
 
 // GetAmountOk returns a tuple with the Amount field value
 // and a boolean to check if the value has been set.
-func (o *CreateTransferRequest) GetAmountOk() (*string, bool) {
+func (o *CreateExternalTransferRequest) GetAmountOk() (*string, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -78,36 +76,12 @@ func (o *CreateTransferRequest) GetAmountOk() (*string, bool) {
 }
 
 // SetAmount sets field value
-func (o *CreateTransferRequest) SetAmount(v string) {
+func (o *CreateExternalTransferRequest) SetAmount(v string) {
 	o.Amount = v
 }
 
-// GetNetworkId returns the NetworkId field value
-func (o *CreateTransferRequest) GetNetworkId() string {
-	if o == nil {
-		var ret string
-		return ret
-	}
-
-	return o.NetworkId
-}
-
-// GetNetworkIdOk returns a tuple with the NetworkId field value
-// and a boolean to check if the value has been set.
-func (o *CreateTransferRequest) GetNetworkIdOk() (*string, bool) {
-	if o == nil {
-		return nil, false
-	}
-	return &o.NetworkId, true
-}
-
-// SetNetworkId sets field value
-func (o *CreateTransferRequest) SetNetworkId(v string) {
-	o.NetworkId = v
-}
-
 // GetAssetId returns the AssetId field value
-func (o *CreateTransferRequest) GetAssetId() string {
+func (o *CreateExternalTransferRequest) GetAssetId() string {
 	if o == nil {
 		var ret string
 		return ret
@@ -118,7 +92,7 @@ func (o *CreateTransferRequest) GetAssetId() string {
 
 // GetAssetIdOk returns a tuple with the AssetId field value
 // and a boolean to check if the value has been set.
-func (o *CreateTransferRequest) GetAssetIdOk() (*string, bool) {
+func (o *CreateExternalTransferRequest) GetAssetIdOk() (*string, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -126,12 +100,12 @@ func (o *CreateTransferRequest) GetAssetIdOk() (*string, bool) {
 }
 
 // SetAssetId sets field value
-func (o *CreateTransferRequest) SetAssetId(v string) {
+func (o *CreateExternalTransferRequest) SetAssetId(v string) {
 	o.AssetId = v
 }
 
 // GetDestination returns the Destination field value
-func (o *CreateTransferRequest) GetDestination() string {
+func (o *CreateExternalTransferRequest) GetDestination() string {
 	if o == nil {
 		var ret string
 		return ret
@@ -142,7 +116,7 @@ func (o *CreateTransferRequest) GetDestination() string {
 
 // GetDestinationOk returns a tuple with the Destination field value
 // and a boolean to check if the value has been set.
-func (o *CreateTransferRequest) GetDestinationOk() (*string, bool) {
+func (o *CreateExternalTransferRequest) GetDestinationOk() (*string, bool) {
 	if o == nil {
 		return nil, false
 	}
@@ -150,44 +124,36 @@ func (o *CreateTransferRequest) GetDestinationOk() (*string, bool) {
 }
 
 // SetDestination sets field value
-func (o *CreateTransferRequest) SetDestination(v string) {
+func (o *CreateExternalTransferRequest) SetDestination(v string) {
 	o.Destination = v
 }
 
-// GetGasless returns the Gasless field value if set, zero value otherwise.
-func (o *CreateTransferRequest) GetGasless() bool {
-	if o == nil || IsNil(o.Gasless) {
+// GetGasless returns the Gasless field value
+func (o *CreateExternalTransferRequest) GetGasless() bool {
+	if o == nil {
 		var ret bool
 		return ret
 	}
-	return *o.Gasless
+
+	return o.Gasless
 }
 
-// GetGaslessOk returns a tuple with the Gasless field value if set, nil otherwise
+// GetGaslessOk returns a tuple with the Gasless field value
 // and a boolean to check if the value has been set.
-func (o *CreateTransferRequest) GetGaslessOk() (*bool, bool) {
-	if o == nil || IsNil(o.Gasless) {
+func (o *CreateExternalTransferRequest) GetGaslessOk() (*bool, bool) {
+	if o == nil {
 		return nil, false
 	}
-	return o.Gasless, true
+	return &o.Gasless, true
 }
 
-// HasGasless returns a boolean if a field has been set.
-func (o *CreateTransferRequest) HasGasless() bool {
-	if o != nil && !IsNil(o.Gasless) {
-		return true
-	}
-
-	return false
-}
-
-// SetGasless gets a reference to the given bool and assigns it to the Gasless field.
-func (o *CreateTransferRequest) SetGasless(v bool) {
-	o.Gasless = &v
+// SetGasless sets field value
+func (o *CreateExternalTransferRequest) SetGasless(v bool) {
+	o.Gasless = v
 }
 
 // GetSkipBatching returns the SkipBatching field value if set, zero value otherwise.
-func (o *CreateTransferRequest) GetSkipBatching() bool {
+func (o *CreateExternalTransferRequest) GetSkipBatching() bool {
 	if o == nil || IsNil(o.SkipBatching) {
 		var ret bool
 		return ret
@@ -197,7 +163,7 @@ func (o *CreateTransferRequest) GetSkipBatching() bool {
 
 // GetSkipBatchingOk returns a tuple with the SkipBatching field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *CreateTransferRequest) GetSkipBatchingOk() (*bool, bool) {
+func (o *CreateExternalTransferRequest) GetSkipBatchingOk() (*bool, bool) {
 	if o == nil || IsNil(o.SkipBatching) {
 		return nil, false
 	}
@@ -205,7 +171,7 @@ func (o *CreateTransferRequest) GetSkipBatchingOk() (*bool, bool) {
 }
 
 // HasSkipBatching returns a boolean if a field has been set.
-func (o *CreateTransferRequest) HasSkipBatching() bool {
+func (o *CreateExternalTransferRequest) HasSkipBatching() bool {
 	if o != nil && !IsNil(o.SkipBatching) {
 		return true
 	}
@@ -214,11 +180,11 @@ func (o *CreateTransferRequest) HasSkipBatching() bool {
 }
 
 // SetSkipBatching gets a reference to the given bool and assigns it to the SkipBatching field.
-func (o *CreateTransferRequest) SetSkipBatching(v bool) {
+func (o *CreateExternalTransferRequest) SetSkipBatching(v bool) {
 	o.SkipBatching = &v
 }
 
-func (o CreateTransferRequest) MarshalJSON() ([]byte, error) {
+func (o CreateExternalTransferRequest) MarshalJSON() ([]byte, error) {
 	toSerialize,err := o.ToMap()
 	if err != nil {
 		return []byte{}, err
@@ -226,30 +192,27 @@ func (o CreateTransferRequest) MarshalJSON() ([]byte, error) {
 	return json.Marshal(toSerialize)
 }
 
-func (o CreateTransferRequest) ToMap() (map[string]interface{}, error) {
+func (o CreateExternalTransferRequest) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["amount"] = o.Amount
-	toSerialize["network_id"] = o.NetworkId
 	toSerialize["asset_id"] = o.AssetId
 	toSerialize["destination"] = o.Destination
-	if !IsNil(o.Gasless) {
-		toSerialize["gasless"] = o.Gasless
-	}
+	toSerialize["gasless"] = o.Gasless
 	if !IsNil(o.SkipBatching) {
 		toSerialize["skip_batching"] = o.SkipBatching
 	}
 	return toSerialize, nil
 }
 
-func (o *CreateTransferRequest) UnmarshalJSON(data []byte) (err error) {
+func (o *CreateExternalTransferRequest) UnmarshalJSON(data []byte) (err error) {
 	// This validates that all required properties are included in the JSON object
 	// by unmarshalling the object into a generic map with string keys and checking
 	// that every required field exists as a key in the generic map.
 	requiredProperties := []string{
 		"amount",
-		"network_id",
 		"asset_id",
 		"destination",
+		"gasless",
 	}
 
 	allProperties := make(map[string]interface{})
@@ -266,53 +229,53 @@ func (o *CreateTransferRequest) UnmarshalJSON(data []byte) (err error) {
 		}
 	}
 
-	varCreateTransferRequest := _CreateTransferRequest{}
+	varCreateExternalTransferRequest := _CreateExternalTransferRequest{}
 
 	decoder := json.NewDecoder(bytes.NewReader(data))
 	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varCreateTransferRequest)
+	err = decoder.Decode(&varCreateExternalTransferRequest)
 
 	if err != nil {
 		return err
 	}
 
-	*o = CreateTransferRequest(varCreateTransferRequest)
+	*o = CreateExternalTransferRequest(varCreateExternalTransferRequest)
 
 	return err
 }
 
-type NullableCreateTransferRequest struct {
-	value *CreateTransferRequest
+type NullableCreateExternalTransferRequest struct {
+	value *CreateExternalTransferRequest
 	isSet bool
 }
 
-func (v NullableCreateTransferRequest) Get() *CreateTransferRequest {
+func (v NullableCreateExternalTransferRequest) Get() *CreateExternalTransferRequest {
 	return v.value
 }
 
-func (v *NullableCreateTransferRequest) Set(val *CreateTransferRequest) {
+func (v *NullableCreateExternalTransferRequest) Set(val *CreateExternalTransferRequest) {
 	v.value = val
 	v.isSet = true
 }
 
-func (v NullableCreateTransferRequest) IsSet() bool {
+func (v NullableCreateExternalTransferRequest) IsSet() bool {
 	return v.isSet
 }
 
-func (v *NullableCreateTransferRequest) Unset() {
+func (v *NullableCreateExternalTransferRequest) Unset() {
 	v.value = nil
 	v.isSet = false
 }
 
-func NewNullableCreateTransferRequest(val *CreateTransferRequest) *NullableCreateTransferRequest {
-	return &NullableCreateTransferRequest{value: val, isSet: true}
+func NewNullableCreateExternalTransferRequest(val *CreateExternalTransferRequest) *NullableCreateExternalTransferRequest {
+	return &NullableCreateExternalTransferRequest{value: val, isSet: true}
 }
 
-func (v NullableCreateTransferRequest) MarshalJSON() ([]byte, error) {
+func (v NullableCreateExternalTransferRequest) MarshalJSON() ([]byte, error) {
 	return json.Marshal(v.value)
 }
 
-func (v *NullableCreateTransferRequest) UnmarshalJSON(src []byte) error {
+func (v *NullableCreateExternalTransferRequest) UnmarshalJSON(src []byte) error {
 	v.isSet = true
 	return json.Unmarshal(src, &v.value)
 }

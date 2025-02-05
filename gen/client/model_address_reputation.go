@@ -21,8 +21,8 @@ var _ MappedNullable = &AddressReputation{}
 
 // AddressReputation The reputation score with metadata of a blockchain address.
 type AddressReputation struct {
-	// The reputation score of a wallet address which lie between 0 to 100.
-	ReputationScore int32 `json:"reputation_score"`
+	// The score of a wallet address, ranging from -100 to 100. A negative score indicates a bad reputation, while a positive score indicates a good reputation.
+	Score int32 `json:"score"`
 	Metadata AddressReputationMetadata `json:"metadata"`
 }
 
@@ -32,9 +32,9 @@ type _AddressReputation AddressReputation
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewAddressReputation(reputationScore int32, metadata AddressReputationMetadata) *AddressReputation {
+func NewAddressReputation(score int32, metadata AddressReputationMetadata) *AddressReputation {
 	this := AddressReputation{}
-	this.ReputationScore = reputationScore
+	this.Score = score
 	this.Metadata = metadata
 	return &this
 }
@@ -47,28 +47,28 @@ func NewAddressReputationWithDefaults() *AddressReputation {
 	return &this
 }
 
-// GetReputationScore returns the ReputationScore field value
-func (o *AddressReputation) GetReputationScore() int32 {
+// GetScore returns the Score field value
+func (o *AddressReputation) GetScore() int32 {
 	if o == nil {
 		var ret int32
 		return ret
 	}
 
-	return o.ReputationScore
+	return o.Score
 }
 
-// GetReputationScoreOk returns a tuple with the ReputationScore field value
+// GetScoreOk returns a tuple with the Score field value
 // and a boolean to check if the value has been set.
-func (o *AddressReputation) GetReputationScoreOk() (*int32, bool) {
+func (o *AddressReputation) GetScoreOk() (*int32, bool) {
 	if o == nil {
 		return nil, false
 	}
-	return &o.ReputationScore, true
+	return &o.Score, true
 }
 
-// SetReputationScore sets field value
-func (o *AddressReputation) SetReputationScore(v int32) {
-	o.ReputationScore = v
+// SetScore sets field value
+func (o *AddressReputation) SetScore(v int32) {
+	o.Score = v
 }
 
 // GetMetadata returns the Metadata field value
@@ -105,7 +105,7 @@ func (o AddressReputation) MarshalJSON() ([]byte, error) {
 
 func (o AddressReputation) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
-	toSerialize["reputation_score"] = o.ReputationScore
+	toSerialize["score"] = o.Score
 	toSerialize["metadata"] = o.Metadata
 	return toSerialize, nil
 }
@@ -115,7 +115,7 @@ func (o *AddressReputation) UnmarshalJSON(data []byte) (err error) {
 	// by unmarshalling the object into a generic map with string keys and checking
 	// that every required field exists as a key in the generic map.
 	requiredProperties := []string{
-		"reputation_score",
+		"score",
 		"metadata",
 	}
 

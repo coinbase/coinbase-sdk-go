@@ -24,6 +24,7 @@ type UpdateWebhookRequest struct {
 	EventFilters []WebhookEventFilter `json:"event_filters,omitempty"`
 	// The Webhook uri that updates to
 	NotificationUri *string `json:"notification_uri,omitempty"`
+	Status *WebhookStatus `json:"status,omitempty"`
 }
 
 // NewUpdateWebhookRequest instantiates a new UpdateWebhookRequest object
@@ -139,6 +140,38 @@ func (o *UpdateWebhookRequest) SetNotificationUri(v string) {
 	o.NotificationUri = &v
 }
 
+// GetStatus returns the Status field value if set, zero value otherwise.
+func (o *UpdateWebhookRequest) GetStatus() WebhookStatus {
+	if o == nil || IsNil(o.Status) {
+		var ret WebhookStatus
+		return ret
+	}
+	return *o.Status
+}
+
+// GetStatusOk returns a tuple with the Status field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *UpdateWebhookRequest) GetStatusOk() (*WebhookStatus, bool) {
+	if o == nil || IsNil(o.Status) {
+		return nil, false
+	}
+	return o.Status, true
+}
+
+// HasStatus returns a boolean if a field has been set.
+func (o *UpdateWebhookRequest) HasStatus() bool {
+	if o != nil && !IsNil(o.Status) {
+		return true
+	}
+
+	return false
+}
+
+// SetStatus gets a reference to the given WebhookStatus and assigns it to the Status field.
+func (o *UpdateWebhookRequest) SetStatus(v WebhookStatus) {
+	o.Status = &v
+}
+
 func (o UpdateWebhookRequest) MarshalJSON() ([]byte, error) {
 	toSerialize,err := o.ToMap()
 	if err != nil {
@@ -157,6 +190,9 @@ func (o UpdateWebhookRequest) ToMap() (map[string]interface{}, error) {
 	}
 	if !IsNil(o.NotificationUri) {
 		toSerialize["notification_uri"] = o.NotificationUri
+	}
+	if !IsNil(o.Status) {
+		toSerialize["status"] = o.Status
 	}
 	return toSerialize, nil
 }

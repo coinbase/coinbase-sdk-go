@@ -30,7 +30,7 @@ func main() {
 
 	address := coinbase.NewExternalAddress(
 		coinbase.EthereumMainnet,
-		os.Args[1],
+		os.Args[2],
 	)
 
 	rewards, err := client.ListStakingRewards(
