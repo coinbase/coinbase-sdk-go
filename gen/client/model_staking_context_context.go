@@ -23,6 +23,7 @@ var _ MappedNullable = &StakingContextContext{}
 type StakingContextContext struct {
 	StakeableBalance Balance `json:"stakeable_balance"`
 	UnstakeableBalance Balance `json:"unstakeable_balance"`
+	PendingClaimableBalance Balance `json:"pending_claimable_balance"`
 	ClaimableBalance Balance `json:"claimable_balance"`
 }
 
@@ -32,10 +33,11 @@ type _StakingContextContext StakingContextContext
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewStakingContextContext(stakeableBalance Balance, unstakeableBalance Balance, claimableBalance Balance) *StakingContextContext {
+func NewStakingContextContext(stakeableBalance Balance, unstakeableBalance Balance, pendingClaimableBalance Balance, claimableBalance Balance) *StakingContextContext {
 	this := StakingContextContext{}
 	this.StakeableBalance = stakeableBalance
 	this.UnstakeableBalance = unstakeableBalance
+	this.PendingClaimableBalance = pendingClaimableBalance
 	this.ClaimableBalance = claimableBalance
 	return &this
 }
@@ -96,6 +98,30 @@ func (o *StakingContextContext) SetUnstakeableBalance(v Balance) {
 	o.UnstakeableBalance = v
 }
 
+// GetPendingClaimableBalance returns the PendingClaimableBalance field value
+func (o *StakingContextContext) GetPendingClaimableBalance() Balance {
+	if o == nil {
+		var ret Balance
+		return ret
+	}
+
+	return o.PendingClaimableBalance
+}
+
+// GetPendingClaimableBalanceOk returns a tuple with the PendingClaimableBalance field value
+// and a boolean to check if the value has been set.
+func (o *StakingContextContext) GetPendingClaimableBalanceOk() (*Balance, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.PendingClaimableBalance, true
+}
+
+// SetPendingClaimableBalance sets field value
+func (o *StakingContextContext) SetPendingClaimableBalance(v Balance) {
+	o.PendingClaimableBalance = v
+}
+
 // GetClaimableBalance returns the ClaimableBalance field value
 func (o *StakingContextContext) GetClaimableBalance() Balance {
 	if o == nil {
@@ -132,6 +158,7 @@ func (o StakingContextContext) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["stakeable_balance"] = o.StakeableBalance
 	toSerialize["unstakeable_balance"] = o.UnstakeableBalance
+	toSerialize["pending_claimable_balance"] = o.PendingClaimableBalance
 	toSerialize["claimable_balance"] = o.ClaimableBalance
 	return toSerialize, nil
 }
@@ -143,6 +170,7 @@ func (o *StakingContextContext) UnmarshalJSON(data []byte) (err error) {
 	requiredProperties := []string{
 		"stakeable_balance",
 		"unstakeable_balance",
+		"pending_claimable_balance",
 		"claimable_balance",
 	}
 

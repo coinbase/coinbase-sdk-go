@@ -23,6 +23,55 @@ import (
 type ExternalAddressesAPI interface {
 
 	/*
+	BroadcastExternalTransaction Broadcast an arbitrary transaction.
+
+	Broadcast an arbitrary transaction to the node constructed and signed by an external address.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@param networkId The ID of the network the external address belongs to.
+	@param addressId The onchain address of the transaction sender.
+	@return ApiBroadcastExternalTransactionRequest
+	*/
+	BroadcastExternalTransaction(ctx context.Context, networkId string, addressId string) ApiBroadcastExternalTransactionRequest
+
+	// BroadcastExternalTransactionExecute executes the request
+	//  @return BroadcastExternalTransaction200Response
+	BroadcastExternalTransactionExecute(r ApiBroadcastExternalTransactionRequest) (*BroadcastExternalTransaction200Response, *http.Response, error)
+
+	/*
+	BroadcastExternalTransfer Broadcast an external address' transfer
+
+	Broadcast an external address's transfer with a signed payload
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@param networkId The ID of the network the address belongs to
+	@param addressId The ID of the address the transfer belongs to
+	@param transferId The ID of the transfer to broadcast
+	@return ApiBroadcastExternalTransferRequest
+	*/
+	BroadcastExternalTransfer(ctx context.Context, networkId string, addressId string, transferId string) ApiBroadcastExternalTransferRequest
+
+	// BroadcastExternalTransferExecute executes the request
+	//  @return Transfer
+	BroadcastExternalTransferExecute(r ApiBroadcastExternalTransferRequest) (*Transfer, *http.Response, error)
+
+	/*
+	CreateExternalTransfer Create a new transfer
+
+	Create a new transfer between addresses.
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@param networkId The ID of the network the address is on
+	@param addressId The ID of the address to transfer from
+	@return ApiCreateExternalTransferRequest
+	*/
+	CreateExternalTransfer(ctx context.Context, networkId string, addressId string) ApiCreateExternalTransferRequest
+
+	// CreateExternalTransferExecute executes the request
+	//  @return Transfer
+	CreateExternalTransferExecute(r ApiCreateExternalTransferRequest) (*Transfer, *http.Response, error)
+
+	/*
 	GetExternalAddressBalance Get the balance of an asset in an external address
 
 	Get the balance of an asset in an external address
@@ -38,6 +87,23 @@ type ExternalAddressesAPI interface {
 	// GetExternalAddressBalanceExecute executes the request
 	//  @return Balance
 	GetExternalAddressBalanceExecute(r ApiGetExternalAddressBalanceRequest) (*Balance, *http.Response, error)
+
+	/*
+	GetExternalTransfer Get a external address' transfer
+
+	Get an external address' transfer by ID
+
+	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+	@param networkId The ID of the network the address is on
+	@param addressId The ID of the address the transfer belongs to
+	@param transferId The ID of the transfer to fetch
+	@return ApiGetExternalTransferRequest
+	*/
+	GetExternalTransfer(ctx context.Context, networkId string, addressId string, transferId string) ApiGetExternalTransferRequest
+
+	// GetExternalTransferExecute executes the request
+	//  @return Transfer
+	GetExternalTransferExecute(r ApiGetExternalTransferRequest) (*Transfer, *http.Response, error)
 
 	/*
 	GetFaucetTransaction Get the status of a faucet transaction
@@ -91,6 +157,444 @@ type ExternalAddressesAPI interface {
 
 // ExternalAddressesAPIService ExternalAddressesAPI service
 type ExternalAddressesAPIService service
+
+type ApiBroadcastExternalTransactionRequest struct {
+	ctx context.Context
+	ApiService ExternalAddressesAPI
+	networkId string
+	addressId string
+	broadcastExternalTransactionRequest *BroadcastExternalTransactionRequest
+}
+
+func (r ApiBroadcastExternalTransactionRequest) BroadcastExternalTransactionRequest(broadcastExternalTransactionRequest BroadcastExternalTransactionRequest) ApiBroadcastExternalTransactionRequest {
+	r.broadcastExternalTransactionRequest = &broadcastExternalTransactionRequest
+	return r
+}
+
+func (r ApiBroadcastExternalTransactionRequest) Execute() (*BroadcastExternalTransaction200Response, *http.Response, error) {
+	return r.ApiService.BroadcastExternalTransactionExecute(r)
+}
+
+/*
+BroadcastExternalTransaction Broadcast an arbitrary transaction.
+
+Broadcast an arbitrary transaction to the node constructed and signed by an external address.
+
+ @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ @param networkId The ID of the network the external address belongs to.
+ @param addressId The onchain address of the transaction sender.
+ @return ApiBroadcastExternalTransactionRequest
+*/
+func (a *ExternalAddressesAPIService) BroadcastExternalTransaction(ctx context.Context, networkId string, addressId string) ApiBroadcastExternalTransactionRequest {
+	return ApiBroadcastExternalTransactionRequest{
+		ApiService: a,
+		ctx: ctx,
+		networkId: networkId,
+		addressId: addressId,
+	}
+}
+
+// Execute executes the request
+//  @return BroadcastExternalTransaction200Response
+func (a *ExternalAddressesAPIService) BroadcastExternalTransactionExecute(r ApiBroadcastExternalTransactionRequest) (*BroadcastExternalTransaction200Response, *http.Response, error) {
+	var (
+		localVarHTTPMethod   = http.MethodPost
+		localVarPostBody     interface{}
+		formFiles            []formFile
+		localVarReturnValue  *BroadcastExternalTransaction200Response
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "ExternalAddressesAPIService.BroadcastExternalTransaction")
+	if err != nil {
+		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/v1/networks/{network_id}/addresses/{address_id}/transactions"
+	localVarPath = strings.Replace(localVarPath, "{"+"network_id"+"}", url.PathEscape(parameterValueToString(r.networkId, "networkId")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"address_id"+"}", url.PathEscape(parameterValueToString(r.addressId, "addressId")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+	if r.broadcastExternalTransactionRequest == nil {
+		return localVarReturnValue, nil, reportError("broadcastExternalTransactionRequest is required and must be specified")
+	}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{"application/json"}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	// body params
+	localVarPostBody = r.broadcastExternalTransactionRequest
+	if r.ctx != nil {
+		// API Key Authentication
+		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
+			if apiKey, ok := auth["apiKey"]; ok {
+				var key string
+				if apiKey.Prefix != "" {
+					key = apiKey.Prefix + " " + apiKey.Key
+				} else {
+					key = apiKey.Key
+				}
+				localVarHeaderParams["Jwt"] = key
+			}
+		}
+	}
+	if r.ctx != nil {
+		// API Key Authentication
+		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
+			if apiKey, ok := auth["session"]; ok {
+				var key string
+				if apiKey.Prefix != "" {
+					key = apiKey.Prefix + " " + apiKey.Key
+				} else {
+					key = apiKey.Key
+				}
+				localVarHeaderParams["Jwt"] = key
+			}
+		}
+	}
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+	localVarHTTPResponse.Body.Close()
+	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	if err != nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: localVarHTTPResponse.Status,
+		}
+			var v Error
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+					newErr.model = v
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	if err != nil {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: err.Error(),
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, nil
+}
+
+type ApiBroadcastExternalTransferRequest struct {
+	ctx context.Context
+	ApiService ExternalAddressesAPI
+	networkId string
+	addressId string
+	transferId string
+	broadcastExternalTransferRequest *BroadcastExternalTransferRequest
+}
+
+func (r ApiBroadcastExternalTransferRequest) BroadcastExternalTransferRequest(broadcastExternalTransferRequest BroadcastExternalTransferRequest) ApiBroadcastExternalTransferRequest {
+	r.broadcastExternalTransferRequest = &broadcastExternalTransferRequest
+	return r
+}
+
+func (r ApiBroadcastExternalTransferRequest) Execute() (*Transfer, *http.Response, error) {
+	return r.ApiService.BroadcastExternalTransferExecute(r)
+}
+
+/*
+BroadcastExternalTransfer Broadcast an external address' transfer
+
+Broadcast an external address's transfer with a signed payload
+
+ @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ @param networkId The ID of the network the address belongs to
+ @param addressId The ID of the address the transfer belongs to
+ @param transferId The ID of the transfer to broadcast
+ @return ApiBroadcastExternalTransferRequest
+*/
+func (a *ExternalAddressesAPIService) BroadcastExternalTransfer(ctx context.Context, networkId string, addressId string, transferId string) ApiBroadcastExternalTransferRequest {
+	return ApiBroadcastExternalTransferRequest{
+		ApiService: a,
+		ctx: ctx,
+		networkId: networkId,
+		addressId: addressId,
+		transferId: transferId,
+	}
+}
+
+// Execute executes the request
+//  @return Transfer
+func (a *ExternalAddressesAPIService) BroadcastExternalTransferExecute(r ApiBroadcastExternalTransferRequest) (*Transfer, *http.Response, error) {
+	var (
+		localVarHTTPMethod   = http.MethodPost
+		localVarPostBody     interface{}
+		formFiles            []formFile
+		localVarReturnValue  *Transfer
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "ExternalAddressesAPIService.BroadcastExternalTransfer")
+	if err != nil {
+		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/v1/networks/{network_id}/addresses/{address_id}/transfers/{transfer_id}/broadcast"
+	localVarPath = strings.Replace(localVarPath, "{"+"network_id"+"}", url.PathEscape(parameterValueToString(r.networkId, "networkId")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"address_id"+"}", url.PathEscape(parameterValueToString(r.addressId, "addressId")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"transfer_id"+"}", url.PathEscape(parameterValueToString(r.transferId, "transferId")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+	if r.broadcastExternalTransferRequest == nil {
+		return localVarReturnValue, nil, reportError("broadcastExternalTransferRequest is required and must be specified")
+	}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{"application/json"}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	// body params
+	localVarPostBody = r.broadcastExternalTransferRequest
+	if r.ctx != nil {
+		// API Key Authentication
+		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
+			if apiKey, ok := auth["apiKey"]; ok {
+				var key string
+				if apiKey.Prefix != "" {
+					key = apiKey.Prefix + " " + apiKey.Key
+				} else {
+					key = apiKey.Key
+				}
+				localVarHeaderParams["Jwt"] = key
+			}
+		}
+	}
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+	localVarHTTPResponse.Body.Close()
+	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	if err != nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: localVarHTTPResponse.Status,
+		}
+			var v Error
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+					newErr.model = v
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	if err != nil {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: err.Error(),
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, nil
+}
+
+type ApiCreateExternalTransferRequest struct {
+	ctx context.Context
+	ApiService ExternalAddressesAPI
+	networkId string
+	addressId string
+	createExternalTransferRequest *CreateExternalTransferRequest
+}
+
+func (r ApiCreateExternalTransferRequest) CreateExternalTransferRequest(createExternalTransferRequest CreateExternalTransferRequest) ApiCreateExternalTransferRequest {
+	r.createExternalTransferRequest = &createExternalTransferRequest
+	return r
+}
+
+func (r ApiCreateExternalTransferRequest) Execute() (*Transfer, *http.Response, error) {
+	return r.ApiService.CreateExternalTransferExecute(r)
+}
+
+/*
+CreateExternalTransfer Create a new transfer
+
+Create a new transfer between addresses.
+
+ @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ @param networkId The ID of the network the address is on
+ @param addressId The ID of the address to transfer from
+ @return ApiCreateExternalTransferRequest
+*/
+func (a *ExternalAddressesAPIService) CreateExternalTransfer(ctx context.Context, networkId string, addressId string) ApiCreateExternalTransferRequest {
+	return ApiCreateExternalTransferRequest{
+		ApiService: a,
+		ctx: ctx,
+		networkId: networkId,
+		addressId: addressId,
+	}
+}
+
+// Execute executes the request
+//  @return Transfer
+func (a *ExternalAddressesAPIService) CreateExternalTransferExecute(r ApiCreateExternalTransferRequest) (*Transfer, *http.Response, error) {
+	var (
+		localVarHTTPMethod   = http.MethodPost
+		localVarPostBody     interface{}
+		formFiles            []formFile
+		localVarReturnValue  *Transfer
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "ExternalAddressesAPIService.CreateExternalTransfer")
+	if err != nil {
+		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/v1/networks/{network_id}/addresses/{address_id}/transfers"
+	localVarPath = strings.Replace(localVarPath, "{"+"network_id"+"}", url.PathEscape(parameterValueToString(r.networkId, "networkId")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"address_id"+"}", url.PathEscape(parameterValueToString(r.addressId, "addressId")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+	if r.createExternalTransferRequest == nil {
+		return localVarReturnValue, nil, reportError("createExternalTransferRequest is required and must be specified")
+	}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{"application/json"}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	// body params
+	localVarPostBody = r.createExternalTransferRequest
+	if r.ctx != nil {
+		// API Key Authentication
+		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
+			if apiKey, ok := auth["apiKey"]; ok {
+				var key string
+				if apiKey.Prefix != "" {
+					key = apiKey.Prefix + " " + apiKey.Key
+				} else {
+					key = apiKey.Key
+				}
+				localVarHeaderParams["Jwt"] = key
+			}
+		}
+	}
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+	localVarHTTPResponse.Body.Close()
+	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	if err != nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: localVarHTTPResponse.Status,
+		}
+			var v Error
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+					newErr.model = v
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	if err != nil {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: err.Error(),
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, nil
+}
 
 type ApiGetExternalAddressBalanceRequest struct {
 	ctx context.Context
@@ -165,6 +669,167 @@ func (a *ExternalAddressesAPIService) GetExternalAddressBalanceExecute(r ApiGetE
 	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
 	if localVarHTTPHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	if r.ctx != nil {
+		// API Key Authentication
+		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
+			if apiKey, ok := auth["apiKey"]; ok {
+				var key string
+				if apiKey.Prefix != "" {
+					key = apiKey.Prefix + " " + apiKey.Key
+				} else {
+					key = apiKey.Key
+				}
+				localVarHeaderParams["Jwt"] = key
+			}
+		}
+	}
+	if r.ctx != nil {
+		// API Key Authentication
+		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
+			if apiKey, ok := auth["session"]; ok {
+				var key string
+				if apiKey.Prefix != "" {
+					key = apiKey.Prefix + " " + apiKey.Key
+				} else {
+					key = apiKey.Key
+				}
+				localVarHeaderParams["Jwt"] = key
+			}
+		}
+	}
+	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
+	if err != nil {
+		return localVarReturnValue, nil, err
+	}
+
+	localVarHTTPResponse, err := a.client.callAPI(req)
+	if err != nil || localVarHTTPResponse == nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	localVarBody, err := io.ReadAll(localVarHTTPResponse.Body)
+	localVarHTTPResponse.Body.Close()
+	localVarHTTPResponse.Body = io.NopCloser(bytes.NewBuffer(localVarBody))
+	if err != nil {
+		return localVarReturnValue, localVarHTTPResponse, err
+	}
+
+	if localVarHTTPResponse.StatusCode >= 300 {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: localVarHTTPResponse.Status,
+		}
+			var v Error
+			err = a.client.decode(&v, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+			if err != nil {
+				newErr.error = err.Error()
+				return localVarReturnValue, localVarHTTPResponse, newErr
+			}
+					newErr.error = formatErrorMessage(localVarHTTPResponse.Status, &v)
+					newErr.model = v
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	err = a.client.decode(&localVarReturnValue, localVarBody, localVarHTTPResponse.Header.Get("Content-Type"))
+	if err != nil {
+		newErr := &GenericOpenAPIError{
+			body:  localVarBody,
+			error: err.Error(),
+		}
+		return localVarReturnValue, localVarHTTPResponse, newErr
+	}
+
+	return localVarReturnValue, localVarHTTPResponse, nil
+}
+
+type ApiGetExternalTransferRequest struct {
+	ctx context.Context
+	ApiService ExternalAddressesAPI
+	networkId string
+	addressId string
+	transferId string
+}
+
+func (r ApiGetExternalTransferRequest) Execute() (*Transfer, *http.Response, error) {
+	return r.ApiService.GetExternalTransferExecute(r)
+}
+
+/*
+GetExternalTransfer Get a external address' transfer
+
+Get an external address' transfer by ID
+
+ @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
+ @param networkId The ID of the network the address is on
+ @param addressId The ID of the address the transfer belongs to
+ @param transferId The ID of the transfer to fetch
+ @return ApiGetExternalTransferRequest
+*/
+func (a *ExternalAddressesAPIService) GetExternalTransfer(ctx context.Context, networkId string, addressId string, transferId string) ApiGetExternalTransferRequest {
+	return ApiGetExternalTransferRequest{
+		ApiService: a,
+		ctx: ctx,
+		networkId: networkId,
+		addressId: addressId,
+		transferId: transferId,
+	}
+}
+
+// Execute executes the request
+//  @return Transfer
+func (a *ExternalAddressesAPIService) GetExternalTransferExecute(r ApiGetExternalTransferRequest) (*Transfer, *http.Response, error) {
+	var (
+		localVarHTTPMethod   = http.MethodGet
+		localVarPostBody     interface{}
+		formFiles            []formFile
+		localVarReturnValue  *Transfer
+	)
+
+	localBasePath, err := a.client.cfg.ServerURLWithContext(r.ctx, "ExternalAddressesAPIService.GetExternalTransfer")
+	if err != nil {
+		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
+	}
+
+	localVarPath := localBasePath + "/v1/networks/{network_id}/addresses/{address_id}/transfers/{transfer_id}"
+	localVarPath = strings.Replace(localVarPath, "{"+"network_id"+"}", url.PathEscape(parameterValueToString(r.networkId, "networkId")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"address_id"+"}", url.PathEscape(parameterValueToString(r.addressId, "addressId")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"transfer_id"+"}", url.PathEscape(parameterValueToString(r.transferId, "transferId")), -1)
+
+	localVarHeaderParams := make(map[string]string)
+	localVarQueryParams := url.Values{}
+	localVarFormParams := url.Values{}
+
+	// to determine the Content-Type header
+	localVarHTTPContentTypes := []string{}
+
+	// set Content-Type header
+	localVarHTTPContentType := selectHeaderContentType(localVarHTTPContentTypes)
+	if localVarHTTPContentType != "" {
+		localVarHeaderParams["Content-Type"] = localVarHTTPContentType
+	}
+
+	// to determine the Accept header
+	localVarHTTPHeaderAccepts := []string{"application/json"}
+
+	// set Accept header
+	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
+	if localVarHTTPHeaderAccept != "" {
+		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	if r.ctx != nil {
+		// API Key Authentication
+		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
+			if apiKey, ok := auth["apiKey"]; ok {
+				var key string
+				if apiKey.Prefix != "" {
+					key = apiKey.Prefix + " " + apiKey.Key
+				} else {
+					key = apiKey.Key
+				}
+				localVarHeaderParams["Jwt"] = key
+			}
+		}
 	}
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
 	if err != nil {
@@ -284,6 +949,34 @@ func (a *ExternalAddressesAPIService) GetFaucetTransactionExecute(r ApiGetFaucet
 	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
 	if localVarHTTPHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	if r.ctx != nil {
+		// API Key Authentication
+		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
+			if apiKey, ok := auth["apiKey"]; ok {
+				var key string
+				if apiKey.Prefix != "" {
+					key = apiKey.Prefix + " " + apiKey.Key
+				} else {
+					key = apiKey.Key
+				}
+				localVarHeaderParams["Jwt"] = key
+			}
+		}
+	}
+	if r.ctx != nil {
+		// API Key Authentication
+		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
+			if apiKey, ok := auth["session"]; ok {
+				var key string
+				if apiKey.Prefix != "" {
+					key = apiKey.Prefix + " " + apiKey.Key
+				} else {
+					key = apiKey.Key
+				}
+				localVarHeaderParams["Jwt"] = key
+			}
+		}
 	}
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
 	if err != nil {
@@ -409,6 +1102,34 @@ func (a *ExternalAddressesAPIService) ListExternalAddressBalancesExecute(r ApiLi
 	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
 	if localVarHTTPHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	if r.ctx != nil {
+		// API Key Authentication
+		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
+			if apiKey, ok := auth["apiKey"]; ok {
+				var key string
+				if apiKey.Prefix != "" {
+					key = apiKey.Prefix + " " + apiKey.Key
+				} else {
+					key = apiKey.Key
+				}
+				localVarHeaderParams["Jwt"] = key
+			}
+		}
+	}
+	if r.ctx != nil {
+		// API Key Authentication
+		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
+			if apiKey, ok := auth["session"]; ok {
+				var key string
+				if apiKey.Prefix != "" {
+					key = apiKey.Prefix + " " + apiKey.Key
+				} else {
+					key = apiKey.Key
+				}
+				localVarHeaderParams["Jwt"] = key
+			}
+		}
 	}
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
 	if err != nil {
@@ -544,6 +1265,34 @@ func (a *ExternalAddressesAPIService) RequestExternalFaucetFundsExecute(r ApiReq
 	localVarHTTPHeaderAccept := selectHeaderAccept(localVarHTTPHeaderAccepts)
 	if localVarHTTPHeaderAccept != "" {
 		localVarHeaderParams["Accept"] = localVarHTTPHeaderAccept
+	}
+	if r.ctx != nil {
+		// API Key Authentication
+		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
+			if apiKey, ok := auth["apiKey"]; ok {
+				var key string
+				if apiKey.Prefix != "" {
+					key = apiKey.Prefix + " " + apiKey.Key
+				} else {
+					key = apiKey.Key
+				}
+				localVarHeaderParams["Jwt"] = key
+			}
+		}
+	}
+	if r.ctx != nil {
+		// API Key Authentication
+		if auth, ok := r.ctx.Value(ContextAPIKeys).(map[string]APIKey); ok {
+			if apiKey, ok := auth["session"]; ok {
+				var key string
+				if apiKey.Prefix != "" {
+					key = apiKey.Prefix + " " + apiKey.Key
+				} else {
+					key = apiKey.Key
+				}
+				localVarHeaderParams["Jwt"] = key
+			}
+		}
 	}
 	req, err := a.client.prepareRequest(r.ctx, localVarPath, localVarHTTPMethod, localVarPostBody, localVarHeaderParams, localVarQueryParams, localVarFormParams, formFiles)
 	if err != nil {

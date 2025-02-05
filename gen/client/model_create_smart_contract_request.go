@@ -23,6 +23,8 @@ var _ MappedNullable = &CreateSmartContractRequest{}
 type CreateSmartContractRequest struct {
 	Type SmartContractType `json:"type"`
 	Options SmartContractOptions `json:"options"`
+	// The optional UUID of the compiled smart contract to deploy. This field is only required when SmartContractType is set to custom.
+	CompiledSmartContractId *string `json:"compiled_smart_contract_id,omitempty"`
 }
 
 type _CreateSmartContractRequest CreateSmartContractRequest
@@ -94,6 +96,38 @@ func (o *CreateSmartContractRequest) SetOptions(v SmartContractOptions) {
 	o.Options = v
 }
 
+// GetCompiledSmartContractId returns the CompiledSmartContractId field value if set, zero value otherwise.
+func (o *CreateSmartContractRequest) GetCompiledSmartContractId() string {
+	if o == nil || IsNil(o.CompiledSmartContractId) {
+		var ret string
+		return ret
+	}
+	return *o.CompiledSmartContractId
+}
+
+// GetCompiledSmartContractIdOk returns a tuple with the CompiledSmartContractId field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *CreateSmartContractRequest) GetCompiledSmartContractIdOk() (*string, bool) {
+	if o == nil || IsNil(o.CompiledSmartContractId) {
+		return nil, false
+	}
+	return o.CompiledSmartContractId, true
+}
+
+// HasCompiledSmartContractId returns a boolean if a field has been set.
+func (o *CreateSmartContractRequest) HasCompiledSmartContractId() bool {
+	if o != nil && !IsNil(o.CompiledSmartContractId) {
+		return true
+	}
+
+	return false
+}
+
+// SetCompiledSmartContractId gets a reference to the given string and assigns it to the CompiledSmartContractId field.
+func (o *CreateSmartContractRequest) SetCompiledSmartContractId(v string) {
+	o.CompiledSmartContractId = &v
+}
+
 func (o CreateSmartContractRequest) MarshalJSON() ([]byte, error) {
 	toSerialize,err := o.ToMap()
 	if err != nil {
@@ -106,6 +140,9 @@ func (o CreateSmartContractRequest) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["type"] = o.Type
 	toSerialize["options"] = o.Options
+	if !IsNil(o.CompiledSmartContractId) {
+		toSerialize["compiled_smart_contract_id"] = o.CompiledSmartContractId
+	}
 	return toSerialize, nil
 }
 

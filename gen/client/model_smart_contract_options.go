@@ -21,6 +21,7 @@ type SmartContractOptions struct {
 	MultiTokenContractOptions *MultiTokenContractOptions
 	NFTContractOptions *NFTContractOptions
 	TokenContractOptions *TokenContractOptions
+	String *string
 }
 
 // MultiTokenContractOptionsAsSmartContractOptions is a convenience function that returns MultiTokenContractOptions wrapped in SmartContractOptions
@@ -41,6 +42,13 @@ func NFTContractOptionsAsSmartContractOptions(v *NFTContractOptions) SmartContra
 func TokenContractOptionsAsSmartContractOptions(v *TokenContractOptions) SmartContractOptions {
 	return SmartContractOptions{
 		TokenContractOptions: v,
+	}
+}
+
+// stringAsSmartContractOptions is a convenience function that returns string wrapped in SmartContractOptions
+func StringAsSmartContractOptions(v *string) SmartContractOptions {
+	return SmartContractOptions{
+		String: v,
 	}
 }
 
@@ -100,11 +108,29 @@ func (dst *SmartContractOptions) UnmarshalJSON(data []byte) error {
 		dst.TokenContractOptions = nil
 	}
 
+	// try to unmarshal data into String
+	err = newStrictDecoder(data).Decode(&dst.String)
+	if err == nil {
+		jsonString, _ := json.Marshal(dst.String)
+		if string(jsonString) == "{}" { // empty struct
+			dst.String = nil
+		} else {
+			if err = validator.Validate(dst.String); err != nil {
+				dst.String = nil
+			} else {
+				match++
+			}
+		}
+	} else {
+		dst.String = nil
+	}
+
 	if match > 1 { // more than 1 match
 		// reset to nil
 		dst.MultiTokenContractOptions = nil
 		dst.NFTContractOptions = nil
 		dst.TokenContractOptions = nil
+		dst.String = nil
 
 		return fmt.Errorf("data matches more than one schema in oneOf(SmartContractOptions)")
 	} else if match == 1 {
@@ -128,6 +154,10 @@ func (src SmartContractOptions) MarshalJSON() ([]byte, error) {
 		return json.Marshal(&src.TokenContractOptions)
 	}
 
+	if src.String != nil {
+		return json.Marshal(&src.String)
+	}
+
 	return nil, nil // no data in oneOf schemas
 }
 
@@ -146,6 +176,10 @@ func (obj *SmartContractOptions) GetActualInstance() (interface{}) {
 
 	if obj.TokenContractOptions != nil {
 		return obj.TokenContractOptions
+	}
+
+	if obj.String != nil {
+		return obj.String
 	}
 
 	// all schemas are nil
