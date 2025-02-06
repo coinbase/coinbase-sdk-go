@@ -12,7 +12,6 @@ package client
 
 import (
 	"encoding/json"
-	"bytes"
 	"fmt"
 )
 
@@ -29,6 +28,7 @@ type GetStakingContextRequest struct {
 	AddressId string `json:"address_id"`
 	// Additional options for getting the staking context. This typically includes network specific fields.
 	Options map[string]string `json:"options"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _GetStakingContextRequest GetStakingContextRequest
@@ -164,6 +164,11 @@ func (o GetStakingContextRequest) ToMap() (map[string]interface{}, error) {
 	toSerialize["asset_id"] = o.AssetId
 	toSerialize["address_id"] = o.AddressId
 	toSerialize["options"] = o.Options
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -194,15 +199,23 @@ func (o *GetStakingContextRequest) UnmarshalJSON(data []byte) (err error) {
 
 	varGetStakingContextRequest := _GetStakingContextRequest{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varGetStakingContextRequest)
+	err = json.Unmarshal(data, &varGetStakingContextRequest)
 
 	if err != nil {
 		return err
 	}
 
 	*o = GetStakingContextRequest(varGetStakingContextRequest)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "network_id")
+		delete(additionalProperties, "asset_id")
+		delete(additionalProperties, "address_id")
+		delete(additionalProperties, "options")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

@@ -25,7 +25,10 @@ type CreateAddressRequest struct {
 	Attestation *string `json:"attestation,omitempty"`
 	// The index of the address within the wallet.
 	AddressIndex *int32 `json:"address_index,omitempty"`
+	AdditionalProperties map[string]interface{}
 }
+
+type _CreateAddressRequest CreateAddressRequest
 
 // NewCreateAddressRequest instantiates a new CreateAddressRequest object
 // This constructor will assign default values to properties that have it defined,
@@ -159,7 +162,35 @@ func (o CreateAddressRequest) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.AddressIndex) {
 		toSerialize["address_index"] = o.AddressIndex
 	}
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
+}
+
+func (o *CreateAddressRequest) UnmarshalJSON(data []byte) (err error) {
+	varCreateAddressRequest := _CreateAddressRequest{}
+
+	err = json.Unmarshal(data, &varCreateAddressRequest)
+
+	if err != nil {
+		return err
+	}
+
+	*o = CreateAddressRequest(varCreateAddressRequest)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "public_key")
+		delete(additionalProperties, "attestation")
+		delete(additionalProperties, "address_index")
+		o.AdditionalProperties = additionalProperties
+	}
+
+	return err
 }
 
 type NullableCreateAddressRequest struct {

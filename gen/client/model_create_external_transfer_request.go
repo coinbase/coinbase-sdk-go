@@ -12,7 +12,6 @@ package client
 
 import (
 	"encoding/json"
-	"bytes"
 	"fmt"
 )
 
@@ -31,6 +30,7 @@ type CreateExternalTransferRequest struct {
 	Gasless bool `json:"gasless"`
 	// When true, the transfer will be submitted immediately. Otherwise, the transfer will be batched. Defaults to false. Note: Requires the gasless option to be set to true. 
 	SkipBatching *bool `json:"skip_batching,omitempty"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _CreateExternalTransferRequest CreateExternalTransferRequest
@@ -201,6 +201,11 @@ func (o CreateExternalTransferRequest) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.SkipBatching) {
 		toSerialize["skip_batching"] = o.SkipBatching
 	}
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -231,15 +236,24 @@ func (o *CreateExternalTransferRequest) UnmarshalJSON(data []byte) (err error) {
 
 	varCreateExternalTransferRequest := _CreateExternalTransferRequest{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varCreateExternalTransferRequest)
+	err = json.Unmarshal(data, &varCreateExternalTransferRequest)
 
 	if err != nil {
 		return err
 	}
 
 	*o = CreateExternalTransferRequest(varCreateExternalTransferRequest)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "amount")
+		delete(additionalProperties, "asset_id")
+		delete(additionalProperties, "destination")
+		delete(additionalProperties, "gasless")
+		delete(additionalProperties, "skip_batching")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

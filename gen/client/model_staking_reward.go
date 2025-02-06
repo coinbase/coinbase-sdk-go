@@ -13,7 +13,6 @@ package client
 import (
 	"encoding/json"
 	"time"
-	"bytes"
 	"fmt"
 )
 
@@ -32,6 +31,7 @@ type StakingReward struct {
 	State string `json:"state"`
 	Format StakingRewardFormat `json:"format"`
 	UsdValue StakingRewardUSDValue `json:"usd_value"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _StakingReward StakingReward
@@ -221,6 +221,11 @@ func (o StakingReward) ToMap() (map[string]interface{}, error) {
 	toSerialize["state"] = o.State
 	toSerialize["format"] = o.Format
 	toSerialize["usd_value"] = o.UsdValue
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -253,15 +258,25 @@ func (o *StakingReward) UnmarshalJSON(data []byte) (err error) {
 
 	varStakingReward := _StakingReward{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varStakingReward)
+	err = json.Unmarshal(data, &varStakingReward)
 
 	if err != nil {
 		return err
 	}
 
 	*o = StakingReward(varStakingReward)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "address_id")
+		delete(additionalProperties, "date")
+		delete(additionalProperties, "amount")
+		delete(additionalProperties, "state")
+		delete(additionalProperties, "format")
+		delete(additionalProperties, "usd_value")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

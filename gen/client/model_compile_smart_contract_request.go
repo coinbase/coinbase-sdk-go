@@ -12,7 +12,6 @@ package client
 
 import (
 	"encoding/json"
-	"bytes"
 	"fmt"
 )
 
@@ -27,6 +26,7 @@ type CompileSmartContractRequest struct {
 	ContractName string `json:"contract_name"`
 	// The version of the Solidity compiler to use.
 	SolidityCompilerVersion string `json:"solidity_compiler_version"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _CompileSmartContractRequest CompileSmartContractRequest
@@ -136,6 +136,11 @@ func (o CompileSmartContractRequest) ToMap() (map[string]interface{}, error) {
 	toSerialize["solidity_input_json"] = o.SolidityInputJson
 	toSerialize["contract_name"] = o.ContractName
 	toSerialize["solidity_compiler_version"] = o.SolidityCompilerVersion
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -165,15 +170,22 @@ func (o *CompileSmartContractRequest) UnmarshalJSON(data []byte) (err error) {
 
 	varCompileSmartContractRequest := _CompileSmartContractRequest{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varCompileSmartContractRequest)
+	err = json.Unmarshal(data, &varCompileSmartContractRequest)
 
 	if err != nil {
 		return err
 	}
 
 	*o = CompileSmartContractRequest(varCompileSmartContractRequest)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "solidity_input_json")
+		delete(additionalProperties, "contract_name")
+		delete(additionalProperties, "solidity_compiler_version")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

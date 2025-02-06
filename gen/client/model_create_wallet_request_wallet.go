@@ -12,7 +12,6 @@ package client
 
 import (
 	"encoding/json"
-	"bytes"
 	"fmt"
 )
 
@@ -25,6 +24,7 @@ type CreateWalletRequestWallet struct {
 	NetworkId string `json:"network_id"`
 	// Whether the wallet should use the project's server signer or if the addresses in the wallets will belong to a private key the developer manages. Defaults to false.
 	UseServerSigner *bool `json:"use_server_signer,omitempty"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _CreateWalletRequestWallet CreateWalletRequestWallet
@@ -117,6 +117,11 @@ func (o CreateWalletRequestWallet) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.UseServerSigner) {
 		toSerialize["use_server_signer"] = o.UseServerSigner
 	}
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -144,15 +149,21 @@ func (o *CreateWalletRequestWallet) UnmarshalJSON(data []byte) (err error) {
 
 	varCreateWalletRequestWallet := _CreateWalletRequestWallet{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varCreateWalletRequestWallet)
+	err = json.Unmarshal(data, &varCreateWalletRequestWallet)
 
 	if err != nil {
 		return err
 	}
 
 	*o = CreateWalletRequestWallet(varCreateWalletRequestWallet)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "network_id")
+		delete(additionalProperties, "use_server_signer")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

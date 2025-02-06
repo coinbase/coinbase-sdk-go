@@ -12,7 +12,6 @@ package client
 
 import (
 	"encoding/json"
-	"bytes"
 	"fmt"
 )
 
@@ -24,6 +23,7 @@ type CryptoAmount struct {
 	// The amount of the crypto in atomic units
 	Amount string `json:"amount"`
 	Asset Asset `json:"asset"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _CryptoAmount CryptoAmount
@@ -107,6 +107,11 @@ func (o CryptoAmount) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["amount"] = o.Amount
 	toSerialize["asset"] = o.Asset
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -135,15 +140,21 @@ func (o *CryptoAmount) UnmarshalJSON(data []byte) (err error) {
 
 	varCryptoAmount := _CryptoAmount{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varCryptoAmount)
+	err = json.Unmarshal(data, &varCryptoAmount)
 
 	if err != nil {
 		return err
 	}
 
 	*o = CryptoAmount(varCryptoAmount)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "amount")
+		delete(additionalProperties, "asset")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

@@ -12,7 +12,6 @@ package client
 
 import (
 	"encoding/json"
-	"bytes"
 	"fmt"
 )
 
@@ -25,6 +24,7 @@ type BroadcastExternalTransaction200Response struct {
 	TransactionHash string `json:"transaction_hash"`
 	// The link to view the transaction on a block explorer. This is optional and may not be present for all transactions.
 	TransactionLink *string `json:"transaction_link,omitempty"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _BroadcastExternalTransaction200Response BroadcastExternalTransaction200Response
@@ -117,6 +117,11 @@ func (o BroadcastExternalTransaction200Response) ToMap() (map[string]interface{}
 	if !IsNil(o.TransactionLink) {
 		toSerialize["transaction_link"] = o.TransactionLink
 	}
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -144,15 +149,21 @@ func (o *BroadcastExternalTransaction200Response) UnmarshalJSON(data []byte) (er
 
 	varBroadcastExternalTransaction200Response := _BroadcastExternalTransaction200Response{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varBroadcastExternalTransaction200Response)
+	err = json.Unmarshal(data, &varBroadcastExternalTransaction200Response)
 
 	if err != nil {
 		return err
 	}
 
 	*o = BroadcastExternalTransaction200Response(varBroadcastExternalTransaction200Response)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "transaction_hash")
+		delete(additionalProperties, "transaction_link")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

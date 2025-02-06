@@ -12,7 +12,6 @@ package client
 
 import (
 	"encoding/json"
-	"bytes"
 	"fmt"
 )
 
@@ -23,6 +22,7 @@ var _ MappedNullable = &BroadcastContractInvocationRequest{}
 type BroadcastContractInvocationRequest struct {
 	// The hex-encoded signed payload of the contract invocation
 	SignedPayload string `json:"signed_payload"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _BroadcastContractInvocationRequest BroadcastContractInvocationRequest
@@ -80,6 +80,11 @@ func (o BroadcastContractInvocationRequest) MarshalJSON() ([]byte, error) {
 func (o BroadcastContractInvocationRequest) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["signed_payload"] = o.SignedPayload
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -107,15 +112,20 @@ func (o *BroadcastContractInvocationRequest) UnmarshalJSON(data []byte) (err err
 
 	varBroadcastContractInvocationRequest := _BroadcastContractInvocationRequest{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varBroadcastContractInvocationRequest)
+	err = json.Unmarshal(data, &varBroadcastContractInvocationRequest)
 
 	if err != nil {
 		return err
 	}
 
 	*o = BroadcastContractInvocationRequest(varBroadcastContractInvocationRequest)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "signed_payload")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

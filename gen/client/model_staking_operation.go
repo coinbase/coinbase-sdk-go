@@ -12,7 +12,6 @@ package client
 
 import (
 	"encoding/json"
-	"bytes"
 	"fmt"
 )
 
@@ -34,6 +33,7 @@ type StakingOperation struct {
 	// The transaction(s) that will execute the staking operation onchain.
 	Transactions []Transaction `json:"transactions"`
 	Metadata *StakingOperationMetadata `json:"metadata,omitempty"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _StakingOperation StakingOperation
@@ -265,6 +265,11 @@ func (o StakingOperation) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.Metadata) {
 		toSerialize["metadata"] = o.Metadata
 	}
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -296,15 +301,26 @@ func (o *StakingOperation) UnmarshalJSON(data []byte) (err error) {
 
 	varStakingOperation := _StakingOperation{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varStakingOperation)
+	err = json.Unmarshal(data, &varStakingOperation)
 
 	if err != nil {
 		return err
 	}
 
 	*o = StakingOperation(varStakingOperation)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "id")
+		delete(additionalProperties, "wallet_id")
+		delete(additionalProperties, "network_id")
+		delete(additionalProperties, "address_id")
+		delete(additionalProperties, "status")
+		delete(additionalProperties, "transactions")
+		delete(additionalProperties, "metadata")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

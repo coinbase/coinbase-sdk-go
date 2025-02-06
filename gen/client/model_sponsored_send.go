@@ -12,7 +12,6 @@ package client
 
 import (
 	"encoding/json"
-	"bytes"
 	"fmt"
 )
 
@@ -35,6 +34,7 @@ type SponsoredSend struct {
 	TransactionLink *string `json:"transaction_link,omitempty"`
 	// The status of the sponsored send
 	Status string `json:"status"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _SponsoredSend SponsoredSend
@@ -275,6 +275,11 @@ func (o SponsoredSend) ToMap() (map[string]interface{}, error) {
 		toSerialize["transaction_link"] = o.TransactionLink
 	}
 	toSerialize["status"] = o.Status
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -305,15 +310,26 @@ func (o *SponsoredSend) UnmarshalJSON(data []byte) (err error) {
 
 	varSponsoredSend := _SponsoredSend{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varSponsoredSend)
+	err = json.Unmarshal(data, &varSponsoredSend)
 
 	if err != nil {
 		return err
 	}
 
 	*o = SponsoredSend(varSponsoredSend)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "to_address_id")
+		delete(additionalProperties, "raw_typed_data")
+		delete(additionalProperties, "typed_data_hash")
+		delete(additionalProperties, "signature")
+		delete(additionalProperties, "transaction_hash")
+		delete(additionalProperties, "transaction_link")
+		delete(additionalProperties, "status")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

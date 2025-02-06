@@ -46,7 +46,10 @@ type ERC20TransferEvent struct {
 	To *string `json:"to,omitempty"`
 	// Amount of tokens transferred, typically in the smallest unit (e.g., wei for Ethereum).
 	Value *string `json:"value,omitempty"`
+	AdditionalProperties map[string]interface{}
 }
+
+type _ERC20TransferEvent ERC20TransferEvent
 
 // NewERC20TransferEvent instantiates a new ERC20TransferEvent object
 // This constructor will assign default values to properties that have it defined,
@@ -530,7 +533,45 @@ func (o ERC20TransferEvent) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.Value) {
 		toSerialize["value"] = o.Value
 	}
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
+}
+
+func (o *ERC20TransferEvent) UnmarshalJSON(data []byte) (err error) {
+	varERC20TransferEvent := _ERC20TransferEvent{}
+
+	err = json.Unmarshal(data, &varERC20TransferEvent)
+
+	if err != nil {
+		return err
+	}
+
+	*o = ERC20TransferEvent(varERC20TransferEvent)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "webhookId")
+		delete(additionalProperties, "eventType")
+		delete(additionalProperties, "network")
+		delete(additionalProperties, "blockHash")
+		delete(additionalProperties, "blockNumber")
+		delete(additionalProperties, "blockTime")
+		delete(additionalProperties, "transactionHash")
+		delete(additionalProperties, "transactionIndex")
+		delete(additionalProperties, "logIndex")
+		delete(additionalProperties, "contractAddress")
+		delete(additionalProperties, "from")
+		delete(additionalProperties, "to")
+		delete(additionalProperties, "value")
+		o.AdditionalProperties = additionalProperties
+	}
+
+	return err
 }
 
 type NullableERC20TransferEvent struct {

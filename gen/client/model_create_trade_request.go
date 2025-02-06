@@ -12,7 +12,6 @@ package client
 
 import (
 	"encoding/json"
-	"bytes"
 	"fmt"
 )
 
@@ -27,6 +26,7 @@ type CreateTradeRequest struct {
 	FromAssetId string `json:"from_asset_id"`
 	// The ID of the asset to receive from the trade
 	ToAssetId string `json:"to_asset_id"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _CreateTradeRequest CreateTradeRequest
@@ -136,6 +136,11 @@ func (o CreateTradeRequest) ToMap() (map[string]interface{}, error) {
 	toSerialize["amount"] = o.Amount
 	toSerialize["from_asset_id"] = o.FromAssetId
 	toSerialize["to_asset_id"] = o.ToAssetId
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -165,15 +170,22 @@ func (o *CreateTradeRequest) UnmarshalJSON(data []byte) (err error) {
 
 	varCreateTradeRequest := _CreateTradeRequest{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varCreateTradeRequest)
+	err = json.Unmarshal(data, &varCreateTradeRequest)
 
 	if err != nil {
 		return err
 	}
 
 	*o = CreateTradeRequest(varCreateTradeRequest)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "amount")
+		delete(additionalProperties, "from_asset_id")
+		delete(additionalProperties, "to_asset_id")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

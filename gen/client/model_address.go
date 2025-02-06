@@ -12,7 +12,6 @@ package client
 
 import (
 	"encoding/json"
-	"bytes"
 	"fmt"
 )
 
@@ -31,6 +30,7 @@ type Address struct {
 	AddressId string `json:"address_id"`
 	// The index of the address in the wallet.
 	Index int32 `json:"index"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _Address Address
@@ -192,6 +192,11 @@ func (o Address) ToMap() (map[string]interface{}, error) {
 	toSerialize["public_key"] = o.PublicKey
 	toSerialize["address_id"] = o.AddressId
 	toSerialize["index"] = o.Index
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -223,15 +228,24 @@ func (o *Address) UnmarshalJSON(data []byte) (err error) {
 
 	varAddress := _Address{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varAddress)
+	err = json.Unmarshal(data, &varAddress)
 
 	if err != nil {
 		return err
 	}
 
 	*o = Address(varAddress)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "wallet_id")
+		delete(additionalProperties, "network_id")
+		delete(additionalProperties, "public_key")
+		delete(additionalProperties, "address_id")
+		delete(additionalProperties, "index")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

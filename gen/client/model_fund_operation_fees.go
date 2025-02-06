@@ -12,7 +12,6 @@ package client
 
 import (
 	"encoding/json"
-	"bytes"
 	"fmt"
 )
 
@@ -23,6 +22,7 @@ var _ MappedNullable = &FundOperationFees{}
 type FundOperationFees struct {
 	BuyFee FiatAmount `json:"buy_fee"`
 	TransferFee CryptoAmount `json:"transfer_fee"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _FundOperationFees FundOperationFees
@@ -106,6 +106,11 @@ func (o FundOperationFees) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["buy_fee"] = o.BuyFee
 	toSerialize["transfer_fee"] = o.TransferFee
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -134,15 +139,21 @@ func (o *FundOperationFees) UnmarshalJSON(data []byte) (err error) {
 
 	varFundOperationFees := _FundOperationFees{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varFundOperationFees)
+	err = json.Unmarshal(data, &varFundOperationFees)
 
 	if err != nil {
 		return err
 	}
 
 	*o = FundOperationFees(varFundOperationFees)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "buy_fee")
+		delete(additionalProperties, "transfer_fee")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

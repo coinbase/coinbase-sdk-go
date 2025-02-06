@@ -12,7 +12,6 @@ package client
 
 import (
 	"encoding/json"
-	"bytes"
 	"fmt"
 )
 
@@ -29,6 +28,7 @@ type Asset struct {
 	Decimals *int32 `json:"decimals,omitempty"`
 	// The optional contract address for the asset. This will be specified for smart contract-based assets, for example ERC20s.
 	ContractAddress *string `json:"contract_address,omitempty"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _Asset Asset
@@ -182,6 +182,11 @@ func (o Asset) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.ContractAddress) {
 		toSerialize["contract_address"] = o.ContractAddress
 	}
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -210,15 +215,23 @@ func (o *Asset) UnmarshalJSON(data []byte) (err error) {
 
 	varAsset := _Asset{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varAsset)
+	err = json.Unmarshal(data, &varAsset)
 
 	if err != nil {
 		return err
 	}
 
 	*o = Asset(varAsset)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "network_id")
+		delete(additionalProperties, "asset_id")
+		delete(additionalProperties, "decimals")
+		delete(additionalProperties, "contract_address")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

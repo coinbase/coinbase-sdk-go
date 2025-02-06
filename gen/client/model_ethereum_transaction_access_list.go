@@ -20,7 +20,10 @@ var _ MappedNullable = &EthereumTransactionAccessList{}
 // EthereumTransactionAccessList struct for EthereumTransactionAccessList
 type EthereumTransactionAccessList struct {
 	AccessList []EthereumTransactionAccess `json:"access_list,omitempty"`
+	AdditionalProperties map[string]interface{}
 }
+
+type _EthereumTransactionAccessList EthereumTransactionAccessList
 
 // NewEthereumTransactionAccessList instantiates a new EthereumTransactionAccessList object
 // This constructor will assign default values to properties that have it defined,
@@ -84,7 +87,33 @@ func (o EthereumTransactionAccessList) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.AccessList) {
 		toSerialize["access_list"] = o.AccessList
 	}
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
+}
+
+func (o *EthereumTransactionAccessList) UnmarshalJSON(data []byte) (err error) {
+	varEthereumTransactionAccessList := _EthereumTransactionAccessList{}
+
+	err = json.Unmarshal(data, &varEthereumTransactionAccessList)
+
+	if err != nil {
+		return err
+	}
+
+	*o = EthereumTransactionAccessList(varEthereumTransactionAccessList)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "access_list")
+		o.AdditionalProperties = additionalProperties
+	}
+
+	return err
 }
 
 type NullableEthereumTransactionAccessList struct {

@@ -12,7 +12,6 @@ package client
 
 import (
 	"encoding/json"
-	"bytes"
 	"fmt"
 )
 
@@ -24,6 +23,7 @@ type ServerSignerEvent struct {
 	// The ID of the server-signer that the event is for
 	ServerSignerId string `json:"server_signer_id"`
 	Event ServerSignerEventEvent `json:"event"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _ServerSignerEvent ServerSignerEvent
@@ -107,6 +107,11 @@ func (o ServerSignerEvent) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["server_signer_id"] = o.ServerSignerId
 	toSerialize["event"] = o.Event
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -135,15 +140,21 @@ func (o *ServerSignerEvent) UnmarshalJSON(data []byte) (err error) {
 
 	varServerSignerEvent := _ServerSignerEvent{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varServerSignerEvent)
+	err = json.Unmarshal(data, &varServerSignerEvent)
 
 	if err != nil {
 		return err
 	}
 
 	*o = ServerSignerEvent(varServerSignerEvent)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "server_signer_id")
+		delete(additionalProperties, "event")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

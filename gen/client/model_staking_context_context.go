@@ -12,7 +12,6 @@ package client
 
 import (
 	"encoding/json"
-	"bytes"
 	"fmt"
 )
 
@@ -25,6 +24,7 @@ type StakingContextContext struct {
 	UnstakeableBalance Balance `json:"unstakeable_balance"`
 	PendingClaimableBalance Balance `json:"pending_claimable_balance"`
 	ClaimableBalance Balance `json:"claimable_balance"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _StakingContextContext StakingContextContext
@@ -160,6 +160,11 @@ func (o StakingContextContext) ToMap() (map[string]interface{}, error) {
 	toSerialize["unstakeable_balance"] = o.UnstakeableBalance
 	toSerialize["pending_claimable_balance"] = o.PendingClaimableBalance
 	toSerialize["claimable_balance"] = o.ClaimableBalance
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -190,15 +195,23 @@ func (o *StakingContextContext) UnmarshalJSON(data []byte) (err error) {
 
 	varStakingContextContext := _StakingContextContext{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varStakingContextContext)
+	err = json.Unmarshal(data, &varStakingContextContext)
 
 	if err != nil {
 		return err
 	}
 
 	*o = StakingContextContext(varStakingContextContext)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "stakeable_balance")
+		delete(additionalProperties, "unstakeable_balance")
+		delete(additionalProperties, "pending_claimable_balance")
+		delete(additionalProperties, "claimable_balance")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

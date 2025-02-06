@@ -12,7 +12,6 @@ package client
 
 import (
 	"encoding/json"
-	"bytes"
 	"fmt"
 )
 
@@ -34,6 +33,7 @@ type FundOperation struct {
 	Fees FundOperationFees `json:"fees"`
 	// The status of the fund operation
 	Status string `json:"status"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _FundOperation FundOperation
@@ -273,6 +273,11 @@ func (o FundOperation) ToMap() (map[string]interface{}, error) {
 	toSerialize["fiat_amount"] = o.FiatAmount
 	toSerialize["fees"] = o.Fees
 	toSerialize["status"] = o.Status
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -307,15 +312,27 @@ func (o *FundOperation) UnmarshalJSON(data []byte) (err error) {
 
 	varFundOperation := _FundOperation{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varFundOperation)
+	err = json.Unmarshal(data, &varFundOperation)
 
 	if err != nil {
 		return err
 	}
 
 	*o = FundOperation(varFundOperation)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "fund_operation_id")
+		delete(additionalProperties, "network_id")
+		delete(additionalProperties, "wallet_id")
+		delete(additionalProperties, "address_id")
+		delete(additionalProperties, "crypto_amount")
+		delete(additionalProperties, "fiat_amount")
+		delete(additionalProperties, "fees")
+		delete(additionalProperties, "status")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

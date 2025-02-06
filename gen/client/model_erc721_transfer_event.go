@@ -46,7 +46,10 @@ type ERC721TransferEvent struct {
 	To *string `json:"to,omitempty"`
 	// Unique identifier of the NFT being transferred.
 	TokenId *string `json:"tokenId,omitempty"`
+	AdditionalProperties map[string]interface{}
 }
+
+type _ERC721TransferEvent ERC721TransferEvent
 
 // NewERC721TransferEvent instantiates a new ERC721TransferEvent object
 // This constructor will assign default values to properties that have it defined,
@@ -530,7 +533,45 @@ func (o ERC721TransferEvent) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.TokenId) {
 		toSerialize["tokenId"] = o.TokenId
 	}
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
+}
+
+func (o *ERC721TransferEvent) UnmarshalJSON(data []byte) (err error) {
+	varERC721TransferEvent := _ERC721TransferEvent{}
+
+	err = json.Unmarshal(data, &varERC721TransferEvent)
+
+	if err != nil {
+		return err
+	}
+
+	*o = ERC721TransferEvent(varERC721TransferEvent)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "webhookId")
+		delete(additionalProperties, "eventType")
+		delete(additionalProperties, "network")
+		delete(additionalProperties, "blockHash")
+		delete(additionalProperties, "blockNumber")
+		delete(additionalProperties, "blockTime")
+		delete(additionalProperties, "transactionHash")
+		delete(additionalProperties, "transactionIndex")
+		delete(additionalProperties, "logIndex")
+		delete(additionalProperties, "contractAddress")
+		delete(additionalProperties, "from")
+		delete(additionalProperties, "to")
+		delete(additionalProperties, "tokenId")
+		o.AdditionalProperties = additionalProperties
+	}
+
+	return err
 }
 
 type NullableERC721TransferEvent struct {

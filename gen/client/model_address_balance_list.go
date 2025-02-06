@@ -12,7 +12,6 @@ package client
 
 import (
 	"encoding/json"
-	"bytes"
 	"fmt"
 )
 
@@ -28,6 +27,7 @@ type AddressBalanceList struct {
 	NextPage string `json:"next_page"`
 	// The total number of balances for the wallet.
 	TotalCount int32 `json:"total_count"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _AddressBalanceList AddressBalanceList
@@ -163,6 +163,11 @@ func (o AddressBalanceList) ToMap() (map[string]interface{}, error) {
 	toSerialize["has_more"] = o.HasMore
 	toSerialize["next_page"] = o.NextPage
 	toSerialize["total_count"] = o.TotalCount
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -193,15 +198,23 @@ func (o *AddressBalanceList) UnmarshalJSON(data []byte) (err error) {
 
 	varAddressBalanceList := _AddressBalanceList{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varAddressBalanceList)
+	err = json.Unmarshal(data, &varAddressBalanceList)
 
 	if err != nil {
 		return err
 	}
 
 	*o = AddressBalanceList(varAddressBalanceList)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "data")
+		delete(additionalProperties, "has_more")
+		delete(additionalProperties, "next_page")
+		delete(additionalProperties, "total_count")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

@@ -12,7 +12,6 @@ package client
 
 import (
 	"encoding/json"
-	"bytes"
 	"fmt"
 )
 
@@ -29,6 +28,7 @@ type CreateStakingOperationRequest struct {
 	Action string `json:"action"`
 	// Additional options for the staking operation.
 	Options map[string]string `json:"options"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _CreateStakingOperationRequest CreateStakingOperationRequest
@@ -164,6 +164,11 @@ func (o CreateStakingOperationRequest) ToMap() (map[string]interface{}, error) {
 	toSerialize["asset_id"] = o.AssetId
 	toSerialize["action"] = o.Action
 	toSerialize["options"] = o.Options
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -194,15 +199,23 @@ func (o *CreateStakingOperationRequest) UnmarshalJSON(data []byte) (err error) {
 
 	varCreateStakingOperationRequest := _CreateStakingOperationRequest{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varCreateStakingOperationRequest)
+	err = json.Unmarshal(data, &varCreateStakingOperationRequest)
 
 	if err != nil {
 		return err
 	}
 
 	*o = CreateStakingOperationRequest(varCreateStakingOperationRequest)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "network_id")
+		delete(additionalProperties, "asset_id")
+		delete(additionalProperties, "action")
+		delete(additionalProperties, "options")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

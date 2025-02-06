@@ -13,7 +13,6 @@ package client
 import (
 	"encoding/json"
 	"time"
-	"bytes"
 	"fmt"
 )
 
@@ -35,6 +34,7 @@ type FundQuote struct {
 	// The time at which the quote expires
 	ExpiresAt time.Time `json:"expires_at"`
 	Fees FundOperationFees `json:"fees"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _FundQuote FundQuote
@@ -274,6 +274,11 @@ func (o FundQuote) ToMap() (map[string]interface{}, error) {
 	toSerialize["fiat_amount"] = o.FiatAmount
 	toSerialize["expires_at"] = o.ExpiresAt
 	toSerialize["fees"] = o.Fees
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -308,15 +313,27 @@ func (o *FundQuote) UnmarshalJSON(data []byte) (err error) {
 
 	varFundQuote := _FundQuote{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varFundQuote)
+	err = json.Unmarshal(data, &varFundQuote)
 
 	if err != nil {
 		return err
 	}
 
 	*o = FundQuote(varFundQuote)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "fund_quote_id")
+		delete(additionalProperties, "network_id")
+		delete(additionalProperties, "wallet_id")
+		delete(additionalProperties, "address_id")
+		delete(additionalProperties, "crypto_amount")
+		delete(additionalProperties, "fiat_amount")
+		delete(additionalProperties, "expires_at")
+		delete(additionalProperties, "fees")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

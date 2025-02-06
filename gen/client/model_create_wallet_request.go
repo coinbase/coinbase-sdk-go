@@ -12,7 +12,6 @@ package client
 
 import (
 	"encoding/json"
-	"bytes"
 	"fmt"
 )
 
@@ -22,6 +21,7 @@ var _ MappedNullable = &CreateWalletRequest{}
 // CreateWalletRequest struct for CreateWalletRequest
 type CreateWalletRequest struct {
 	Wallet CreateWalletRequestWallet `json:"wallet"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _CreateWalletRequest CreateWalletRequest
@@ -79,6 +79,11 @@ func (o CreateWalletRequest) MarshalJSON() ([]byte, error) {
 func (o CreateWalletRequest) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["wallet"] = o.Wallet
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -106,15 +111,20 @@ func (o *CreateWalletRequest) UnmarshalJSON(data []byte) (err error) {
 
 	varCreateWalletRequest := _CreateWalletRequest{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varCreateWalletRequest)
+	err = json.Unmarshal(data, &varCreateWalletRequest)
 
 	if err != nil {
 		return err
 	}
 
 	*o = CreateWalletRequest(varCreateWalletRequest)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "wallet")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

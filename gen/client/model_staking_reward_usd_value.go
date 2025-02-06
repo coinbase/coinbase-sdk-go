@@ -13,7 +13,6 @@ package client
 import (
 	"encoding/json"
 	"time"
-	"bytes"
 	"fmt"
 )
 
@@ -28,6 +27,7 @@ type StakingRewardUSDValue struct {
 	ConversionPrice string `json:"conversion_price"`
 	// The time of the conversion in UTC.
 	ConversionTime time.Time `json:"conversion_time"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _StakingRewardUSDValue StakingRewardUSDValue
@@ -137,6 +137,11 @@ func (o StakingRewardUSDValue) ToMap() (map[string]interface{}, error) {
 	toSerialize["amount"] = o.Amount
 	toSerialize["conversion_price"] = o.ConversionPrice
 	toSerialize["conversion_time"] = o.ConversionTime
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -166,15 +171,22 @@ func (o *StakingRewardUSDValue) UnmarshalJSON(data []byte) (err error) {
 
 	varStakingRewardUSDValue := _StakingRewardUSDValue{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varStakingRewardUSDValue)
+	err = json.Unmarshal(data, &varStakingRewardUSDValue)
 
 	if err != nil {
 		return err
 	}
 
 	*o = StakingRewardUSDValue(varStakingRewardUSDValue)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "amount")
+		delete(additionalProperties, "conversion_price")
+		delete(additionalProperties, "conversion_time")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

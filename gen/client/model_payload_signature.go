@@ -12,7 +12,6 @@ package client
 
 import (
 	"encoding/json"
-	"bytes"
 	"fmt"
 )
 
@@ -33,6 +32,7 @@ type PayloadSignature struct {
 	Signature *string `json:"signature,omitempty"`
 	// The status of the payload signature.
 	Status string `json:"status"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _PayloadSignature PayloadSignature
@@ -229,6 +229,11 @@ func (o PayloadSignature) ToMap() (map[string]interface{}, error) {
 		toSerialize["signature"] = o.Signature
 	}
 	toSerialize["status"] = o.Status
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -260,15 +265,25 @@ func (o *PayloadSignature) UnmarshalJSON(data []byte) (err error) {
 
 	varPayloadSignature := _PayloadSignature{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varPayloadSignature)
+	err = json.Unmarshal(data, &varPayloadSignature)
 
 	if err != nil {
 		return err
 	}
 
 	*o = PayloadSignature(varPayloadSignature)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "payload_signature_id")
+		delete(additionalProperties, "wallet_id")
+		delete(additionalProperties, "address_id")
+		delete(additionalProperties, "unsigned_payload")
+		delete(additionalProperties, "signature")
+		delete(additionalProperties, "status")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

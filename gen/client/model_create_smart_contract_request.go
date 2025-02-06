@@ -12,7 +12,6 @@ package client
 
 import (
 	"encoding/json"
-	"bytes"
 	"fmt"
 )
 
@@ -25,6 +24,7 @@ type CreateSmartContractRequest struct {
 	Options SmartContractOptions `json:"options"`
 	// The optional UUID of the compiled smart contract to deploy. This field is only required when SmartContractType is set to custom.
 	CompiledSmartContractId *string `json:"compiled_smart_contract_id,omitempty"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _CreateSmartContractRequest CreateSmartContractRequest
@@ -143,6 +143,11 @@ func (o CreateSmartContractRequest) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.CompiledSmartContractId) {
 		toSerialize["compiled_smart_contract_id"] = o.CompiledSmartContractId
 	}
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -171,15 +176,22 @@ func (o *CreateSmartContractRequest) UnmarshalJSON(data []byte) (err error) {
 
 	varCreateSmartContractRequest := _CreateSmartContractRequest{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varCreateSmartContractRequest)
+	err = json.Unmarshal(data, &varCreateSmartContractRequest)
 
 	if err != nil {
 		return err
 	}
 
 	*o = CreateSmartContractRequest(varCreateSmartContractRequest)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "type")
+		delete(additionalProperties, "options")
+		delete(additionalProperties, "compiled_smart_contract_id")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

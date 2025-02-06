@@ -12,7 +12,6 @@ package client
 
 import (
 	"encoding/json"
-	"bytes"
 	"fmt"
 )
 
@@ -27,6 +26,7 @@ type ReadContractRequest struct {
 	Args string `json:"args"`
 	// The JSON-encoded ABI of the contract method (optional, will use cached ABI if not provided)
 	Abi *string `json:"abi,omitempty"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _ReadContractRequest ReadContractRequest
@@ -145,6 +145,11 @@ func (o ReadContractRequest) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.Abi) {
 		toSerialize["abi"] = o.Abi
 	}
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -173,15 +178,22 @@ func (o *ReadContractRequest) UnmarshalJSON(data []byte) (err error) {
 
 	varReadContractRequest := _ReadContractRequest{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varReadContractRequest)
+	err = json.Unmarshal(data, &varReadContractRequest)
 
 	if err != nil {
 		return err
 	}
 
 	*o = ReadContractRequest(varReadContractRequest)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "method")
+		delete(additionalProperties, "args")
+		delete(additionalProperties, "abi")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

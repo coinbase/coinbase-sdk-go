@@ -13,7 +13,6 @@ package client
 import (
 	"encoding/json"
 	"time"
-	"bytes"
 	"fmt"
 )
 
@@ -33,6 +32,7 @@ type FetchStakingRewardsRequest struct {
 	// The end time of this reward period
 	EndTime time.Time `json:"end_time"`
 	Format StakingRewardFormat `json:"format"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _FetchStakingRewardsRequest FetchStakingRewardsRequest
@@ -222,6 +222,11 @@ func (o FetchStakingRewardsRequest) ToMap() (map[string]interface{}, error) {
 	toSerialize["start_time"] = o.StartTime
 	toSerialize["end_time"] = o.EndTime
 	toSerialize["format"] = o.Format
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -254,15 +259,25 @@ func (o *FetchStakingRewardsRequest) UnmarshalJSON(data []byte) (err error) {
 
 	varFetchStakingRewardsRequest := _FetchStakingRewardsRequest{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varFetchStakingRewardsRequest)
+	err = json.Unmarshal(data, &varFetchStakingRewardsRequest)
 
 	if err != nil {
 		return err
 	}
 
 	*o = FetchStakingRewardsRequest(varFetchStakingRewardsRequest)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "network_id")
+		delete(additionalProperties, "asset_id")
+		delete(additionalProperties, "address_ids")
+		delete(additionalProperties, "start_time")
+		delete(additionalProperties, "end_time")
+		delete(additionalProperties, "format")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

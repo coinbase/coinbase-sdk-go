@@ -12,7 +12,6 @@ package client
 
 import (
 	"encoding/json"
-	"bytes"
 	"fmt"
 )
 
@@ -30,6 +29,7 @@ type EthereumTokenTransfer struct {
 	TokenId *string `json:"token_id,omitempty"`
 	LogIndex int64 `json:"log_index"`
 	TokenTransferType TokenTransferType `json:"token_transfer_type"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _EthereumTokenTransfer EthereumTokenTransfer
@@ -261,6 +261,11 @@ func (o EthereumTokenTransfer) ToMap() (map[string]interface{}, error) {
 	}
 	toSerialize["log_index"] = o.LogIndex
 	toSerialize["token_transfer_type"] = o.TokenTransferType
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -292,15 +297,26 @@ func (o *EthereumTokenTransfer) UnmarshalJSON(data []byte) (err error) {
 
 	varEthereumTokenTransfer := _EthereumTokenTransfer{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varEthereumTokenTransfer)
+	err = json.Unmarshal(data, &varEthereumTokenTransfer)
 
 	if err != nil {
 		return err
 	}
 
 	*o = EthereumTokenTransfer(varEthereumTokenTransfer)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "contract_address")
+		delete(additionalProperties, "from_address")
+		delete(additionalProperties, "to_address")
+		delete(additionalProperties, "value")
+		delete(additionalProperties, "token_id")
+		delete(additionalProperties, "log_index")
+		delete(additionalProperties, "token_transfer_type")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

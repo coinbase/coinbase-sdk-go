@@ -12,7 +12,6 @@ package client
 
 import (
 	"encoding/json"
-	"bytes"
 	"fmt"
 )
 
@@ -24,6 +23,7 @@ type Balance struct {
 	// The amount in the atomic units of the asset
 	Amount string `json:"amount"`
 	Asset Asset `json:"asset"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _Balance Balance
@@ -107,6 +107,11 @@ func (o Balance) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["amount"] = o.Amount
 	toSerialize["asset"] = o.Asset
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -135,15 +140,21 @@ func (o *Balance) UnmarshalJSON(data []byte) (err error) {
 
 	varBalance := _Balance{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varBalance)
+	err = json.Unmarshal(data, &varBalance)
 
 	if err != nil {
 		return err
 	}
 
 	*o = Balance(varBalance)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "amount")
+		delete(additionalProperties, "asset")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

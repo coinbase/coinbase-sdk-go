@@ -12,7 +12,6 @@ package client
 
 import (
 	"encoding/json"
-	"bytes"
 	"fmt"
 )
 
@@ -37,6 +36,7 @@ type EthereumValidatorMetadata struct {
 	WithdrawableEpoch string `json:"withdrawableEpoch"`
 	Balance Balance `json:"balance"`
 	EffectiveBalance Balance `json:"effective_balance"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _EthereumValidatorMetadata EthereumValidatorMetadata
@@ -302,6 +302,11 @@ func (o EthereumValidatorMetadata) ToMap() (map[string]interface{}, error) {
 	toSerialize["withdrawableEpoch"] = o.WithdrawableEpoch
 	toSerialize["balance"] = o.Balance
 	toSerialize["effective_balance"] = o.EffectiveBalance
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -337,15 +342,28 @@ func (o *EthereumValidatorMetadata) UnmarshalJSON(data []byte) (err error) {
 
 	varEthereumValidatorMetadata := _EthereumValidatorMetadata{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varEthereumValidatorMetadata)
+	err = json.Unmarshal(data, &varEthereumValidatorMetadata)
 
 	if err != nil {
 		return err
 	}
 
 	*o = EthereumValidatorMetadata(varEthereumValidatorMetadata)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "index")
+		delete(additionalProperties, "public_key")
+		delete(additionalProperties, "withdrawal_address")
+		delete(additionalProperties, "slashed")
+		delete(additionalProperties, "activationEpoch")
+		delete(additionalProperties, "exitEpoch")
+		delete(additionalProperties, "withdrawableEpoch")
+		delete(additionalProperties, "balance")
+		delete(additionalProperties, "effective_balance")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

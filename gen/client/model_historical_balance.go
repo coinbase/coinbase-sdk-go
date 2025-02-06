@@ -12,7 +12,6 @@ package client
 
 import (
 	"encoding/json"
-	"bytes"
 	"fmt"
 )
 
@@ -28,6 +27,7 @@ type HistoricalBalance struct {
 	// The block height at which the balance was recorded
 	BlockHeight string `json:"block_height"`
 	Asset Asset `json:"asset"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _HistoricalBalance HistoricalBalance
@@ -163,6 +163,11 @@ func (o HistoricalBalance) ToMap() (map[string]interface{}, error) {
 	toSerialize["block_hash"] = o.BlockHash
 	toSerialize["block_height"] = o.BlockHeight
 	toSerialize["asset"] = o.Asset
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -193,15 +198,23 @@ func (o *HistoricalBalance) UnmarshalJSON(data []byte) (err error) {
 
 	varHistoricalBalance := _HistoricalBalance{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varHistoricalBalance)
+	err = json.Unmarshal(data, &varHistoricalBalance)
 
 	if err != nil {
 		return err
 	}
 
 	*o = HistoricalBalance(varHistoricalBalance)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "amount")
+		delete(additionalProperties, "block_hash")
+		delete(additionalProperties, "block_height")
+		delete(additionalProperties, "asset")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

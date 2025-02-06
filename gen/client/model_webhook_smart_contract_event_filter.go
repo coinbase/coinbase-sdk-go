@@ -12,7 +12,6 @@ package client
 
 import (
 	"encoding/json"
-	"bytes"
 	"fmt"
 )
 
@@ -23,6 +22,7 @@ var _ MappedNullable = &WebhookSmartContractEventFilter{}
 type WebhookSmartContractEventFilter struct {
 	// A list of smart contract addresses to filter on.
 	ContractAddresses []string `json:"contract_addresses"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _WebhookSmartContractEventFilter WebhookSmartContractEventFilter
@@ -80,6 +80,11 @@ func (o WebhookSmartContractEventFilter) MarshalJSON() ([]byte, error) {
 func (o WebhookSmartContractEventFilter) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["contract_addresses"] = o.ContractAddresses
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -107,15 +112,20 @@ func (o *WebhookSmartContractEventFilter) UnmarshalJSON(data []byte) (err error)
 
 	varWebhookSmartContractEventFilter := _WebhookSmartContractEventFilter{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varWebhookSmartContractEventFilter)
+	err = json.Unmarshal(data, &varWebhookSmartContractEventFilter)
 
 	if err != nil {
 		return err
 	}
 
 	*o = WebhookSmartContractEventFilter(varWebhookSmartContractEventFilter)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "contract_addresses")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

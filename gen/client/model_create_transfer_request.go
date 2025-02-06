@@ -12,7 +12,6 @@ package client
 
 import (
 	"encoding/json"
-	"bytes"
 	"fmt"
 )
 
@@ -33,6 +32,7 @@ type CreateTransferRequest struct {
 	Gasless *bool `json:"gasless,omitempty"`
 	// When true, the transfer will be submitted immediately. Otherwise, the transfer will be batched. Defaults to false
 	SkipBatching *bool `json:"skip_batching,omitempty"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _CreateTransferRequest CreateTransferRequest
@@ -238,6 +238,11 @@ func (o CreateTransferRequest) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.SkipBatching) {
 		toSerialize["skip_batching"] = o.SkipBatching
 	}
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -268,15 +273,25 @@ func (o *CreateTransferRequest) UnmarshalJSON(data []byte) (err error) {
 
 	varCreateTransferRequest := _CreateTransferRequest{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varCreateTransferRequest)
+	err = json.Unmarshal(data, &varCreateTransferRequest)
 
 	if err != nil {
 		return err
 	}
 
 	*o = CreateTransferRequest(varCreateTransferRequest)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "amount")
+		delete(additionalProperties, "network_id")
+		delete(additionalProperties, "asset_id")
+		delete(additionalProperties, "destination")
+		delete(additionalProperties, "gasless")
+		delete(additionalProperties, "skip_batching")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

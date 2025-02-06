@@ -56,7 +56,10 @@ type SmartContractActivityEvent struct {
 	To *string `json:"to,omitempty"`
 	// Amount of tokens transferred, typically in the smallest unit (e.g., wei for Ethereum).
 	Value *int32 `json:"value,omitempty"`
+	AdditionalProperties map[string]interface{}
 }
+
+type _SmartContractActivityEvent SmartContractActivityEvent
 
 // NewSmartContractActivityEvent instantiates a new SmartContractActivityEvent object
 // This constructor will assign default values to properties that have it defined,
@@ -715,7 +718,50 @@ func (o SmartContractActivityEvent) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.Value) {
 		toSerialize["value"] = o.Value
 	}
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
+}
+
+func (o *SmartContractActivityEvent) UnmarshalJSON(data []byte) (err error) {
+	varSmartContractActivityEvent := _SmartContractActivityEvent{}
+
+	err = json.Unmarshal(data, &varSmartContractActivityEvent)
+
+	if err != nil {
+		return err
+	}
+
+	*o = SmartContractActivityEvent(varSmartContractActivityEvent)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "webhookId")
+		delete(additionalProperties, "eventType")
+		delete(additionalProperties, "network")
+		delete(additionalProperties, "projectName")
+		delete(additionalProperties, "contractName")
+		delete(additionalProperties, "func")
+		delete(additionalProperties, "sig")
+		delete(additionalProperties, "fourBytes")
+		delete(additionalProperties, "contractAddress")
+		delete(additionalProperties, "blockHash")
+		delete(additionalProperties, "blockNumber")
+		delete(additionalProperties, "blockTime")
+		delete(additionalProperties, "transactionHash")
+		delete(additionalProperties, "transactionIndex")
+		delete(additionalProperties, "logIndex")
+		delete(additionalProperties, "from")
+		delete(additionalProperties, "to")
+		delete(additionalProperties, "value")
+		o.AdditionalProperties = additionalProperties
+	}
+
+	return err
 }
 
 type NullableSmartContractActivityEvent struct {

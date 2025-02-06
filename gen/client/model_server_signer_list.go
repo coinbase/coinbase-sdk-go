@@ -12,7 +12,6 @@ package client
 
 import (
 	"encoding/json"
-	"bytes"
 	"fmt"
 )
 
@@ -28,6 +27,7 @@ type ServerSignerList struct {
 	NextPage string `json:"next_page"`
 	// The total number of server-signers for the project.
 	TotalCount int32 `json:"total_count"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _ServerSignerList ServerSignerList
@@ -163,6 +163,11 @@ func (o ServerSignerList) ToMap() (map[string]interface{}, error) {
 	toSerialize["has_more"] = o.HasMore
 	toSerialize["next_page"] = o.NextPage
 	toSerialize["total_count"] = o.TotalCount
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -193,15 +198,23 @@ func (o *ServerSignerList) UnmarshalJSON(data []byte) (err error) {
 
 	varServerSignerList := _ServerSignerList{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varServerSignerList)
+	err = json.Unmarshal(data, &varServerSignerList)
 
 	if err != nil {
 		return err
 	}
 
 	*o = ServerSignerList(varServerSignerList)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "data")
+		delete(additionalProperties, "has_more")
+		delete(additionalProperties, "next_page")
+		delete(additionalProperties, "total_count")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

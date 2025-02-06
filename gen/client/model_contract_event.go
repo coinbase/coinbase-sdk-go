@@ -13,7 +13,6 @@ package client
 import (
 	"encoding/json"
 	"time"
-	"bytes"
 	"fmt"
 )
 
@@ -48,6 +47,7 @@ type ContractEvent struct {
 	EventIndex int32 `json:"event_index"`
 	// The event data in a stringified format
 	Data string `json:"data"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _ContractEvent ContractEvent
@@ -417,6 +417,11 @@ func (o ContractEvent) ToMap() (map[string]interface{}, error) {
 	toSerialize["tx_index"] = o.TxIndex
 	toSerialize["event_index"] = o.EventIndex
 	toSerialize["data"] = o.Data
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -456,15 +461,32 @@ func (o *ContractEvent) UnmarshalJSON(data []byte) (err error) {
 
 	varContractEvent := _ContractEvent{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varContractEvent)
+	err = json.Unmarshal(data, &varContractEvent)
 
 	if err != nil {
 		return err
 	}
 
 	*o = ContractEvent(varContractEvent)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "network_id")
+		delete(additionalProperties, "protocol_name")
+		delete(additionalProperties, "contract_name")
+		delete(additionalProperties, "event_name")
+		delete(additionalProperties, "sig")
+		delete(additionalProperties, "four_bytes")
+		delete(additionalProperties, "contract_address")
+		delete(additionalProperties, "block_time")
+		delete(additionalProperties, "block_height")
+		delete(additionalProperties, "tx_hash")
+		delete(additionalProperties, "tx_index")
+		delete(additionalProperties, "event_index")
+		delete(additionalProperties, "data")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

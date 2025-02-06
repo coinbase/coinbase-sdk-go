@@ -12,7 +12,6 @@ package client
 
 import (
 	"encoding/json"
-	"bytes"
 	"fmt"
 )
 
@@ -27,6 +26,7 @@ type CreateServerSignerRequest struct {
 	EnrollmentData string `json:"enrollment_data"`
 	// Whether the Server-Signer uses MPC.
 	IsMpc bool `json:"is_mpc"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _CreateServerSignerRequest CreateServerSignerRequest
@@ -145,6 +145,11 @@ func (o CreateServerSignerRequest) ToMap() (map[string]interface{}, error) {
 	}
 	toSerialize["enrollment_data"] = o.EnrollmentData
 	toSerialize["is_mpc"] = o.IsMpc
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -173,15 +178,22 @@ func (o *CreateServerSignerRequest) UnmarshalJSON(data []byte) (err error) {
 
 	varCreateServerSignerRequest := _CreateServerSignerRequest{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varCreateServerSignerRequest)
+	err = json.Unmarshal(data, &varCreateServerSignerRequest)
 
 	if err != nil {
 		return err
 	}
 
 	*o = CreateServerSignerRequest(varCreateServerSignerRequest)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "server_signer_id")
+		delete(additionalProperties, "enrollment_data")
+		delete(additionalProperties, "is_mpc")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

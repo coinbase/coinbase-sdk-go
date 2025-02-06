@@ -12,7 +12,6 @@ package client
 
 import (
 	"encoding/json"
-	"bytes"
 	"fmt"
 )
 
@@ -26,6 +25,7 @@ type WebhookList struct {
 	HasMore *bool `json:"has_more,omitempty"`
 	// The page token to be used to fetch the next page.
 	NextPage *string `json:"next_page,omitempty"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _WebhookList WebhookList
@@ -153,6 +153,11 @@ func (o WebhookList) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.NextPage) {
 		toSerialize["next_page"] = o.NextPage
 	}
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -180,15 +185,22 @@ func (o *WebhookList) UnmarshalJSON(data []byte) (err error) {
 
 	varWebhookList := _WebhookList{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varWebhookList)
+	err = json.Unmarshal(data, &varWebhookList)
 
 	if err != nil {
 		return err
 	}
 
 	*o = WebhookList(varWebhookList)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "data")
+		delete(additionalProperties, "has_more")
+		delete(additionalProperties, "next_page")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

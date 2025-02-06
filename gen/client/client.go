@@ -75,6 +75,8 @@ type APIClient struct {
 
 	SmartContractsAPI SmartContractsAPI
 
+	SmartWalletsAPI SmartWalletsAPI
+
 	StakeAPI StakeAPI
 
 	TradesAPI TradesAPI
@@ -119,6 +121,7 @@ func NewAPIClient(cfg *Configuration) *APIClient {
 	c.ReputationAPI = (*ReputationAPIService)(&c.common)
 	c.ServerSignersAPI = (*ServerSignersAPIService)(&c.common)
 	c.SmartContractsAPI = (*SmartContractsAPIService)(&c.common)
+	c.SmartWalletsAPI = (*SmartWalletsAPIService)(&c.common)
 	c.StakeAPI = (*StakeAPIService)(&c.common)
 	c.TradesAPI = (*TradesAPIService)(&c.common)
 	c.TransactionHistoryAPI = (*TransactionHistoryAPIService)(&c.common)

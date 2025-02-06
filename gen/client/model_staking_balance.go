@@ -13,7 +13,6 @@ package client
 import (
 	"encoding/json"
 	"time"
-	"bytes"
 	"fmt"
 )
 
@@ -30,6 +29,7 @@ type StakingBalance struct {
 	UnbondedBalance Balance `json:"unbonded_balance"`
 	// The type of staking participation.
 	ParticipantType string `json:"participant_type"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _StakingBalance StakingBalance
@@ -191,6 +191,11 @@ func (o StakingBalance) ToMap() (map[string]interface{}, error) {
 	toSerialize["bonded_stake"] = o.BondedStake
 	toSerialize["unbonded_balance"] = o.UnbondedBalance
 	toSerialize["participant_type"] = o.ParticipantType
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -222,15 +227,24 @@ func (o *StakingBalance) UnmarshalJSON(data []byte) (err error) {
 
 	varStakingBalance := _StakingBalance{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varStakingBalance)
+	err = json.Unmarshal(data, &varStakingBalance)
 
 	if err != nil {
 		return err
 	}
 
 	*o = StakingBalance(varStakingBalance)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "address")
+		delete(additionalProperties, "date")
+		delete(additionalProperties, "bonded_stake")
+		delete(additionalProperties, "unbonded_balance")
+		delete(additionalProperties, "participant_type")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }
