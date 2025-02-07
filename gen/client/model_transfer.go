@@ -12,7 +12,6 @@ package client
 
 import (
 	"encoding/json"
-	"bytes"
 	"fmt"
 )
 
@@ -52,6 +51,7 @@ type Transfer struct {
 	Status *string `json:"status,omitempty"`
 	// Whether the transfer uses sponsored gas
 	Gasless bool `json:"gasless"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _Transfer Transfer
@@ -542,6 +542,11 @@ func (o Transfer) ToMap() (map[string]interface{}, error) {
 		toSerialize["status"] = o.Status
 	}
 	toSerialize["gasless"] = o.Gasless
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -577,15 +582,34 @@ func (o *Transfer) UnmarshalJSON(data []byte) (err error) {
 
 	varTransfer := _Transfer{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varTransfer)
+	err = json.Unmarshal(data, &varTransfer)
 
 	if err != nil {
 		return err
 	}
 
 	*o = Transfer(varTransfer)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "network_id")
+		delete(additionalProperties, "wallet_id")
+		delete(additionalProperties, "address_id")
+		delete(additionalProperties, "destination")
+		delete(additionalProperties, "amount")
+		delete(additionalProperties, "asset_id")
+		delete(additionalProperties, "asset")
+		delete(additionalProperties, "transfer_id")
+		delete(additionalProperties, "transaction")
+		delete(additionalProperties, "sponsored_send")
+		delete(additionalProperties, "unsigned_payload")
+		delete(additionalProperties, "signed_payload")
+		delete(additionalProperties, "transaction_hash")
+		delete(additionalProperties, "status")
+		delete(additionalProperties, "gasless")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

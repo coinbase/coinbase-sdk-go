@@ -12,7 +12,6 @@ package client
 
 import (
 	"encoding/json"
-	"bytes"
 	"fmt"
 )
 
@@ -26,6 +25,7 @@ type ValidatorList struct {
 	HasMore bool `json:"has_more"`
 	// The page token to be used to fetch the next page.
 	NextPage string `json:"next_page"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _ValidatorList ValidatorList
@@ -135,6 +135,11 @@ func (o ValidatorList) ToMap() (map[string]interface{}, error) {
 	toSerialize["data"] = o.Data
 	toSerialize["has_more"] = o.HasMore
 	toSerialize["next_page"] = o.NextPage
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -164,15 +169,22 @@ func (o *ValidatorList) UnmarshalJSON(data []byte) (err error) {
 
 	varValidatorList := _ValidatorList{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varValidatorList)
+	err = json.Unmarshal(data, &varValidatorList)
 
 	if err != nil {
 		return err
 	}
 
 	*o = ValidatorList(varValidatorList)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "data")
+		delete(additionalProperties, "has_more")
+		delete(additionalProperties, "next_page")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

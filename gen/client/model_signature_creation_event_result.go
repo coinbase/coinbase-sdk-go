@@ -12,7 +12,6 @@ package client
 
 import (
 	"encoding/json"
-	"bytes"
 	"fmt"
 )
 
@@ -32,6 +31,7 @@ type SignatureCreationEventResult struct {
 	TransactionId string `json:"transaction_id"`
 	// The signature created by the server-signer.
 	Signature string `json:"signature"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _SignatureCreationEventResult SignatureCreationEventResult
@@ -219,6 +219,11 @@ func (o SignatureCreationEventResult) ToMap() (map[string]interface{}, error) {
 	toSerialize["transaction_type"] = o.TransactionType
 	toSerialize["transaction_id"] = o.TransactionId
 	toSerialize["signature"] = o.Signature
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -251,15 +256,25 @@ func (o *SignatureCreationEventResult) UnmarshalJSON(data []byte) (err error) {
 
 	varSignatureCreationEventResult := _SignatureCreationEventResult{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varSignatureCreationEventResult)
+	err = json.Unmarshal(data, &varSignatureCreationEventResult)
 
 	if err != nil {
 		return err
 	}
 
 	*o = SignatureCreationEventResult(varSignatureCreationEventResult)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "wallet_id")
+		delete(additionalProperties, "wallet_user_id")
+		delete(additionalProperties, "address_id")
+		delete(additionalProperties, "transaction_type")
+		delete(additionalProperties, "transaction_id")
+		delete(additionalProperties, "signature")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

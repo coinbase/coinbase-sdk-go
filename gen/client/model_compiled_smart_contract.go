@@ -29,7 +29,10 @@ type CompiledSmartContract struct {
 	Abi *string `json:"abi,omitempty"`
 	// The name of the smart contract to deploy
 	ContractName *string `json:"contract_name,omitempty"`
+	AdditionalProperties map[string]interface{}
 }
+
+type _CompiledSmartContract CompiledSmartContract
 
 // NewCompiledSmartContract instantiates a new CompiledSmartContract object
 // This constructor will assign default values to properties that have it defined,
@@ -233,7 +236,37 @@ func (o CompiledSmartContract) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.ContractName) {
 		toSerialize["contract_name"] = o.ContractName
 	}
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
+}
+
+func (o *CompiledSmartContract) UnmarshalJSON(data []byte) (err error) {
+	varCompiledSmartContract := _CompiledSmartContract{}
+
+	err = json.Unmarshal(data, &varCompiledSmartContract)
+
+	if err != nil {
+		return err
+	}
+
+	*o = CompiledSmartContract(varCompiledSmartContract)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "compiled_smart_contract_id")
+		delete(additionalProperties, "solidity_input_json")
+		delete(additionalProperties, "contract_creation_bytecode")
+		delete(additionalProperties, "abi")
+		delete(additionalProperties, "contract_name")
+		o.AdditionalProperties = additionalProperties
+	}
+
+	return err
 }
 
 type NullableCompiledSmartContract struct {

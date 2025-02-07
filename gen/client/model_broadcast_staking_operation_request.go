@@ -12,7 +12,6 @@ package client
 
 import (
 	"encoding/json"
-	"bytes"
 	"fmt"
 )
 
@@ -25,6 +24,7 @@ type BroadcastStakingOperationRequest struct {
 	SignedPayload string `json:"signed_payload"`
 	// The index in the transaction array of the staking operation.
 	TransactionIndex int32 `json:"transaction_index"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _BroadcastStakingOperationRequest BroadcastStakingOperationRequest
@@ -108,6 +108,11 @@ func (o BroadcastStakingOperationRequest) ToMap() (map[string]interface{}, error
 	toSerialize := map[string]interface{}{}
 	toSerialize["signed_payload"] = o.SignedPayload
 	toSerialize["transaction_index"] = o.TransactionIndex
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -136,15 +141,21 @@ func (o *BroadcastStakingOperationRequest) UnmarshalJSON(data []byte) (err error
 
 	varBroadcastStakingOperationRequest := _BroadcastStakingOperationRequest{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varBroadcastStakingOperationRequest)
+	err = json.Unmarshal(data, &varBroadcastStakingOperationRequest)
 
 	if err != nil {
 		return err
 	}
 
 	*o = BroadcastStakingOperationRequest(varBroadcastStakingOperationRequest)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "signed_payload")
+		delete(additionalProperties, "transaction_index")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

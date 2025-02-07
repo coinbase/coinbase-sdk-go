@@ -12,7 +12,6 @@ package client
 
 import (
 	"encoding/json"
-	"bytes"
 	"fmt"
 )
 
@@ -27,6 +26,7 @@ type ContractEventList struct {
 	NextPage string `json:"next_page"`
 	// True if this list has another page of items after this one that can be fetched
 	HasMore bool `json:"has_more"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _ContractEventList ContractEventList
@@ -136,6 +136,11 @@ func (o ContractEventList) ToMap() (map[string]interface{}, error) {
 	toSerialize["data"] = o.Data
 	toSerialize["next_page"] = o.NextPage
 	toSerialize["has_more"] = o.HasMore
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -165,15 +170,22 @@ func (o *ContractEventList) UnmarshalJSON(data []byte) (err error) {
 
 	varContractEventList := _ContractEventList{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varContractEventList)
+	err = json.Unmarshal(data, &varContractEventList)
 
 	if err != nil {
 		return err
 	}
 
 	*o = ContractEventList(varContractEventList)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "data")
+		delete(additionalProperties, "next_page")
+		delete(additionalProperties, "has_more")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

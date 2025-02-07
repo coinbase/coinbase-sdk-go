@@ -12,7 +12,6 @@ package client
 
 import (
 	"encoding/json"
-	"bytes"
 	"fmt"
 )
 
@@ -27,6 +26,7 @@ type Error struct {
 	Message string `json:"message"`
 	// A unique identifier for the request that generated the error. This can be used to help debug issues with the API.
 	CorrelationId *string `json:"correlation_id,omitempty"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _Error Error
@@ -145,6 +145,11 @@ func (o Error) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.CorrelationId) {
 		toSerialize["correlation_id"] = o.CorrelationId
 	}
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -173,15 +178,22 @@ func (o *Error) UnmarshalJSON(data []byte) (err error) {
 
 	varError := _Error{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varError)
+	err = json.Unmarshal(data, &varError)
 
 	if err != nil {
 		return err
 	}
 
 	*o = Error(varError)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "code")
+		delete(additionalProperties, "message")
+		delete(additionalProperties, "correlation_id")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

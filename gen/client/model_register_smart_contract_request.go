@@ -12,7 +12,6 @@ package client
 
 import (
 	"encoding/json"
-	"bytes"
 	"fmt"
 )
 
@@ -25,6 +24,7 @@ type RegisterSmartContractRequest struct {
 	Abi string `json:"abi"`
 	// Name of the smart contract
 	ContractName *string `json:"contract_name,omitempty"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _RegisterSmartContractRequest RegisterSmartContractRequest
@@ -117,6 +117,11 @@ func (o RegisterSmartContractRequest) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.ContractName) {
 		toSerialize["contract_name"] = o.ContractName
 	}
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -144,15 +149,21 @@ func (o *RegisterSmartContractRequest) UnmarshalJSON(data []byte) (err error) {
 
 	varRegisterSmartContractRequest := _RegisterSmartContractRequest{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varRegisterSmartContractRequest)
+	err = json.Unmarshal(data, &varRegisterSmartContractRequest)
 
 	if err != nil {
 		return err
 	}
 
 	*o = RegisterSmartContractRequest(varRegisterSmartContractRequest)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "abi")
+		delete(additionalProperties, "contract_name")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

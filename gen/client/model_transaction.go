@@ -12,7 +12,6 @@ package client
 
 import (
 	"encoding/json"
-	"bytes"
 	"fmt"
 )
 
@@ -42,6 +41,7 @@ type Transaction struct {
 	// The status of the transaction.
 	Status string `json:"status"`
 	Content *TransactionContent `json:"content,omitempty"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _Transaction Transaction
@@ -422,6 +422,11 @@ func (o Transaction) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.Content) {
 		toSerialize["content"] = o.Content
 	}
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -452,15 +457,30 @@ func (o *Transaction) UnmarshalJSON(data []byte) (err error) {
 
 	varTransaction := _Transaction{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varTransaction)
+	err = json.Unmarshal(data, &varTransaction)
 
 	if err != nil {
 		return err
 	}
 
 	*o = Transaction(varTransaction)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "network_id")
+		delete(additionalProperties, "block_hash")
+		delete(additionalProperties, "block_height")
+		delete(additionalProperties, "from_address_id")
+		delete(additionalProperties, "to_address_id")
+		delete(additionalProperties, "unsigned_payload")
+		delete(additionalProperties, "signed_payload")
+		delete(additionalProperties, "transaction_hash")
+		delete(additionalProperties, "transaction_link")
+		delete(additionalProperties, "status")
+		delete(additionalProperties, "content")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

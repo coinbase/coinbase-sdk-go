@@ -12,7 +12,6 @@ package client
 
 import (
 	"encoding/json"
-	"bytes"
 	"fmt"
 )
 
@@ -25,6 +24,7 @@ type WebhookWalletActivityFilter struct {
 	Addresses []string `json:"addresses,omitempty"`
 	// The ID of the wallet that owns the webhook.
 	WalletId string `json:"wallet_id"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _WebhookWalletActivityFilter WebhookWalletActivityFilter
@@ -117,6 +117,11 @@ func (o WebhookWalletActivityFilter) ToMap() (map[string]interface{}, error) {
 		toSerialize["addresses"] = o.Addresses
 	}
 	toSerialize["wallet_id"] = o.WalletId
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -144,15 +149,21 @@ func (o *WebhookWalletActivityFilter) UnmarshalJSON(data []byte) (err error) {
 
 	varWebhookWalletActivityFilter := _WebhookWalletActivityFilter{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varWebhookWalletActivityFilter)
+	err = json.Unmarshal(data, &varWebhookWalletActivityFilter)
 
 	if err != nil {
 		return err
 	}
 
 	*o = WebhookWalletActivityFilter(varWebhookWalletActivityFilter)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "addresses")
+		delete(additionalProperties, "wallet_id")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

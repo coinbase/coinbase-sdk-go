@@ -12,7 +12,6 @@ package client
 
 import (
 	"encoding/json"
-	"bytes"
 	"fmt"
 )
 
@@ -28,6 +27,7 @@ type SolidityValue struct {
 	Value *string `json:"value,omitempty"`
 	// For array and tuple types, the components of the value
 	Values []SolidityValue `json:"values,omitempty"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _SolidityValue SolidityValue
@@ -190,6 +190,11 @@ func (o SolidityValue) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.Values) {
 		toSerialize["values"] = o.Values
 	}
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -217,15 +222,23 @@ func (o *SolidityValue) UnmarshalJSON(data []byte) (err error) {
 
 	varSolidityValue := _SolidityValue{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varSolidityValue)
+	err = json.Unmarshal(data, &varSolidityValue)
 
 	if err != nil {
 		return err
 	}
 
 	*o = SolidityValue(varSolidityValue)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "type")
+		delete(additionalProperties, "name")
+		delete(additionalProperties, "value")
+		delete(additionalProperties, "values")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

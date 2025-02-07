@@ -12,7 +12,6 @@ package client
 
 import (
 	"encoding/json"
-	"bytes"
 	"fmt"
 )
 
@@ -25,6 +24,7 @@ type SeedCreationEvent struct {
 	WalletId string `json:"wallet_id"`
 	// The ID of the user that the wallet belongs to
 	WalletUserId string `json:"wallet_user_id"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _SeedCreationEvent SeedCreationEvent
@@ -108,6 +108,11 @@ func (o SeedCreationEvent) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["wallet_id"] = o.WalletId
 	toSerialize["wallet_user_id"] = o.WalletUserId
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -136,15 +141,21 @@ func (o *SeedCreationEvent) UnmarshalJSON(data []byte) (err error) {
 
 	varSeedCreationEvent := _SeedCreationEvent{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varSeedCreationEvent)
+	err = json.Unmarshal(data, &varSeedCreationEvent)
 
 	if err != nil {
 		return err
 	}
 
 	*o = SeedCreationEvent(varSeedCreationEvent)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "wallet_id")
+		delete(additionalProperties, "wallet_user_id")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

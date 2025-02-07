@@ -1,5 +1,11 @@
 # Coinbase Go SDK Changelog
 
+## [0.0.17] - 2025-02-06
+
+### Added
+
+- Update auto-generated client code to help relax decoding of server returned jsons to allow new fields to be added without breaking the SDK.
+
 ## [0.0.16] - 2025-02-05
 
 ### Added

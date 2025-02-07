@@ -25,7 +25,10 @@ type UpdateWebhookRequest struct {
 	// The Webhook uri that updates to
 	NotificationUri *string `json:"notification_uri,omitempty"`
 	Status *WebhookStatus `json:"status,omitempty"`
+	AdditionalProperties map[string]interface{}
 }
+
+type _UpdateWebhookRequest UpdateWebhookRequest
 
 // NewUpdateWebhookRequest instantiates a new UpdateWebhookRequest object
 // This constructor will assign default values to properties that have it defined,
@@ -194,7 +197,36 @@ func (o UpdateWebhookRequest) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.Status) {
 		toSerialize["status"] = o.Status
 	}
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
+}
+
+func (o *UpdateWebhookRequest) UnmarshalJSON(data []byte) (err error) {
+	varUpdateWebhookRequest := _UpdateWebhookRequest{}
+
+	err = json.Unmarshal(data, &varUpdateWebhookRequest)
+
+	if err != nil {
+		return err
+	}
+
+	*o = UpdateWebhookRequest(varUpdateWebhookRequest)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "event_type_filter")
+		delete(additionalProperties, "event_filters")
+		delete(additionalProperties, "notification_uri")
+		delete(additionalProperties, "status")
+		o.AdditionalProperties = additionalProperties
+	}
+
+	return err
 }
 
 type NullableUpdateWebhookRequest struct {

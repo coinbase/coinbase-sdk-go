@@ -12,7 +12,6 @@ package client
 
 import (
 	"encoding/json"
-	"bytes"
 	"fmt"
 )
 
@@ -33,6 +32,7 @@ type FeatureSet struct {
 	Stake bool `json:"stake"`
 	// Whether the network supports gasless sends
 	GaslessSend bool `json:"gasless_send"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _FeatureSet FeatureSet
@@ -220,6 +220,11 @@ func (o FeatureSet) ToMap() (map[string]interface{}, error) {
 	toSerialize["trade"] = o.Trade
 	toSerialize["stake"] = o.Stake
 	toSerialize["gasless_send"] = o.GaslessSend
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -252,15 +257,25 @@ func (o *FeatureSet) UnmarshalJSON(data []byte) (err error) {
 
 	varFeatureSet := _FeatureSet{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varFeatureSet)
+	err = json.Unmarshal(data, &varFeatureSet)
 
 	if err != nil {
 		return err
 	}
 
 	*o = FeatureSet(varFeatureSet)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "faucet")
+		delete(additionalProperties, "server_signer")
+		delete(additionalProperties, "transfer")
+		delete(additionalProperties, "trade")
+		delete(additionalProperties, "stake")
+		delete(additionalProperties, "gasless_send")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

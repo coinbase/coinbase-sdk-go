@@ -12,7 +12,6 @@ package client
 
 import (
 	"encoding/json"
-	"bytes"
 	"fmt"
 )
 
@@ -26,6 +25,7 @@ type FaucetTransaction struct {
 	// Link to the transaction on the blockchain explorer.
 	TransactionLink string `json:"transaction_link"`
 	Transaction Transaction `json:"transaction"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _FaucetTransaction FaucetTransaction
@@ -135,6 +135,11 @@ func (o FaucetTransaction) ToMap() (map[string]interface{}, error) {
 	toSerialize["transaction_hash"] = o.TransactionHash
 	toSerialize["transaction_link"] = o.TransactionLink
 	toSerialize["transaction"] = o.Transaction
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -164,15 +169,22 @@ func (o *FaucetTransaction) UnmarshalJSON(data []byte) (err error) {
 
 	varFaucetTransaction := _FaucetTransaction{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varFaucetTransaction)
+	err = json.Unmarshal(data, &varFaucetTransaction)
 
 	if err != nil {
 		return err
 	}
 
 	*o = FaucetTransaction(varFaucetTransaction)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "transaction_hash")
+		delete(additionalProperties, "transaction_link")
+		delete(additionalProperties, "transaction")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

@@ -12,7 +12,6 @@ package client
 
 import (
 	"encoding/json"
-	"bytes"
 	"fmt"
 )
 
@@ -27,6 +26,7 @@ type SignedVoluntaryExitMessageMetadata struct {
 	Fork string `json:"fork"`
 	// A base64 encoded version of a json string representing a voluntary exit message.
 	SignedVoluntaryExit string `json:"signed_voluntary_exit"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _SignedVoluntaryExitMessageMetadata SignedVoluntaryExitMessageMetadata
@@ -136,6 +136,11 @@ func (o SignedVoluntaryExitMessageMetadata) ToMap() (map[string]interface{}, err
 	toSerialize["validator_pub_key"] = o.ValidatorPubKey
 	toSerialize["fork"] = o.Fork
 	toSerialize["signed_voluntary_exit"] = o.SignedVoluntaryExit
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -165,15 +170,22 @@ func (o *SignedVoluntaryExitMessageMetadata) UnmarshalJSON(data []byte) (err err
 
 	varSignedVoluntaryExitMessageMetadata := _SignedVoluntaryExitMessageMetadata{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varSignedVoluntaryExitMessageMetadata)
+	err = json.Unmarshal(data, &varSignedVoluntaryExitMessageMetadata)
 
 	if err != nil {
 		return err
 	}
 
 	*o = SignedVoluntaryExitMessageMetadata(varSignedVoluntaryExitMessageMetadata)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "validator_pub_key")
+		delete(additionalProperties, "fork")
+		delete(additionalProperties, "signed_voluntary_exit")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

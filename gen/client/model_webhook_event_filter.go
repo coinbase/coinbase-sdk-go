@@ -25,7 +25,10 @@ type WebhookEventFilter struct {
 	FromAddress *string `json:"from_address,omitempty"`
 	// The onchain address of the receiver. Set this filter to track all transfer events sent to your address.
 	ToAddress *string `json:"to_address,omitempty"`
+	AdditionalProperties map[string]interface{}
 }
+
+type _WebhookEventFilter WebhookEventFilter
 
 // NewWebhookEventFilter instantiates a new WebhookEventFilter object
 // This constructor will assign default values to properties that have it defined,
@@ -159,7 +162,35 @@ func (o WebhookEventFilter) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.ToAddress) {
 		toSerialize["to_address"] = o.ToAddress
 	}
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
+}
+
+func (o *WebhookEventFilter) UnmarshalJSON(data []byte) (err error) {
+	varWebhookEventFilter := _WebhookEventFilter{}
+
+	err = json.Unmarshal(data, &varWebhookEventFilter)
+
+	if err != nil {
+		return err
+	}
+
+	*o = WebhookEventFilter(varWebhookEventFilter)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "contract_address")
+		delete(additionalProperties, "from_address")
+		delete(additionalProperties, "to_address")
+		o.AdditionalProperties = additionalProperties
+	}
+
+	return err
 }
 
 type NullableWebhookEventFilter struct {

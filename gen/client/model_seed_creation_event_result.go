@@ -12,7 +12,6 @@ package client
 
 import (
 	"encoding/json"
-	"bytes"
 	"fmt"
 )
 
@@ -29,6 +28,7 @@ type SeedCreationEventResult struct {
 	ExtendedPublicKey string `json:"extended_public_key"`
 	// The ID of the seed in Server-Signer used to generate the extended public key.
 	SeedId string `json:"seed_id"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _SeedCreationEventResult SeedCreationEventResult
@@ -164,6 +164,11 @@ func (o SeedCreationEventResult) ToMap() (map[string]interface{}, error) {
 	toSerialize["wallet_user_id"] = o.WalletUserId
 	toSerialize["extended_public_key"] = o.ExtendedPublicKey
 	toSerialize["seed_id"] = o.SeedId
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -194,15 +199,23 @@ func (o *SeedCreationEventResult) UnmarshalJSON(data []byte) (err error) {
 
 	varSeedCreationEventResult := _SeedCreationEventResult{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varSeedCreationEventResult)
+	err = json.Unmarshal(data, &varSeedCreationEventResult)
 
 	if err != nil {
 		return err
 	}
 
 	*o = SeedCreationEventResult(varSeedCreationEventResult)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "wallet_id")
+		delete(additionalProperties, "wallet_user_id")
+		delete(additionalProperties, "extended_public_key")
+		delete(additionalProperties, "seed_id")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

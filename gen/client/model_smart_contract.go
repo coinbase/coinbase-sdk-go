@@ -12,7 +12,6 @@ package client
 
 import (
 	"encoding/json"
-	"bytes"
 	"fmt"
 )
 
@@ -42,6 +41,7 @@ type SmartContract struct {
 	IsExternal bool `json:"is_external"`
 	// The ID of the compiled smart contract that was used to deploy this contract
 	CompiledSmartContractId *string `json:"compiled_smart_contract_id,omitempty"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _SmartContract SmartContract
@@ -430,6 +430,11 @@ func (o SmartContract) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.CompiledSmartContractId) {
 		toSerialize["compiled_smart_contract_id"] = o.CompiledSmartContractId
 	}
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -463,15 +468,31 @@ func (o *SmartContract) UnmarshalJSON(data []byte) (err error) {
 
 	varSmartContract := _SmartContract{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varSmartContract)
+	err = json.Unmarshal(data, &varSmartContract)
 
 	if err != nil {
 		return err
 	}
 
 	*o = SmartContract(varSmartContract)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "smart_contract_id")
+		delete(additionalProperties, "network_id")
+		delete(additionalProperties, "wallet_id")
+		delete(additionalProperties, "contract_address")
+		delete(additionalProperties, "contract_name")
+		delete(additionalProperties, "deployer_address")
+		delete(additionalProperties, "type")
+		delete(additionalProperties, "options")
+		delete(additionalProperties, "abi")
+		delete(additionalProperties, "transaction")
+		delete(additionalProperties, "is_external")
+		delete(additionalProperties, "compiled_smart_contract_id")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

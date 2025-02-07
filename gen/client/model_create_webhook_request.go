@@ -12,7 +12,6 @@ package client
 
 import (
 	"encoding/json"
-	"bytes"
 	"fmt"
 )
 
@@ -31,6 +30,7 @@ type CreateWebhookRequest struct {
 	NotificationUri string `json:"notification_uri"`
 	// The custom header to be used for x-webhook-signature header on callbacks, so developers can verify the requests are coming from Coinbase.
 	SignatureHeader *string `json:"signature_header,omitempty"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _CreateWebhookRequest CreateWebhookRequest
@@ -245,6 +245,11 @@ func (o CreateWebhookRequest) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.SignatureHeader) {
 		toSerialize["signature_header"] = o.SignatureHeader
 	}
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -274,15 +279,25 @@ func (o *CreateWebhookRequest) UnmarshalJSON(data []byte) (err error) {
 
 	varCreateWebhookRequest := _CreateWebhookRequest{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varCreateWebhookRequest)
+	err = json.Unmarshal(data, &varCreateWebhookRequest)
 
 	if err != nil {
 		return err
 	}
 
 	*o = CreateWebhookRequest(varCreateWebhookRequest)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "network_id")
+		delete(additionalProperties, "event_type")
+		delete(additionalProperties, "event_type_filter")
+		delete(additionalProperties, "event_filters")
+		delete(additionalProperties, "notification_uri")
+		delete(additionalProperties, "signature_header")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

@@ -12,7 +12,6 @@ package client
 
 import (
 	"encoding/json"
-	"bytes"
 	"fmt"
 )
 
@@ -23,6 +22,7 @@ var _ MappedNullable = &DeploySmartContractRequest{}
 type DeploySmartContractRequest struct {
 	// The hex-encoded signed payload of the contract deployment transaction.
 	SignedPayload string `json:"signed_payload"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _DeploySmartContractRequest DeploySmartContractRequest
@@ -80,6 +80,11 @@ func (o DeploySmartContractRequest) MarshalJSON() ([]byte, error) {
 func (o DeploySmartContractRequest) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["signed_payload"] = o.SignedPayload
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -107,15 +112,20 @@ func (o *DeploySmartContractRequest) UnmarshalJSON(data []byte) (err error) {
 
 	varDeploySmartContractRequest := _DeploySmartContractRequest{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varDeploySmartContractRequest)
+	err = json.Unmarshal(data, &varDeploySmartContractRequest)
 
 	if err != nil {
 		return err
 	}
 
 	*o = DeploySmartContractRequest(varDeploySmartContractRequest)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "signed_payload")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

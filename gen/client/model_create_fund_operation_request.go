@@ -12,7 +12,6 @@ package client
 
 import (
 	"encoding/json"
-	"bytes"
 	"fmt"
 )
 
@@ -27,6 +26,7 @@ type CreateFundOperationRequest struct {
 	AssetId string `json:"asset_id"`
 	// The Optional ID of the fund quote to fund the address with. If omitted we will generate a quote and immediately execute it.
 	FundQuoteId *string `json:"fund_quote_id,omitempty"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _CreateFundOperationRequest CreateFundOperationRequest
@@ -145,6 +145,11 @@ func (o CreateFundOperationRequest) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.FundQuoteId) {
 		toSerialize["fund_quote_id"] = o.FundQuoteId
 	}
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -173,15 +178,22 @@ func (o *CreateFundOperationRequest) UnmarshalJSON(data []byte) (err error) {
 
 	varCreateFundOperationRequest := _CreateFundOperationRequest{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varCreateFundOperationRequest)
+	err = json.Unmarshal(data, &varCreateFundOperationRequest)
 
 	if err != nil {
 		return err
 	}
 
 	*o = CreateFundOperationRequest(varCreateFundOperationRequest)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "amount")
+		delete(additionalProperties, "asset_id")
+		delete(additionalProperties, "fund_quote_id")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

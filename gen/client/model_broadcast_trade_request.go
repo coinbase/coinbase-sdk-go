@@ -12,7 +12,6 @@ package client
 
 import (
 	"encoding/json"
-	"bytes"
 	"fmt"
 )
 
@@ -25,6 +24,7 @@ type BroadcastTradeRequest struct {
 	SignedPayload string `json:"signed_payload"`
 	// The hex-encoded signed payload of the approval transaction
 	ApproveTransactionSignedPayload *string `json:"approve_transaction_signed_payload,omitempty"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _BroadcastTradeRequest BroadcastTradeRequest
@@ -117,6 +117,11 @@ func (o BroadcastTradeRequest) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.ApproveTransactionSignedPayload) {
 		toSerialize["approve_transaction_signed_payload"] = o.ApproveTransactionSignedPayload
 	}
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -144,15 +149,21 @@ func (o *BroadcastTradeRequest) UnmarshalJSON(data []byte) (err error) {
 
 	varBroadcastTradeRequest := _BroadcastTradeRequest{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varBroadcastTradeRequest)
+	err = json.Unmarshal(data, &varBroadcastTradeRequest)
 
 	if err != nil {
 		return err
 	}
 
 	*o = BroadcastTradeRequest(varBroadcastTradeRequest)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "signed_payload")
+		delete(additionalProperties, "approve_transaction_signed_payload")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

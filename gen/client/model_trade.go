@@ -12,7 +12,6 @@ package client
 
 import (
 	"encoding/json"
-	"bytes"
 	"fmt"
 )
 
@@ -37,6 +36,7 @@ type Trade struct {
 	ToAsset Asset `json:"to_asset"`
 	Transaction Transaction `json:"transaction"`
 	ApproveTransaction *Transaction `json:"approve_transaction,omitempty"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _Trade Trade
@@ -337,6 +337,11 @@ func (o Trade) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.ApproveTransaction) {
 		toSerialize["approve_transaction"] = o.ApproveTransaction
 	}
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -372,15 +377,29 @@ func (o *Trade) UnmarshalJSON(data []byte) (err error) {
 
 	varTrade := _Trade{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varTrade)
+	err = json.Unmarshal(data, &varTrade)
 
 	if err != nil {
 		return err
 	}
 
 	*o = Trade(varTrade)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "network_id")
+		delete(additionalProperties, "wallet_id")
+		delete(additionalProperties, "address_id")
+		delete(additionalProperties, "trade_id")
+		delete(additionalProperties, "from_amount")
+		delete(additionalProperties, "from_asset")
+		delete(additionalProperties, "to_amount")
+		delete(additionalProperties, "to_asset")
+		delete(additionalProperties, "transaction")
+		delete(additionalProperties, "approve_transaction")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

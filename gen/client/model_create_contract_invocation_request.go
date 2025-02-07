@@ -12,7 +12,6 @@ package client
 
 import (
 	"encoding/json"
-	"bytes"
 	"fmt"
 )
 
@@ -31,6 +30,7 @@ type CreateContractInvocationRequest struct {
 	Abi *string `json:"abi,omitempty"`
 	// The amount in atomic units of the native asset to send to the contract for a payable method
 	Amount *string `json:"amount,omitempty"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _CreateContractInvocationRequest CreateContractInvocationRequest
@@ -210,6 +210,11 @@ func (o CreateContractInvocationRequest) ToMap() (map[string]interface{}, error)
 	if !IsNil(o.Amount) {
 		toSerialize["amount"] = o.Amount
 	}
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -239,15 +244,24 @@ func (o *CreateContractInvocationRequest) UnmarshalJSON(data []byte) (err error)
 
 	varCreateContractInvocationRequest := _CreateContractInvocationRequest{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varCreateContractInvocationRequest)
+	err = json.Unmarshal(data, &varCreateContractInvocationRequest)
 
 	if err != nil {
 		return err
 	}
 
 	*o = CreateContractInvocationRequest(varCreateContractInvocationRequest)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "contract_address")
+		delete(additionalProperties, "method")
+		delete(additionalProperties, "args")
+		delete(additionalProperties, "abi")
+		delete(additionalProperties, "amount")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

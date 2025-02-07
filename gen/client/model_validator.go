@@ -12,7 +12,6 @@ package client
 
 import (
 	"encoding/json"
-	"bytes"
 	"fmt"
 )
 
@@ -29,6 +28,7 @@ type Validator struct {
 	AssetId string `json:"asset_id"`
 	Status ValidatorStatus `json:"status"`
 	Details *ValidatorDetails `json:"details,omitempty"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _Validator Validator
@@ -199,6 +199,11 @@ func (o Validator) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.Details) {
 		toSerialize["details"] = o.Details
 	}
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -229,15 +234,24 @@ func (o *Validator) UnmarshalJSON(data []byte) (err error) {
 
 	varValidator := _Validator{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varValidator)
+	err = json.Unmarshal(data, &varValidator)
 
 	if err != nil {
 		return err
 	}
 
 	*o = Validator(varValidator)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "validator_id")
+		delete(additionalProperties, "network_id")
+		delete(additionalProperties, "asset_id")
+		delete(additionalProperties, "status")
+		delete(additionalProperties, "details")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

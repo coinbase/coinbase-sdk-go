@@ -12,7 +12,6 @@ package client
 
 import (
 	"encoding/json"
-	"bytes"
 	"fmt"
 )
 
@@ -25,6 +24,7 @@ type FiatAmount struct {
 	Amount string `json:"amount"`
 	// The currency of the fiat
 	Currency string `json:"currency"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _FiatAmount FiatAmount
@@ -108,6 +108,11 @@ func (o FiatAmount) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["amount"] = o.Amount
 	toSerialize["currency"] = o.Currency
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -136,15 +141,21 @@ func (o *FiatAmount) UnmarshalJSON(data []byte) (err error) {
 
 	varFiatAmount := _FiatAmount{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varFiatAmount)
+	err = json.Unmarshal(data, &varFiatAmount)
 
 	if err != nil {
 		return err
 	}
 
 	*o = FiatAmount(varFiatAmount)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "amount")
+		delete(additionalProperties, "currency")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

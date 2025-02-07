@@ -13,7 +13,6 @@ package client
 import (
 	"encoding/json"
 	"time"
-	"bytes"
 	"fmt"
 )
 
@@ -39,6 +38,7 @@ type Webhook struct {
 	// The header that will contain the signature of the webhook payload.
 	SignatureHeader *string `json:"signature_header,omitempty"`
 	Status WebhookStatus `json:"status"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _Webhook Webhook
@@ -411,6 +411,11 @@ func (o Webhook) ToMap() (map[string]interface{}, error) {
 		toSerialize["signature_header"] = o.SignatureHeader
 	}
 	toSerialize["status"] = o.Status
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -438,15 +443,29 @@ func (o *Webhook) UnmarshalJSON(data []byte) (err error) {
 
 	varWebhook := _Webhook{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varWebhook)
+	err = json.Unmarshal(data, &varWebhook)
 
 	if err != nil {
 		return err
 	}
 
 	*o = Webhook(varWebhook)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "id")
+		delete(additionalProperties, "network_id")
+		delete(additionalProperties, "event_type")
+		delete(additionalProperties, "event_type_filter")
+		delete(additionalProperties, "event_filters")
+		delete(additionalProperties, "notification_uri")
+		delete(additionalProperties, "created_at")
+		delete(additionalProperties, "updated_at")
+		delete(additionalProperties, "signature_header")
+		delete(additionalProperties, "status")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

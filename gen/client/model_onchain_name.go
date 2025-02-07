@@ -13,7 +13,6 @@ package client
 import (
 	"encoding/json"
 	"time"
-	"bytes"
 	"fmt"
 )
 
@@ -42,6 +41,7 @@ type OnchainName struct {
 	TextRecords *map[string]string `json:"text_records,omitempty"`
 	// Whether this name is the primary name for the owner (This is when the ETH coin address for this name is equal to the primary_address. More info here https://docs.ens.domains/ensip/19)
 	IsPrimary bool `json:"is_primary"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _OnchainName OnchainName
@@ -360,6 +360,11 @@ func (o OnchainName) ToMap() (map[string]interface{}, error) {
 		toSerialize["text_records"] = o.TextRecords
 	}
 	toSerialize["is_primary"] = o.IsPrimary
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -393,15 +398,29 @@ func (o *OnchainName) UnmarshalJSON(data []byte) (err error) {
 
 	varOnchainName := _OnchainName{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varOnchainName)
+	err = json.Unmarshal(data, &varOnchainName)
 
 	if err != nil {
 		return err
 	}
 
 	*o = OnchainName(varOnchainName)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "token_id")
+		delete(additionalProperties, "owner_address")
+		delete(additionalProperties, "manager_address")
+		delete(additionalProperties, "primary_address")
+		delete(additionalProperties, "domain")
+		delete(additionalProperties, "avatar")
+		delete(additionalProperties, "network_id")
+		delete(additionalProperties, "expires_at")
+		delete(additionalProperties, "text_records")
+		delete(additionalProperties, "is_primary")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

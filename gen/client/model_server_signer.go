@@ -12,7 +12,6 @@ package client
 
 import (
 	"encoding/json"
-	"bytes"
 	"fmt"
 )
 
@@ -27,6 +26,7 @@ type ServerSigner struct {
 	Wallets []string `json:"wallets,omitempty"`
 	// Whether the Server-Signer uses MPC.
 	IsMpc bool `json:"is_mpc"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _ServerSigner ServerSigner
@@ -145,6 +145,11 @@ func (o ServerSigner) ToMap() (map[string]interface{}, error) {
 		toSerialize["wallets"] = o.Wallets
 	}
 	toSerialize["is_mpc"] = o.IsMpc
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -173,15 +178,22 @@ func (o *ServerSigner) UnmarshalJSON(data []byte) (err error) {
 
 	varServerSigner := _ServerSigner{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varServerSigner)
+	err = json.Unmarshal(data, &varServerSigner)
 
 	if err != nil {
 		return err
 	}
 
 	*o = ServerSigner(varServerSigner)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "server_signer_id")
+		delete(additionalProperties, "wallets")
+		delete(additionalProperties, "is_mpc")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

@@ -23,7 +23,10 @@ type UpdateSmartContractRequest struct {
 	Abi *string `json:"abi,omitempty"`
 	// Name of the smart contract
 	ContractName *string `json:"contract_name,omitempty"`
+	AdditionalProperties map[string]interface{}
 }
+
+type _UpdateSmartContractRequest UpdateSmartContractRequest
 
 // NewUpdateSmartContractRequest instantiates a new UpdateSmartContractRequest object
 // This constructor will assign default values to properties that have it defined,
@@ -122,7 +125,34 @@ func (o UpdateSmartContractRequest) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.ContractName) {
 		toSerialize["contract_name"] = o.ContractName
 	}
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
+}
+
+func (o *UpdateSmartContractRequest) UnmarshalJSON(data []byte) (err error) {
+	varUpdateSmartContractRequest := _UpdateSmartContractRequest{}
+
+	err = json.Unmarshal(data, &varUpdateSmartContractRequest)
+
+	if err != nil {
+		return err
+	}
+
+	*o = UpdateSmartContractRequest(varUpdateSmartContractRequest)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "abi")
+		delete(additionalProperties, "contract_name")
+		o.AdditionalProperties = additionalProperties
+	}
+
+	return err
 }
 
 type NullableUpdateSmartContractRequest struct {

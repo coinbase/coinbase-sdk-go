@@ -12,7 +12,6 @@ package client
 
 import (
 	"encoding/json"
-	"bytes"
 	"fmt"
 )
 
@@ -23,6 +22,7 @@ var _ MappedNullable = &BroadcastExternalTransactionRequest{}
 type BroadcastExternalTransactionRequest struct {
 	// The hex-encoded signed payload of the external address transaction.
 	SignedPayload string `json:"signed_payload"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _BroadcastExternalTransactionRequest BroadcastExternalTransactionRequest
@@ -80,6 +80,11 @@ func (o BroadcastExternalTransactionRequest) MarshalJSON() ([]byte, error) {
 func (o BroadcastExternalTransactionRequest) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["signed_payload"] = o.SignedPayload
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -107,15 +112,20 @@ func (o *BroadcastExternalTransactionRequest) UnmarshalJSON(data []byte) (err er
 
 	varBroadcastExternalTransactionRequest := _BroadcastExternalTransactionRequest{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varBroadcastExternalTransactionRequest)
+	err = json.Unmarshal(data, &varBroadcastExternalTransactionRequest)
 
 	if err != nil {
 		return err
 	}
 
 	*o = BroadcastExternalTransactionRequest(varBroadcastExternalTransactionRequest)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "signed_payload")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

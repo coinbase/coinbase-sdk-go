@@ -38,7 +38,10 @@ type EthereumTransactionFlattenedTrace struct {
 	BlockNumber *int64 `json:"block_number,omitempty"`
 	TransactionHash *string `json:"transaction_hash,omitempty"`
 	TransactionIndex *int64 `json:"transaction_index,omitempty"`
+	AdditionalProperties map[string]interface{}
 }
+
+type _EthereumTransactionFlattenedTrace EthereumTransactionFlattenedTrace
 
 // NewEthereumTransactionFlattenedTrace instantiates a new EthereumTransactionFlattenedTrace object
 // This constructor will assign default values to properties that have it defined,
@@ -732,7 +735,51 @@ func (o EthereumTransactionFlattenedTrace) ToMap() (map[string]interface{}, erro
 	if !IsNil(o.TransactionIndex) {
 		toSerialize["transaction_index"] = o.TransactionIndex
 	}
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
+}
+
+func (o *EthereumTransactionFlattenedTrace) UnmarshalJSON(data []byte) (err error) {
+	varEthereumTransactionFlattenedTrace := _EthereumTransactionFlattenedTrace{}
+
+	err = json.Unmarshal(data, &varEthereumTransactionFlattenedTrace)
+
+	if err != nil {
+		return err
+	}
+
+	*o = EthereumTransactionFlattenedTrace(varEthereumTransactionFlattenedTrace)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "error")
+		delete(additionalProperties, "type")
+		delete(additionalProperties, "from")
+		delete(additionalProperties, "to")
+		delete(additionalProperties, "value")
+		delete(additionalProperties, "gas")
+		delete(additionalProperties, "gas_used")
+		delete(additionalProperties, "input")
+		delete(additionalProperties, "output")
+		delete(additionalProperties, "sub_traces")
+		delete(additionalProperties, "trace_address")
+		delete(additionalProperties, "trace_type")
+		delete(additionalProperties, "call_type")
+		delete(additionalProperties, "trace_id")
+		delete(additionalProperties, "status")
+		delete(additionalProperties, "block_hash")
+		delete(additionalProperties, "block_number")
+		delete(additionalProperties, "transaction_hash")
+		delete(additionalProperties, "transaction_index")
+		o.AdditionalProperties = additionalProperties
+	}
+
+	return err
 }
 
 type NullableEthereumTransactionFlattenedTrace struct {

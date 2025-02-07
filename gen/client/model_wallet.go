@@ -12,7 +12,6 @@ package client
 
 import (
 	"encoding/json"
-	"bytes"
 	"fmt"
 )
 
@@ -29,6 +28,7 @@ type Wallet struct {
 	FeatureSet FeatureSet `json:"feature_set"`
 	// The status of the Server-Signer for the wallet if present.
 	ServerSignerStatus *string `json:"server_signer_status,omitempty"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _Wallet Wallet
@@ -208,6 +208,11 @@ func (o Wallet) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.ServerSignerStatus) {
 		toSerialize["server_signer_status"] = o.ServerSignerStatus
 	}
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -237,15 +242,24 @@ func (o *Wallet) UnmarshalJSON(data []byte) (err error) {
 
 	varWallet := _Wallet{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varWallet)
+	err = json.Unmarshal(data, &varWallet)
 
 	if err != nil {
 		return err
 	}
 
 	*o = Wallet(varWallet)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "id")
+		delete(additionalProperties, "network_id")
+		delete(additionalProperties, "default_address")
+		delete(additionalProperties, "feature_set")
+		delete(additionalProperties, "server_signer_status")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

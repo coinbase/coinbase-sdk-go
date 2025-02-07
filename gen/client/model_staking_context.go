@@ -12,7 +12,6 @@ package client
 
 import (
 	"encoding/json"
-	"bytes"
 	"fmt"
 )
 
@@ -22,6 +21,7 @@ var _ MappedNullable = &StakingContext{}
 // StakingContext Context needed to perform a staking operation
 type StakingContext struct {
 	Context StakingContextContext `json:"context"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _StakingContext StakingContext
@@ -79,6 +79,11 @@ func (o StakingContext) MarshalJSON() ([]byte, error) {
 func (o StakingContext) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["context"] = o.Context
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -106,15 +111,20 @@ func (o *StakingContext) UnmarshalJSON(data []byte) (err error) {
 
 	varStakingContext := _StakingContext{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varStakingContext)
+	err = json.Unmarshal(data, &varStakingContext)
 
 	if err != nil {
 		return err
 	}
 
 	*o = StakingContext(varStakingContext)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "context")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

@@ -12,7 +12,6 @@ package client
 
 import (
 	"encoding/json"
-	"bytes"
 	"fmt"
 )
 
@@ -25,6 +24,7 @@ type CreateFundQuoteRequest struct {
 	Amount string `json:"amount"`
 	// The ID of the asset to fund the address with. Can be an asset symbol alias or a token contract address.
 	AssetId string `json:"asset_id"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _CreateFundQuoteRequest CreateFundQuoteRequest
@@ -108,6 +108,11 @@ func (o CreateFundQuoteRequest) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["amount"] = o.Amount
 	toSerialize["asset_id"] = o.AssetId
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -136,15 +141,21 @@ func (o *CreateFundQuoteRequest) UnmarshalJSON(data []byte) (err error) {
 
 	varCreateFundQuoteRequest := _CreateFundQuoteRequest{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varCreateFundQuoteRequest)
+	err = json.Unmarshal(data, &varCreateFundQuoteRequest)
 
 	if err != nil {
 		return err
 	}
 
 	*o = CreateFundQuoteRequest(varCreateFundQuoteRequest)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "amount")
+		delete(additionalProperties, "asset_id")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

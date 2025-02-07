@@ -12,7 +12,6 @@ package client
 
 import (
 	"encoding/json"
-	"bytes"
 	"fmt"
 )
 
@@ -34,6 +33,7 @@ type Network struct {
 	FeatureSet FeatureSet `json:"feature_set"`
 	// The BIP44 path prefix for the network
 	AddressPathPrefix *string `json:"address_path_prefix,omitempty"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _Network Network
@@ -282,6 +282,11 @@ func (o Network) ToMap() (map[string]interface{}, error) {
 	if !IsNil(o.AddressPathPrefix) {
 		toSerialize["address_path_prefix"] = o.AddressPathPrefix
 	}
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -315,15 +320,27 @@ func (o *Network) UnmarshalJSON(data []byte) (err error) {
 
 	varNetwork := _Network{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varNetwork)
+	err = json.Unmarshal(data, &varNetwork)
 
 	if err != nil {
 		return err
 	}
 
 	*o = Network(varNetwork)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "id")
+		delete(additionalProperties, "display_name")
+		delete(additionalProperties, "chain_id")
+		delete(additionalProperties, "protocol_family")
+		delete(additionalProperties, "is_testnet")
+		delete(additionalProperties, "native_asset")
+		delete(additionalProperties, "feature_set")
+		delete(additionalProperties, "address_path_prefix")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

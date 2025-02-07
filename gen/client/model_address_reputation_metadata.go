@@ -12,7 +12,6 @@ package client
 
 import (
 	"encoding/json"
-	"bytes"
 	"fmt"
 )
 
@@ -41,6 +40,7 @@ type AddressReputationMetadata struct {
 	EnsContractInteractions int32 `json:"ens_contract_interactions"`
 	// The number of smart contracts deployed by the address.
 	SmartContractDeployments int32 `json:"smart_contract_deployments"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _AddressReputationMetadata AddressReputationMetadata
@@ -332,6 +332,11 @@ func (o AddressReputationMetadata) ToMap() (map[string]interface{}, error) {
 	toSerialize["lend_borrow_stake_transactions"] = o.LendBorrowStakeTransactions
 	toSerialize["ens_contract_interactions"] = o.EnsContractInteractions
 	toSerialize["smart_contract_deployments"] = o.SmartContractDeployments
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -368,15 +373,29 @@ func (o *AddressReputationMetadata) UnmarshalJSON(data []byte) (err error) {
 
 	varAddressReputationMetadata := _AddressReputationMetadata{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varAddressReputationMetadata)
+	err = json.Unmarshal(data, &varAddressReputationMetadata)
 
 	if err != nil {
 		return err
 	}
 
 	*o = AddressReputationMetadata(varAddressReputationMetadata)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "total_transactions")
+		delete(additionalProperties, "unique_days_active")
+		delete(additionalProperties, "longest_active_streak")
+		delete(additionalProperties, "current_active_streak")
+		delete(additionalProperties, "activity_period_days")
+		delete(additionalProperties, "token_swaps_performed")
+		delete(additionalProperties, "bridge_transactions_performed")
+		delete(additionalProperties, "lend_borrow_stake_transactions")
+		delete(additionalProperties, "ens_contract_interactions")
+		delete(additionalProperties, "smart_contract_deployments")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }

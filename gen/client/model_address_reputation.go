@@ -12,7 +12,6 @@ package client
 
 import (
 	"encoding/json"
-	"bytes"
 	"fmt"
 )
 
@@ -24,6 +23,7 @@ type AddressReputation struct {
 	// The score of a wallet address, ranging from -100 to 100. A negative score indicates a bad reputation, while a positive score indicates a good reputation.
 	Score int32 `json:"score"`
 	Metadata AddressReputationMetadata `json:"metadata"`
+	AdditionalProperties map[string]interface{}
 }
 
 type _AddressReputation AddressReputation
@@ -107,6 +107,11 @@ func (o AddressReputation) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["score"] = o.Score
 	toSerialize["metadata"] = o.Metadata
+
+	for key, value := range o.AdditionalProperties {
+		toSerialize[key] = value
+	}
+
 	return toSerialize, nil
 }
 
@@ -135,15 +140,21 @@ func (o *AddressReputation) UnmarshalJSON(data []byte) (err error) {
 
 	varAddressReputation := _AddressReputation{}
 
-	decoder := json.NewDecoder(bytes.NewReader(data))
-	decoder.DisallowUnknownFields()
-	err = decoder.Decode(&varAddressReputation)
+	err = json.Unmarshal(data, &varAddressReputation)
 
 	if err != nil {
 		return err
 	}
 
 	*o = AddressReputation(varAddressReputation)
+
+	additionalProperties := make(map[string]interface{})
+
+	if err = json.Unmarshal(data, &additionalProperties); err == nil {
+		delete(additionalProperties, "score")
+		delete(additionalProperties, "metadata")
+		o.AdditionalProperties = additionalProperties
+	}
 
 	return err
 }
