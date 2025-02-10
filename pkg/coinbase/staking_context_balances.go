@@ -9,9 +9,10 @@ import (
 
 // StakingContextBalance represents the active stakeable balances for a given address and asset.
 type StakingContextBalance struct {
-	StakeableBalance   *Balance
-	UnstakeableBalance *Balance
-	ClaimableBalance   *Balance
+	StakeableBalance        *Balance
+	UnstakeableBalance      *Balance
+	PendingClaimableBalance *Balance
+	ClaimableBalance        *Balance
 }
 
 // StakingBalanceOption allows for the passing of custom options to the staking balance
@@ -35,6 +36,15 @@ func (c *Client) GetUnstakeableBalance(ctx context.Context, assetId string, addr
 	}
 
 	return sb.UnstakeableBalance, nil
+}
+
+func (c *Client) GetPendingClaimableBalance(ctx context.Context, assetId string, address *Address, o ...StakingBalanceOption) (*Balance, error) {
+	sb, err := c.fetchStakingBalances(ctx, assetId, address, o...)
+	if err != nil {
+		return nil, err
+	}
+
+	return sb.PendingClaimableBalance, nil
 }
 
 // GetClaimableBalance returns the claimable balance.
@@ -92,14 +102,20 @@ func newStakingBalancesFromModel(context *client.StakingContext) (*StakingContex
 		return nil, err
 	}
 
+	pendingClaimableBalance, err := newBalanceFromModel(&context.Context.PendingClaimableBalance)
+	if err != nil {
+		return nil, err
+	}
+
 	claimableBalance, err := newBalanceFromModel(&context.Context.ClaimableBalance)
 	if err != nil {
 		return nil, err
 	}
 
 	return &StakingContextBalance{
-		StakeableBalance:   stakeableBalance,
-		UnstakeableBalance: unstakeableBalance,
-		ClaimableBalance:   claimableBalance,
+		StakeableBalance:        stakeableBalance,
+		UnstakeableBalance:      unstakeableBalance,
+		PendingClaimableBalance: pendingClaimableBalance,
+		ClaimableBalance:        claimableBalance,
 	}, nil
 }
