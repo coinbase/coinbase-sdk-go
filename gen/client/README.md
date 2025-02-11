@@ -271,8 +271,6 @@ Class | Method | HTTP request | Description
  - [TradeList](docs/TradeList.md)
  - [Transaction](docs/Transaction.md)
  - [TransactionContent](docs/TransactionContent.md)
- - [TransactionLog](docs/TransactionLog.md)
- - [TransactionReceipt](docs/TransactionReceipt.md)
  - [TransactionType](docs/TransactionType.md)
  - [Transfer](docs/Transfer.md)
  - [TransferList](docs/TransferList.md)

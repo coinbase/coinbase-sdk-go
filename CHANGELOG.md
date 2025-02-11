@@ -1,5 +1,11 @@
 # Coinbase Go SDK Changelog
 
+## [0.0.19] - 2025-02-11
+
+### Added
+
+- Add `FeeRecipientAddress` and `ForwardedFeeRecipientAddress` functions to the `Validator` resource to help users get the fee_recipient  and forwarded_fee_recipient addresses for a given validator.
+
 ## [0.0.18] - 2025-02-10
 
 ### Added
