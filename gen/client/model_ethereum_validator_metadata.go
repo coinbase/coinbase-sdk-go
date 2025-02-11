@@ -36,6 +36,10 @@ type EthereumValidatorMetadata struct {
 	WithdrawableEpoch string `json:"withdrawableEpoch"`
 	Balance Balance `json:"balance"`
 	EffectiveBalance Balance `json:"effective_balance"`
+	// The address for execution layer rewards (MEV & tx fees). If using a reward splitter plan, this is a smart contract  address that splits rewards based on defined commissions and send a portion to the forwarded_fee_recipient_address. 
+	FeeRecipientAddress string `json:"fee_recipient_address"`
+	// If using a reward splitter plan, this address receives a defined percentage of the total execution layer rewards. 
+	ForwardedFeeRecipientAddress *string `json:"forwarded_fee_recipient_address,omitempty"`
 	AdditionalProperties map[string]interface{}
 }
 
@@ -45,7 +49,7 @@ type _EthereumValidatorMetadata EthereumValidatorMetadata
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewEthereumValidatorMetadata(index string, publicKey string, withdrawalAddress string, slashed bool, activationEpoch string, exitEpoch string, withdrawableEpoch string, balance Balance, effectiveBalance Balance) *EthereumValidatorMetadata {
+func NewEthereumValidatorMetadata(index string, publicKey string, withdrawalAddress string, slashed bool, activationEpoch string, exitEpoch string, withdrawableEpoch string, balance Balance, effectiveBalance Balance, feeRecipientAddress string) *EthereumValidatorMetadata {
 	this := EthereumValidatorMetadata{}
 	this.Index = index
 	this.PublicKey = publicKey
@@ -56,6 +60,7 @@ func NewEthereumValidatorMetadata(index string, publicKey string, withdrawalAddr
 	this.WithdrawableEpoch = withdrawableEpoch
 	this.Balance = balance
 	this.EffectiveBalance = effectiveBalance
+	this.FeeRecipientAddress = feeRecipientAddress
 	return &this
 }
 
@@ -283,6 +288,62 @@ func (o *EthereumValidatorMetadata) SetEffectiveBalance(v Balance) {
 	o.EffectiveBalance = v
 }
 
+// GetFeeRecipientAddress returns the FeeRecipientAddress field value
+func (o *EthereumValidatorMetadata) GetFeeRecipientAddress() string {
+	if o == nil {
+		var ret string
+		return ret
+	}
+
+	return o.FeeRecipientAddress
+}
+
+// GetFeeRecipientAddressOk returns a tuple with the FeeRecipientAddress field value
+// and a boolean to check if the value has been set.
+func (o *EthereumValidatorMetadata) GetFeeRecipientAddressOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.FeeRecipientAddress, true
+}
+
+// SetFeeRecipientAddress sets field value
+func (o *EthereumValidatorMetadata) SetFeeRecipientAddress(v string) {
+	o.FeeRecipientAddress = v
+}
+
+// GetForwardedFeeRecipientAddress returns the ForwardedFeeRecipientAddress field value if set, zero value otherwise.
+func (o *EthereumValidatorMetadata) GetForwardedFeeRecipientAddress() string {
+	if o == nil || IsNil(o.ForwardedFeeRecipientAddress) {
+		var ret string
+		return ret
+	}
+	return *o.ForwardedFeeRecipientAddress
+}
+
+// GetForwardedFeeRecipientAddressOk returns a tuple with the ForwardedFeeRecipientAddress field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *EthereumValidatorMetadata) GetForwardedFeeRecipientAddressOk() (*string, bool) {
+	if o == nil || IsNil(o.ForwardedFeeRecipientAddress) {
+		return nil, false
+	}
+	return o.ForwardedFeeRecipientAddress, true
+}
+
+// HasForwardedFeeRecipientAddress returns a boolean if a field has been set.
+func (o *EthereumValidatorMetadata) HasForwardedFeeRecipientAddress() bool {
+	if o != nil && !IsNil(o.ForwardedFeeRecipientAddress) {
+		return true
+	}
+
+	return false
+}
+
+// SetForwardedFeeRecipientAddress gets a reference to the given string and assigns it to the ForwardedFeeRecipientAddress field.
+func (o *EthereumValidatorMetadata) SetForwardedFeeRecipientAddress(v string) {
+	o.ForwardedFeeRecipientAddress = &v
+}
+
 func (o EthereumValidatorMetadata) MarshalJSON() ([]byte, error) {
 	toSerialize,err := o.ToMap()
 	if err != nil {
@@ -302,6 +363,10 @@ func (o EthereumValidatorMetadata) ToMap() (map[string]interface{}, error) {
 	toSerialize["withdrawableEpoch"] = o.WithdrawableEpoch
 	toSerialize["balance"] = o.Balance
 	toSerialize["effective_balance"] = o.EffectiveBalance
+	toSerialize["fee_recipient_address"] = o.FeeRecipientAddress
+	if !IsNil(o.ForwardedFeeRecipientAddress) {
+		toSerialize["forwarded_fee_recipient_address"] = o.ForwardedFeeRecipientAddress
+	}
 
 	for key, value := range o.AdditionalProperties {
 		toSerialize[key] = value
@@ -324,6 +389,7 @@ func (o *EthereumValidatorMetadata) UnmarshalJSON(data []byte) (err error) {
 		"withdrawableEpoch",
 		"balance",
 		"effective_balance",
+		"fee_recipient_address",
 	}
 
 	allProperties := make(map[string]interface{})
@@ -362,6 +428,8 @@ func (o *EthereumValidatorMetadata) UnmarshalJSON(data []byte) (err error) {
 		delete(additionalProperties, "withdrawableEpoch")
 		delete(additionalProperties, "balance")
 		delete(additionalProperties, "effective_balance")
+		delete(additionalProperties, "fee_recipient_address")
+		delete(additionalProperties, "forwarded_fee_recipient_address")
 		o.AdditionalProperties = additionalProperties
 	}
 

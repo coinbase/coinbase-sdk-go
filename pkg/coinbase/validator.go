@@ -124,6 +124,20 @@ func (v Validator) WithdrawalAddress() string {
 	return v.model.Details.EthereumValidatorMetadata.GetWithdrawalAddress()
 }
 
+func (v Validator) FeeRecipientAddress() string {
+	if !v.hasEthereumMetadata() {
+		return ""
+	}
+	return v.model.Details.EthereumValidatorMetadata.GetFeeRecipientAddress()
+}
+
+func (v Validator) ForwardedFeeRecipientAddress() string {
+	if !v.hasEthereumMetadata() {
+		return ""
+	}
+	return v.model.Details.EthereumValidatorMetadata.GetForwardedFeeRecipientAddress()
+}
+
 func (v Validator) Slashed() bool {
 	if !v.hasEthereumMetadata() {
 		return false
