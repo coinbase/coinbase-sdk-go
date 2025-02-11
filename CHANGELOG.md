@@ -1,5 +1,11 @@
 # Coinbase Go SDK Changelog
 
+## [0.0.18] - 2025-02-10
+
+### Added
+
+- Add `GetPendingClaimableBalance` function to help users get the pending claimable balance for a given address.
+
 ## [0.0.17] - 2025-02-06
 
 ### Added
