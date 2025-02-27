@@ -124,6 +124,13 @@ func (v Validator) WithdrawalAddress() string {
 	return v.model.Details.EthereumValidatorMetadata.GetWithdrawalAddress()
 }
 
+func (v Validator) WithdrawalCredentials() string {
+	if !v.hasEthereumMetadata() {
+		return ""
+	}
+	return v.model.Details.EthereumValidatorMetadata.GetWithdrawalCredentials()
+}
+
 func (v Validator) FeeRecipientAddress() string {
 	if !v.hasEthereumMetadata() {
 		return ""

@@ -126,11 +126,11 @@ Class | Method | HTTP request | Description
 *SmartContractsAPI* | [**ReadContract**](docs/SmartContractsAPI.md#readcontract) | **Post** /v1/networks/{network_id}/smart_contracts/{contract_address}/read | Read data from a smart contract
 *SmartContractsAPI* | [**RegisterSmartContract**](docs/SmartContractsAPI.md#registersmartcontract) | **Post** /v1/networks/{network_id}/smart_contracts/{contract_address}/register | Register a smart contract
 *SmartContractsAPI* | [**UpdateSmartContract**](docs/SmartContractsAPI.md#updatesmartcontract) | **Put** /v1/networks/{network_id}/smart_contracts/{contract_address} | Update a smart contract
-*SmartWalletsAPI* | [**BroadcastUserOperation**](docs/SmartWalletsAPI.md#broadcastuseroperation) | **Post** /v1/smart_wallets/{smart_wallet_address}/user_operations/{user_operation_id}/broadcast | Broadcast a user operation
+*SmartWalletsAPI* | [**BroadcastUserOperation**](docs/SmartWalletsAPI.md#broadcastuseroperation) | **Post** /v1/smart_wallets/{smart_wallet_address}/user_operations/{user_op_hash}/broadcast | Broadcast a user operation
 *SmartWalletsAPI* | [**CreateSmartWallet**](docs/SmartWalletsAPI.md#createsmartwallet) | **Post** /v1/smart_wallets | Create a new smart wallet
 *SmartWalletsAPI* | [**CreateUserOperation**](docs/SmartWalletsAPI.md#createuseroperation) | **Post** /v1/smart_wallets/{smart_wallet_address}/networks/{network_id}/user_operations | Create a new user operation
 *SmartWalletsAPI* | [**GetSmartWallet**](docs/SmartWalletsAPI.md#getsmartwallet) | **Get** /v1/smart_wallets/{smart_wallet_address} | Get smart wallet by address
-*SmartWalletsAPI* | [**GetUserOperation**](docs/SmartWalletsAPI.md#getuseroperation) | **Get** /v1/smart_wallets/{smart_wallet_address}/user_operations/{user_operation_id} | Get user operation
+*SmartWalletsAPI* | [**GetUserOperation**](docs/SmartWalletsAPI.md#getuseroperation) | **Get** /v1/smart_wallets/{smart_wallet_address}/user_operations/{user_op_hash} | Get user operation
 *SmartWalletsAPI* | [**ListSmartWallets**](docs/SmartWalletsAPI.md#listsmartwallets) | **Get** /v1/smart_wallets | List smart wallets
 *StakeAPI* | [**BuildStakingOperation**](docs/StakeAPI.md#buildstakingoperation) | **Post** /v1/stake/build | Build a new staking operation
 *StakeAPI* | [**FetchHistoricalStakingBalances**](docs/StakeAPI.md#fetchhistoricalstakingbalances) | **Get** /v1/networks/{network_id}/addresses/{address_id}/stake/balances | Fetch historical staking balances
@@ -271,6 +271,8 @@ Class | Method | HTTP request | Description
  - [TradeList](docs/TradeList.md)
  - [Transaction](docs/Transaction.md)
  - [TransactionContent](docs/TransactionContent.md)
+ - [TransactionLog](docs/TransactionLog.md)
+ - [TransactionReceipt](docs/TransactionReceipt.md)
  - [TransactionType](docs/TransactionType.md)
  - [Transfer](docs/Transfer.md)
  - [TransferList](docs/TransferList.md)

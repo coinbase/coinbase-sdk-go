@@ -24,8 +24,10 @@ type EthereumValidatorMetadata struct {
 	Index string `json:"index"`
 	// The public key of the validator.
 	PublicKey string `json:"public_key"`
-	// The address to which the validator's rewards are sent.
+	// The 20-byte address to which the validator's rewards are sent.
 	WithdrawalAddress string `json:"withdrawal_address"`
+	// The 32-byte field that determines where and how a validator’s staked ETH and rewards can be withdrawn.
+	WithdrawalCredentials string `json:"withdrawal_credentials"`
 	// Whether the validator has been slashed.
 	Slashed bool `json:"slashed"`
 	// The epoch at which the validator was activated.
@@ -36,7 +38,7 @@ type EthereumValidatorMetadata struct {
 	WithdrawableEpoch string `json:"withdrawableEpoch"`
 	Balance Balance `json:"balance"`
 	EffectiveBalance Balance `json:"effective_balance"`
-	// The address for execution layer rewards (MEV & tx fees). If using a reward splitter plan, this is a smart contract  address that splits rewards based on defined commissions and send a portion to the forwarded_fee_recipient_address. 
+	// The address for execution layer rewards (MEV & tx fees). If using a reward splitter plan, this is a smart contract address that splits rewards based on defined commissions and send a portion to the forwarded_fee_recipient_address. 
 	FeeRecipientAddress string `json:"fee_recipient_address"`
 	// If using a reward splitter plan, this address receives a defined percentage of the total execution layer rewards. 
 	ForwardedFeeRecipientAddress *string `json:"forwarded_fee_recipient_address,omitempty"`
@@ -49,11 +51,12 @@ type _EthereumValidatorMetadata EthereumValidatorMetadata
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewEthereumValidatorMetadata(index string, publicKey string, withdrawalAddress string, slashed bool, activationEpoch string, exitEpoch string, withdrawableEpoch string, balance Balance, effectiveBalance Balance, feeRecipientAddress string) *EthereumValidatorMetadata {
+func NewEthereumValidatorMetadata(index string, publicKey string, withdrawalAddress string, withdrawalCredentials string, slashed bool, activationEpoch string, exitEpoch string, withdrawableEpoch string, balance Balance, effectiveBalance Balance, feeRecipientAddress string) *EthereumValidatorMetadata {
 	this := EthereumValidatorMetadata{}
 	this.Index = index
 	this.PublicKey = publicKey
 	this.WithdrawalAddress = withdrawalAddress
+	this.WithdrawalCredentials = withdrawalCredentials
 	this.Slashed = slashed
 	this.ActivationEpoch = activationEpoch
 	this.ExitEpoch = exitEpoch
@@ -142,6 +145,30 @@ func (o *EthereumValidatorMetadata) GetWithdrawalAddressOk() (*string, bool) {
 // SetWithdrawalAddress sets field value
 func (o *EthereumValidatorMetadata) SetWithdrawalAddress(v string) {
 	o.WithdrawalAddress = v
+}
+
+// GetWithdrawalCredentials returns the WithdrawalCredentials field value
+func (o *EthereumValidatorMetadata) GetWithdrawalCredentials() string {
+	if o == nil {
+		var ret string
+		return ret
+	}
+
+	return o.WithdrawalCredentials
+}
+
+// GetWithdrawalCredentialsOk returns a tuple with the WithdrawalCredentials field value
+// and a boolean to check if the value has been set.
+func (o *EthereumValidatorMetadata) GetWithdrawalCredentialsOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.WithdrawalCredentials, true
+}
+
+// SetWithdrawalCredentials sets field value
+func (o *EthereumValidatorMetadata) SetWithdrawalCredentials(v string) {
+	o.WithdrawalCredentials = v
 }
 
 // GetSlashed returns the Slashed field value
@@ -357,6 +384,7 @@ func (o EthereumValidatorMetadata) ToMap() (map[string]interface{}, error) {
 	toSerialize["index"] = o.Index
 	toSerialize["public_key"] = o.PublicKey
 	toSerialize["withdrawal_address"] = o.WithdrawalAddress
+	toSerialize["withdrawal_credentials"] = o.WithdrawalCredentials
 	toSerialize["slashed"] = o.Slashed
 	toSerialize["activationEpoch"] = o.ActivationEpoch
 	toSerialize["exitEpoch"] = o.ExitEpoch
@@ -383,6 +411,7 @@ func (o *EthereumValidatorMetadata) UnmarshalJSON(data []byte) (err error) {
 		"index",
 		"public_key",
 		"withdrawal_address",
+		"withdrawal_credentials",
 		"slashed",
 		"activationEpoch",
 		"exitEpoch",
@@ -422,6 +451,7 @@ func (o *EthereumValidatorMetadata) UnmarshalJSON(data []byte) (err error) {
 		delete(additionalProperties, "index")
 		delete(additionalProperties, "public_key")
 		delete(additionalProperties, "withdrawal_address")
+		delete(additionalProperties, "withdrawal_credentials")
 		delete(additionalProperties, "slashed")
 		delete(additionalProperties, "activationEpoch")
 		delete(additionalProperties, "exitEpoch")

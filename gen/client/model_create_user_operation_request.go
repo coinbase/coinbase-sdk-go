@@ -22,6 +22,8 @@ var _ MappedNullable = &CreateUserOperationRequest{}
 type CreateUserOperationRequest struct {
 	// The list of calls to make from the smart wallet.
 	Calls []Call `json:"calls"`
+	// The URL of the paymaster to use for the user operation.
+	PaymasterUrl *string `json:"paymaster_url,omitempty"`
 	AdditionalProperties map[string]interface{}
 }
 
@@ -69,6 +71,38 @@ func (o *CreateUserOperationRequest) SetCalls(v []Call) {
 	o.Calls = v
 }
 
+// GetPaymasterUrl returns the PaymasterUrl field value if set, zero value otherwise.
+func (o *CreateUserOperationRequest) GetPaymasterUrl() string {
+	if o == nil || IsNil(o.PaymasterUrl) {
+		var ret string
+		return ret
+	}
+	return *o.PaymasterUrl
+}
+
+// GetPaymasterUrlOk returns a tuple with the PaymasterUrl field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *CreateUserOperationRequest) GetPaymasterUrlOk() (*string, bool) {
+	if o == nil || IsNil(o.PaymasterUrl) {
+		return nil, false
+	}
+	return o.PaymasterUrl, true
+}
+
+// HasPaymasterUrl returns a boolean if a field has been set.
+func (o *CreateUserOperationRequest) HasPaymasterUrl() bool {
+	if o != nil && !IsNil(o.PaymasterUrl) {
+		return true
+	}
+
+	return false
+}
+
+// SetPaymasterUrl gets a reference to the given string and assigns it to the PaymasterUrl field.
+func (o *CreateUserOperationRequest) SetPaymasterUrl(v string) {
+	o.PaymasterUrl = &v
+}
+
 func (o CreateUserOperationRequest) MarshalJSON() ([]byte, error) {
 	toSerialize,err := o.ToMap()
 	if err != nil {
@@ -80,6 +114,9 @@ func (o CreateUserOperationRequest) MarshalJSON() ([]byte, error) {
 func (o CreateUserOperationRequest) ToMap() (map[string]interface{}, error) {
 	toSerialize := map[string]interface{}{}
 	toSerialize["calls"] = o.Calls
+	if !IsNil(o.PaymasterUrl) {
+		toSerialize["paymaster_url"] = o.PaymasterUrl
+	}
 
 	for key, value := range o.AdditionalProperties {
 		toSerialize[key] = value
@@ -124,6 +161,7 @@ func (o *CreateUserOperationRequest) UnmarshalJSON(data []byte) (err error) {
 
 	if err = json.Unmarshal(data, &additionalProperties); err == nil {
 		delete(additionalProperties, "calls")
+		delete(additionalProperties, "paymaster_url")
 		o.AdditionalProperties = additionalProperties
 	}
 

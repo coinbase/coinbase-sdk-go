@@ -29,10 +29,10 @@ type SmartWalletsAPI interface {
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	@param smartWalletAddress The address of the smart wallet to broadcast the user operation from.
-	@param userOperationId The ID of the user operation to broadcast.
+	@param userOpHash The hash of the user operation to broadcast
 	@return ApiBroadcastUserOperationRequest
 	*/
-	BroadcastUserOperation(ctx context.Context, smartWalletAddress string, userOperationId string) ApiBroadcastUserOperationRequest
+	BroadcastUserOperation(ctx context.Context, smartWalletAddress string, userOpHash string) ApiBroadcastUserOperationRequest
 
 	// BroadcastUserOperationExecute executes the request
 	//  @return UserOperation
@@ -90,10 +90,10 @@ type SmartWalletsAPI interface {
 
 	@param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
 	@param smartWalletAddress The address of the smart wallet the user operation belongs to.
-	@param userOperationId The ID of the user operation to fetch.
+	@param userOpHash The hash of the user operation to fetch
 	@return ApiGetUserOperationRequest
 	*/
-	GetUserOperation(ctx context.Context, smartWalletAddress string, userOperationId string) ApiGetUserOperationRequest
+	GetUserOperation(ctx context.Context, smartWalletAddress string, userOpHash string) ApiGetUserOperationRequest
 
 	// GetUserOperationExecute executes the request
 	//  @return UserOperation
@@ -121,7 +121,7 @@ type ApiBroadcastUserOperationRequest struct {
 	ctx context.Context
 	ApiService SmartWalletsAPI
 	smartWalletAddress string
-	userOperationId string
+	userOpHash string
 	broadcastUserOperationRequest *BroadcastUserOperationRequest
 }
 
@@ -141,15 +141,15 @@ Broadcast a user operation
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  @param smartWalletAddress The address of the smart wallet to broadcast the user operation from.
- @param userOperationId The ID of the user operation to broadcast.
+ @param userOpHash The hash of the user operation to broadcast
  @return ApiBroadcastUserOperationRequest
 */
-func (a *SmartWalletsAPIService) BroadcastUserOperation(ctx context.Context, smartWalletAddress string, userOperationId string) ApiBroadcastUserOperationRequest {
+func (a *SmartWalletsAPIService) BroadcastUserOperation(ctx context.Context, smartWalletAddress string, userOpHash string) ApiBroadcastUserOperationRequest {
 	return ApiBroadcastUserOperationRequest{
 		ApiService: a,
 		ctx: ctx,
 		smartWalletAddress: smartWalletAddress,
-		userOperationId: userOperationId,
+		userOpHash: userOpHash,
 	}
 }
 
@@ -168,9 +168,9 @@ func (a *SmartWalletsAPIService) BroadcastUserOperationExecute(r ApiBroadcastUse
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/v1/smart_wallets/{smart_wallet_address}/user_operations/{user_operation_id}/broadcast"
+	localVarPath := localBasePath + "/v1/smart_wallets/{smart_wallet_address}/user_operations/{user_op_hash}/broadcast"
 	localVarPath = strings.Replace(localVarPath, "{"+"smart_wallet_address"+"}", url.PathEscape(parameterValueToString(r.smartWalletAddress, "smartWalletAddress")), -1)
-	localVarPath = strings.Replace(localVarPath, "{"+"user_operation_id"+"}", url.PathEscape(parameterValueToString(r.userOperationId, "userOperationId")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"user_op_hash"+"}", url.PathEscape(parameterValueToString(r.userOpHash, "userOpHash")), -1)
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}
@@ -663,7 +663,7 @@ type ApiGetUserOperationRequest struct {
 	ctx context.Context
 	ApiService SmartWalletsAPI
 	smartWalletAddress string
-	userOperationId string
+	userOpHash string
 }
 
 func (r ApiGetUserOperationRequest) Execute() (*UserOperation, *http.Response, error) {
@@ -677,15 +677,15 @@ Get user operation
 
  @param ctx context.Context - for authentication, logging, cancellation, deadlines, tracing, etc. Passed from http.Request or context.Background().
  @param smartWalletAddress The address of the smart wallet the user operation belongs to.
- @param userOperationId The ID of the user operation to fetch.
+ @param userOpHash The hash of the user operation to fetch
  @return ApiGetUserOperationRequest
 */
-func (a *SmartWalletsAPIService) GetUserOperation(ctx context.Context, smartWalletAddress string, userOperationId string) ApiGetUserOperationRequest {
+func (a *SmartWalletsAPIService) GetUserOperation(ctx context.Context, smartWalletAddress string, userOpHash string) ApiGetUserOperationRequest {
 	return ApiGetUserOperationRequest{
 		ApiService: a,
 		ctx: ctx,
 		smartWalletAddress: smartWalletAddress,
-		userOperationId: userOperationId,
+		userOpHash: userOpHash,
 	}
 }
 
@@ -704,9 +704,9 @@ func (a *SmartWalletsAPIService) GetUserOperationExecute(r ApiGetUserOperationRe
 		return localVarReturnValue, nil, &GenericOpenAPIError{error: err.Error()}
 	}
 
-	localVarPath := localBasePath + "/v1/smart_wallets/{smart_wallet_address}/user_operations/{user_operation_id}"
+	localVarPath := localBasePath + "/v1/smart_wallets/{smart_wallet_address}/user_operations/{user_op_hash}"
 	localVarPath = strings.Replace(localVarPath, "{"+"smart_wallet_address"+"}", url.PathEscape(parameterValueToString(r.smartWalletAddress, "smartWalletAddress")), -1)
-	localVarPath = strings.Replace(localVarPath, "{"+"user_operation_id"+"}", url.PathEscape(parameterValueToString(r.userOperationId, "userOperationId")), -1)
+	localVarPath = strings.Replace(localVarPath, "{"+"user_op_hash"+"}", url.PathEscape(parameterValueToString(r.userOpHash, "userOpHash")), -1)
 
 	localVarHeaderParams := make(map[string]string)
 	localVarQueryParams := url.Values{}

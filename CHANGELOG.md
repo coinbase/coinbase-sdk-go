@@ -1,5 +1,11 @@
 # Coinbase Go SDK Changelog
 
+## [0.0.20] - 2025-02-27
+
+### Added
+
+- Add `WithdrawalCredentials` function to the `Validator` resource to help users get the withdrawl credentials for a given validator.
+
 ## [0.0.19] - 2025-02-11
 
 ### Added
