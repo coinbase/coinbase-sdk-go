@@ -26,12 +26,17 @@ type UserOperation struct {
 	NetworkId string `json:"network_id"`
 	// The list of calls to make from the smart wallet.
 	Calls []Call `json:"calls"`
+	// The unique identifier for the user operation onchain. This is the payload that must be signed by one of the owners of the smart wallet to send the user operation.
+	UserOpHash string `json:"user_op_hash"`
 	// The hex-encoded hash that must be signed by the user.
+	// Deprecated
 	UnsignedPayload string `json:"unsigned_payload"`
 	// The hex-encoded signature of the user operation.
 	Signature *string `json:"signature,omitempty"`
+	// The hash of the transaction that was broadcast.
+	TransactionHash *string `json:"transaction_hash,omitempty"`
 	// The status of the user operation.
-	Status *string `json:"status,omitempty"`
+	Status string `json:"status"`
 	AdditionalProperties map[string]interface{}
 }
 
@@ -41,12 +46,14 @@ type _UserOperation UserOperation
 // This constructor will assign default values to properties that have it defined,
 // and makes sure properties required by API are set, but the set of arguments
 // will change when the set of required properties is changed
-func NewUserOperation(id string, networkId string, calls []Call, unsignedPayload string) *UserOperation {
+func NewUserOperation(id string, networkId string, calls []Call, userOpHash string, unsignedPayload string, status string) *UserOperation {
 	this := UserOperation{}
 	this.Id = id
 	this.NetworkId = networkId
 	this.Calls = calls
+	this.UserOpHash = userOpHash
 	this.UnsignedPayload = unsignedPayload
+	this.Status = status
 	return &this
 }
 
@@ -130,7 +137,32 @@ func (o *UserOperation) SetCalls(v []Call) {
 	o.Calls = v
 }
 
+// GetUserOpHash returns the UserOpHash field value
+func (o *UserOperation) GetUserOpHash() string {
+	if o == nil {
+		var ret string
+		return ret
+	}
+
+	return o.UserOpHash
+}
+
+// GetUserOpHashOk returns a tuple with the UserOpHash field value
+// and a boolean to check if the value has been set.
+func (o *UserOperation) GetUserOpHashOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.UserOpHash, true
+}
+
+// SetUserOpHash sets field value
+func (o *UserOperation) SetUserOpHash(v string) {
+	o.UserOpHash = v
+}
+
 // GetUnsignedPayload returns the UnsignedPayload field value
+// Deprecated
 func (o *UserOperation) GetUnsignedPayload() string {
 	if o == nil {
 		var ret string
@@ -142,6 +174,7 @@ func (o *UserOperation) GetUnsignedPayload() string {
 
 // GetUnsignedPayloadOk returns a tuple with the UnsignedPayload field value
 // and a boolean to check if the value has been set.
+// Deprecated
 func (o *UserOperation) GetUnsignedPayloadOk() (*string, bool) {
 	if o == nil {
 		return nil, false
@@ -150,6 +183,7 @@ func (o *UserOperation) GetUnsignedPayloadOk() (*string, bool) {
 }
 
 // SetUnsignedPayload sets field value
+// Deprecated
 func (o *UserOperation) SetUnsignedPayload(v string) {
 	o.UnsignedPayload = v
 }
@@ -186,36 +220,60 @@ func (o *UserOperation) SetSignature(v string) {
 	o.Signature = &v
 }
 
-// GetStatus returns the Status field value if set, zero value otherwise.
-func (o *UserOperation) GetStatus() string {
-	if o == nil || IsNil(o.Status) {
+// GetTransactionHash returns the TransactionHash field value if set, zero value otherwise.
+func (o *UserOperation) GetTransactionHash() string {
+	if o == nil || IsNil(o.TransactionHash) {
 		var ret string
 		return ret
 	}
-	return *o.Status
+	return *o.TransactionHash
 }
 
-// GetStatusOk returns a tuple with the Status field value if set, nil otherwise
+// GetTransactionHashOk returns a tuple with the TransactionHash field value if set, nil otherwise
 // and a boolean to check if the value has been set.
-func (o *UserOperation) GetStatusOk() (*string, bool) {
-	if o == nil || IsNil(o.Status) {
+func (o *UserOperation) GetTransactionHashOk() (*string, bool) {
+	if o == nil || IsNil(o.TransactionHash) {
 		return nil, false
 	}
-	return o.Status, true
+	return o.TransactionHash, true
 }
 
-// HasStatus returns a boolean if a field has been set.
-func (o *UserOperation) HasStatus() bool {
-	if o != nil && !IsNil(o.Status) {
+// HasTransactionHash returns a boolean if a field has been set.
+func (o *UserOperation) HasTransactionHash() bool {
+	if o != nil && !IsNil(o.TransactionHash) {
 		return true
 	}
 
 	return false
 }
 
-// SetStatus gets a reference to the given string and assigns it to the Status field.
+// SetTransactionHash gets a reference to the given string and assigns it to the TransactionHash field.
+func (o *UserOperation) SetTransactionHash(v string) {
+	o.TransactionHash = &v
+}
+
+// GetStatus returns the Status field value
+func (o *UserOperation) GetStatus() string {
+	if o == nil {
+		var ret string
+		return ret
+	}
+
+	return o.Status
+}
+
+// GetStatusOk returns a tuple with the Status field value
+// and a boolean to check if the value has been set.
+func (o *UserOperation) GetStatusOk() (*string, bool) {
+	if o == nil {
+		return nil, false
+	}
+	return &o.Status, true
+}
+
+// SetStatus sets field value
 func (o *UserOperation) SetStatus(v string) {
-	o.Status = &v
+	o.Status = v
 }
 
 func (o UserOperation) MarshalJSON() ([]byte, error) {
@@ -231,13 +289,15 @@ func (o UserOperation) ToMap() (map[string]interface{}, error) {
 	toSerialize["id"] = o.Id
 	toSerialize["network_id"] = o.NetworkId
 	toSerialize["calls"] = o.Calls
+	toSerialize["user_op_hash"] = o.UserOpHash
 	toSerialize["unsigned_payload"] = o.UnsignedPayload
 	if !IsNil(o.Signature) {
 		toSerialize["signature"] = o.Signature
 	}
-	if !IsNil(o.Status) {
-		toSerialize["status"] = o.Status
+	if !IsNil(o.TransactionHash) {
+		toSerialize["transaction_hash"] = o.TransactionHash
 	}
+	toSerialize["status"] = o.Status
 
 	for key, value := range o.AdditionalProperties {
 		toSerialize[key] = value
@@ -254,7 +314,9 @@ func (o *UserOperation) UnmarshalJSON(data []byte) (err error) {
 		"id",
 		"network_id",
 		"calls",
+		"user_op_hash",
 		"unsigned_payload",
+		"status",
 	}
 
 	allProperties := make(map[string]interface{})
@@ -287,8 +349,10 @@ func (o *UserOperation) UnmarshalJSON(data []byte) (err error) {
 		delete(additionalProperties, "id")
 		delete(additionalProperties, "network_id")
 		delete(additionalProperties, "calls")
+		delete(additionalProperties, "user_op_hash")
 		delete(additionalProperties, "unsigned_payload")
 		delete(additionalProperties, "signature")
+		delete(additionalProperties, "transaction_hash")
 		delete(additionalProperties, "status")
 		o.AdditionalProperties = additionalProperties
 	}

@@ -56,6 +56,7 @@ type EthereumTransaction struct {
 	Mint *string `json:"mint,omitempty"`
 	// RLP encoded transaction as a hex string (prefixed with 0x) for native compatibility with popular eth clients such as etherjs, viem etc.
 	RlpEncodedTx *string `json:"rlp_encoded_tx,omitempty"`
+	Receipt *TransactionReceipt `json:"receipt,omitempty"`
 	AdditionalProperties map[string]interface{}
 }
 
@@ -672,6 +673,38 @@ func (o *EthereumTransaction) SetRlpEncodedTx(v string) {
 	o.RlpEncodedTx = &v
 }
 
+// GetReceipt returns the Receipt field value if set, zero value otherwise.
+func (o *EthereumTransaction) GetReceipt() TransactionReceipt {
+	if o == nil || IsNil(o.Receipt) {
+		var ret TransactionReceipt
+		return ret
+	}
+	return *o.Receipt
+}
+
+// GetReceiptOk returns a tuple with the Receipt field value if set, nil otherwise
+// and a boolean to check if the value has been set.
+func (o *EthereumTransaction) GetReceiptOk() (*TransactionReceipt, bool) {
+	if o == nil || IsNil(o.Receipt) {
+		return nil, false
+	}
+	return o.Receipt, true
+}
+
+// HasReceipt returns a boolean if a field has been set.
+func (o *EthereumTransaction) HasReceipt() bool {
+	if o != nil && !IsNil(o.Receipt) {
+		return true
+	}
+
+	return false
+}
+
+// SetReceipt gets a reference to the given TransactionReceipt and assigns it to the Receipt field.
+func (o *EthereumTransaction) SetReceipt(v TransactionReceipt) {
+	o.Receipt = &v
+}
+
 func (o EthereumTransaction) MarshalJSON() ([]byte, error) {
 	toSerialize,err := o.ToMap()
 	if err != nil {
@@ -734,6 +767,9 @@ func (o EthereumTransaction) ToMap() (map[string]interface{}, error) {
 	}
 	if !IsNil(o.RlpEncodedTx) {
 		toSerialize["rlp_encoded_tx"] = o.RlpEncodedTx
+	}
+	if !IsNil(o.Receipt) {
+		toSerialize["receipt"] = o.Receipt
 	}
 
 	for key, value := range o.AdditionalProperties {
@@ -798,6 +834,7 @@ func (o *EthereumTransaction) UnmarshalJSON(data []byte) (err error) {
 		delete(additionalProperties, "block_timestamp")
 		delete(additionalProperties, "mint")
 		delete(additionalProperties, "rlp_encoded_tx")
+		delete(additionalProperties, "receipt")
 		o.AdditionalProperties = additionalProperties
 	}
 
