@@ -81,7 +81,7 @@ func (c *Client) BuildStakingOperation(
 		Action:    action,
 		Options: map[string]string{
 			"mode":   StakingOperationModeDefault,
-			"amount": asset.toAtomicAmount(amount).String(),
+			"amount": asset.ToAtomicAmount(amount).String(),
 		},
 	}
 	for _, f := range o {

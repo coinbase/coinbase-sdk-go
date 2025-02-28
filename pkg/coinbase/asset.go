@@ -37,22 +37,22 @@ func (a Asset) FromAtomicAmount(wholeAmount *big.Int) *big.Float {
 	divisor := new(big.Int).Exp(big.NewInt(10), big.NewInt(int64(exponent)), nil)
 
 	// Convert the divisor to *big.Float for division.
-	divisorFloat := new(big.Float).SetInt(divisor)
+	divisorFloat := new(big.Float).SetInt(divisor).SetPrec(128)
 
 	// Convert the wholeAmount to *big.Float.
-	amountFloat := new(big.Float).SetInt(wholeAmount)
+	amountFloat := new(big.Float).SetInt(wholeAmount).SetPrec(128)
 
 	return new(big.Float).Quo(amountFloat, divisorFloat)
 }
 
-func (a Asset) toAtomicAmount(wholeAmount *big.Float) *big.Int {
+func (a Asset) ToAtomicAmount(wholeAmount *big.Float) *big.Int {
 	exponent := a.decimals
 
 	// Calculate the 10^exponent as *big.Int.
 	multiplier := new(big.Int).Exp(big.NewInt(10), big.NewInt(int64(exponent)), nil)
 
 	// Convert the multiplier to *big.Float for multiplication.
-	multiplierFloat := new(big.Float).SetInt(multiplier)
+	multiplierFloat := new(big.Float).SetInt(multiplier).SetPrec(128)
 
 	// Perform the multiplication.
 	resultFloat := new(big.Float).Mul(wholeAmount, multiplierFloat)
