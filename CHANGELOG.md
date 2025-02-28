@@ -1,5 +1,11 @@
 # Coinbase Go SDK Changelog
 
+## [0.0.21] - 2025-02-28
+
+### Changed
+
+- Improved precision of `FromAtomicAmount` and `ToAtomicAmount` calculations. Fixed an issue where the amount "32006467556000000000" wei was interpreted as "32.006467555999999999" due to lossy floating point math. Updated precision to 128 bits to resolve this.
+
 ## [0.0.20] - 2025-02-27
 
 ### Added
