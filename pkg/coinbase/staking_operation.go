@@ -4,6 +4,7 @@ import (
 	"context"
 	"crypto"
 	"encoding/base64"
+	"encoding/json"
 	"fmt"
 	"math/big"
 	"time"
@@ -25,6 +26,63 @@ func WithStakingOperationMode(mode string) StakingOperationOption {
 // WithIntegratorContractAddress allows for the setting of the integrator contract address for Shared ETH staking.
 func WithIntegratorContractAddress(integratorContractAddress string) StakingOperationOption {
 	return WithStakingOperationOption("integrator_contract_address", integratorContractAddress)
+}
+
+// ExecutionLayerWithdrawalsOptionBuilder builds the options for Native ETH execution layer validator withdrawals as defined in https://eips.ethereum.org/EIPS/eip-7002.
+type ExecutionLayerWithdrawalsOptionBuilder struct {
+	assetUnitConverter func(*big.Float) string
+	validatorAmounts   map[string]string
+	buffer             string
+}
+
+// NewExecutionLayerWithdrawalsOptionBuilder creates a new builder for Native ETH execution layer validator withdrawals.
+func NewExecutionLayerWithdrawalsOptionBuilder(
+	ctx context.Context,
+	c *Client,
+	address *Address,
+	assetID string,
+) (*ExecutionLayerWithdrawalsOptionBuilder, error) {
+	asset, err := c.fetchAsset(ctx, address.NetworkID(), assetID)
+	if err != nil {
+		return nil, err
+	}
+
+	return &ExecutionLayerWithdrawalsOptionBuilder{
+		assetUnitConverter: func(amount *big.Float) string { return asset.ToAtomicAmount(amount).String() },
+		validatorAmounts:   make(map[string]string),
+		buffer:             "{}",
+	}, nil
+}
+
+// AddValidatorWithdrawal adds a Native ETH validator public key and amount to the list of validators to generate withdrawal transactions for.
+// An amount of "0" indicates a full withdrawal.
+func (b *ExecutionLayerWithdrawalsOptionBuilder) AddValidatorWithdrawal(publicKey string, amount *big.Float) error {
+	if amount == nil {
+		return nil
+	}
+
+	b.validatorAmounts[publicKey] = b.assetUnitConverter(amount)
+
+	buf, err := json.Marshal(b.validatorAmounts)
+	if err != nil {
+		return err
+	}
+
+	b.buffer = string(buf)
+
+	return nil
+}
+
+// WithExecutionLayerWithdrawals allows for Native ETH execution layer withdrawals as defined in https://eips.ethereum.org/EIPS/eip-7002.
+// Selected validators must have been upgraded to withdrawal credentials of type "0x02".
+func WithExecutionLayerWithdrawals(builder *ExecutionLayerWithdrawalsOptionBuilder) StakingOperationOption {
+	return func(op *client.BuildStakingOperationRequest) {
+		op.Options["withdrawal_credential_type"] = "0x02"
+		op.Options["validator_unstake_amounts"] = builder.buffer
+
+		// Top-level "amount" is excluded for execution layer withdrawals
+		delete(op.Options, "amount")
+	}
 }
 
 // WithStakingOperationOption allows for the passing of custom options
@@ -84,9 +142,11 @@ func (c *Client) BuildStakingOperation(
 			"amount": asset.ToAtomicAmount(amount).String(),
 		},
 	}
+
 	for _, f := range o {
 		f(&req)
 	}
+
 	op, httpResp, err := c.client.StakeAPI.BuildStakingOperation(ctx).BuildStakingOperationRequest(req).Execute()
 	if err != nil {
 		return nil, errors.MapToUserFacing(err, httpResp)
