@@ -36,7 +36,7 @@ func (t *transport) RoundTrip(req *http.Request) (*http.Response, error) {
 		"Correlation-Context",
 		fmt.Sprintf(
 			"%s,%s",
-			fmt.Sprintf("%s=%s", "sdk_version", "0.0.21"),
+			fmt.Sprintf("%s=%s", "sdk_version", "0.0.22"),
 			fmt.Sprintf("%s=%s", "sdk_language", "go"),
 		),
 	)
