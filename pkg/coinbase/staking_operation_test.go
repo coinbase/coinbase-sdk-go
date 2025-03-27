@@ -7,6 +7,7 @@ import (
 	"crypto/rand"
 	"errors"
 	"fmt"
+	"math/big"
 	"net/http"
 	"testing"
 
@@ -129,6 +130,77 @@ func (s *StakingOperationSuite) TestStakingOperation_GetSignedVoluntaryExitMessa
 
 	s.Equal(1, len(SignedVoluntaryExitMessages), "signed voluntary exit messages should have length 1")
 	s.Equal("test-data", SignedVoluntaryExitMessages[0], "signed voluntary exit messages should match")
+}
+
+func (s *StakingOperationSuite) TestStakingOperation_BuildUnstakeOperation_WithExecutionLayerWithdrawals() {
+	mc := &mockController{
+		stakeAPI:  mocks.NewStakeAPI(s.T()),
+		assetsAPI: mocks.NewAssetsAPI(s.T()),
+	}
+
+	mc.assetsAPI.On("GetAsset", mock.Anything, mock.Anything, mock.Anything).
+		Return(api.ApiGetAssetRequest{ApiService: mc.assetsAPI})
+
+	decimals := int32(5)
+	asset := &api.Asset{
+		NetworkId: EthereumHolesky,
+		AssetId:   "1",
+		Decimals:  &decimals,
+	}
+	mc.assetsAPI.On("GetAssetExecute", mock.Anything, mock.Anything, mock.Anything).
+		Return(asset, &http.Response{StatusCode: http.StatusOK}, nil)
+
+	mc.stakeAPI.On("BuildStakingOperation", mock.Anything).
+		Return(api.ApiBuildStakingOperationRequest{ApiService: mc.stakeAPI})
+
+	op := &api.StakingOperation{Id: "1"}
+	mc.stakeAPI.On("BuildStakingOperationExecute", mock.Anything).
+		Return(op, &http.Response{StatusCode: http.StatusOK}, nil)
+
+	c := &Client{
+		client: &api.APIClient{
+			StakeAPI:  mc.stakeAPI,
+			AssetsAPI: mc.assetsAPI,
+		},
+	}
+
+	address := NewExternalAddress(EthereumHolesky, "1")
+
+	builder, err := NewExecutionLayerWithdrawalsOptionBuilder(
+		context.Background(),
+		c,
+		address,
+		"1",
+	)
+	s.NoError(err, "failed to create execution layer withdrawal builder")
+
+	err = builder.AddValidatorWithdrawal("0x123", big.NewFloat(1.0))
+	s.NoError(err, "failed to add validator withdrawal")
+
+	err = builder.AddValidatorWithdrawal("0xabc", big.NewFloat(2.0))
+	s.NoError(err, "failed to add validator withdrawal")
+
+	option := WithExecutionLayerWithdrawals(builder)
+
+	req := client.BuildStakingOperationRequest{
+		Options: map[string]string{
+			"mode":   StakingOperationModeDefault,
+			"amount": "some-amount",
+		},
+	}
+	option(&req)
+	s.Empty(req.Options["amount"])
+	s.Equal("0x02", req.Options["withdrawal_credential_type"])
+	s.JSONEq(`{"0x123":  "100000", "0xabc":  "200000"}`, req.Options["validator_unstake_amounts"])
+
+	_, err = c.BuildUnstakeOperation(
+		context.Background(),
+		big.NewFloat(0),
+		Eth,
+		NewExternalAddress(EthereumHolesky, "1"),
+		option,
+	)
+	s.NoError(err)
 }
 
 func mockStakingOperation(t *testing.T, status string) (*StakingOperation, error) {

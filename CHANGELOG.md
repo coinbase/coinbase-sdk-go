@@ -1,5 +1,11 @@
 # Coinbase Go SDK Changelog
 
+## [0.0.22] - 2025-03-27
+
+### Added
+
+- Add `ExecutionLayerWithdrawalsOptionBuilder` and `WithExecutionLayerWithdrawals` as an option to allow for native ETH execution layer withdrawals as defined in https://eips.ethereum.org/EIPS/eip-7002.
+
 ## [0.0.21] - 2025-02-28
 
 ### Changed
