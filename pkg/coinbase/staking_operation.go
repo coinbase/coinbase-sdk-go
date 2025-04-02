@@ -55,9 +55,8 @@ func NewExecutionLayerWithdrawalsOptionBuilder(
 	ctx context.Context,
 	c *Client,
 	address *Address,
-	assetID string,
 ) (*ExecutionLayerWithdrawalsOptionBuilder, error) {
-	asset, err := c.fetchAsset(ctx, address.NetworkID(), assetID)
+	asset, err := c.fetchAsset(ctx, address.NetworkID(), Eth)
 	if err != nil {
 		return nil, err
 	}
