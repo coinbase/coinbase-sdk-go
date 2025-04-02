@@ -5,6 +5,7 @@
 ### Added
 
 - Add `ExecutionLayerWithdrawalsOptionBuilder` and `WithExecutionLayerWithdrawals` as an option to allow for native ETH execution layer withdrawals as defined in https://eips.ethereum.org/EIPS/eip-7002.
+- Add `Hoodi` network support.
 
 ## [0.0.21] - 2025-02-28
 
