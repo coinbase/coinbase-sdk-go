@@ -23,6 +23,21 @@ func WithStakingOperationMode(mode string) StakingOperationOption {
 	return WithStakingOperationOption("mode", mode)
 }
 
+// WithWithdrawalCredentialType allows for the setting of the withdrawal credential type.
+func WithWithdrawalCredentialType(credentialType string) StakingOperationOption {
+	return WithStakingOperationOption("withdrawal_credential_type", credentialType)
+}
+
+// With0x01WithdrawalCredentialType allows for the setting of the withdrawal credential type to "0x01".
+func With0x01WithdrawalCredentialType() StakingOperationOption {
+	return WithWithdrawalCredentialType("0x01")
+}
+
+// With0x02WithdrawalCredentialType allows for the setting of the withdrawal credential type to "0x02".
+func With0x02WithdrawalCredentialType() StakingOperationOption {
+	return WithWithdrawalCredentialType("0x02")
+}
+
 // WithIntegratorContractAddress allows for the setting of the integrator contract address for Shared ETH staking.
 func WithIntegratorContractAddress(integratorContractAddress string) StakingOperationOption {
 	return WithStakingOperationOption("integrator_contract_address", integratorContractAddress)
@@ -40,9 +55,8 @@ func NewExecutionLayerWithdrawalsOptionBuilder(
 	ctx context.Context,
 	c *Client,
 	address *Address,
-	assetID string,
 ) (*ExecutionLayerWithdrawalsOptionBuilder, error) {
-	asset, err := c.fetchAsset(ctx, address.NetworkID(), assetID)
+	asset, err := c.fetchAsset(ctx, address.NetworkID(), Eth)
 	if err != nil {
 		return nil, err
 	}

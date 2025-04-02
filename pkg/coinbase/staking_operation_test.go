@@ -170,7 +170,6 @@ func (s *StakingOperationSuite) TestStakingOperation_BuildUnstakeOperation_WithE
 		context.Background(),
 		c,
 		address,
-		"1",
 	)
 	s.NoError(err, "failed to create execution layer withdrawal builder")
 
