@@ -69,6 +69,16 @@ func WithStakingBalanceMode(mode string) StakingBalanceOption {
 	return WithStakingBalanceOption("mode", mode)
 }
 
+// WithNativeStakingBalanceMode allows for the setting of the mode of the staking balance to native
+func WithNativeStakingBalanceMode() StakingBalanceOption {
+	return WithStakingBalanceMode(StakingOperationModeNative)
+}
+
+// WithPartialStakingBalanceMode allows for the setting of the mode of the staking balance to partial
+func WithPartialStakingBalanceMode() StakingBalanceOption {
+	return WithStakingBalanceMode(StakingOperationModePartial)
+}
+
 // FetchStakingBalances fetches the staking balances for a given address and asset.
 func (c *Client) fetchStakingBalances(ctx context.Context, assetId string, address *Address, o ...StakingBalanceOption) (*StakingContextBalance, error) {
 	req := client.GetStakingContextRequest{

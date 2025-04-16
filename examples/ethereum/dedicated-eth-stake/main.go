@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"math/big"
 	"os"
@@ -20,7 +19,7 @@ var (
 )
 
 /*
- * This example code stakes ETH on the Holesky network via Dedicated ETH Staking.
+ * This example code stakes ETH on the Hoodi network via Dedicated ETH Staking.
  * Run the code with 'go run examples/ethereum/dedicated-eth-stake/main.go <api_key_file_path> <funding_wallet_address> <private_key> <rpc_url>'
  */
 
@@ -37,24 +36,16 @@ func main() {
 
 	address := coinbase.NewExternalAddress(string(networkID), os.Args[2])
 
-	stakeableBalance, err := client.GetStakeableBalance(ctx, assetID, address, coinbase.WithStakingBalanceMode(coinbase.StakingOperationModeNative))
+	stakeableBalance, err := client.GetStakeableBalance(ctx, assetID, address, coinbase.WithNativeStakingBalanceMode())
 	if err != nil {
 		log.Fatalf("error getting stakeable balance: %v", err)
 	}
 
 	log.Printf("stakeable balance: %s\n", stakeableBalance.Amount().Text('f', 18))
 
-	unstakeableBalance, err := client.GetUnstakeableBalance(ctx, assetID, address, coinbase.WithStakingBalanceMode(coinbase.StakingOperationModeNative))
-	if err != nil {
-		log.Fatalf("error getting unstakeableBalance balance: %v", err)
-	}
-
-	log.Printf("unstakeableBalance balance: %s\n", unstakeableBalance.Amount().Text('f', 18))
-
-	listMyValidators(ctx, client, string(networkID), assetID)
-
 	options := []coinbase.StakingOperationOption{
-		coinbase.WithStakingOperationMode(coinbase.StakingOperationModeNative),
+		coinbase.WithNativeStakingOperationMode(),
+		// Select 0x02 for Pectra validators or 0x01 for pre-pectra validators.
 		coinbase.With0x02WithdrawalCredentialType(),
 	}
 
@@ -69,11 +60,11 @@ func main() {
 		log.Fatalf("error building staking operation: %v", err)
 	}
 
+	log.Printf("staking operation ID: %s\n", stakeOperation.ID())
+
 	if err := client.Wait(ctx, stakeOperation, coinbase.WithWaitTimeoutSeconds(600)); err != nil {
 		log.Fatalf("error waiting for staking operation: %v", err)
 	}
-
-	log.Printf("staking operation ID: %s\n", stakeOperation.ID())
 
 	// Load your wallet's private key from which you initiated the above stake operation.
 	key, err := crypto.HexToECDSA(os.Args[3])
@@ -81,9 +72,10 @@ func main() {
 		log.Fatal(err)
 	}
 
+	log.Printf("Signing stake operation ...")
+
 	// Sign the transactions within staking operation resource with your private key.
-	err = stakeOperation.Sign(key)
-	if err != nil {
+	if err := stakeOperation.Sign(key); err != nil {
 		log.Fatal(err)
 	}
 
@@ -106,14 +98,20 @@ func main() {
 			log.Fatal(err)
 		}
 
-		println(fmt.Sprintf("Broadcasted transaction hash: %s", rawTx.Hash().Hex()))
+		log.Printf("Broadcasted transaction hash: %s", rawTx.Hash().Hex())
 	}
 
-	listMyValidators(ctx, client, string(networkID), assetID)
+	listMyValidators(ctx, client, string(networkID), assetID, coinbase.ValidatorStatusProvisioned)
 }
 
-func listMyValidators(ctx context.Context, client *coinbase.Client, networkID string, assetID string) {
-	validators, err := client.ListValidators(ctx, networkID, assetID)
+func listMyValidators(ctx context.Context, client *coinbase.Client, networkID string, assetID string, status coinbase.ValidatorStatus) {
+	var opts []coinbase.ListValidatorsOption
+
+	if status != coinbase.ValidatorStatusUnknown {
+		opts = append(opts, coinbase.WithListValidatorsStatusOption(status))
+	}
+
+	validators, err := client.ListValidators(ctx, networkID, assetID, opts...)
 	if err != nil {
 		log.Fatalf("error listing validators: %v", err)
 	}

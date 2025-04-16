@@ -189,14 +189,77 @@ func (s *StakingOperationSuite) TestStakingOperation_BuildUnstakeOperation_WithE
 	}
 	option(&req)
 	s.Empty(req.Options["amount"])
-	s.Equal("0x02", req.Options["withdrawal_credential_type"])
 	s.JSONEq(`{"0x123":  "100000", "0xabc":  "200000"}`, req.Options["validator_unstake_amounts"])
 
 	_, err = c.BuildUnstakeOperation(
 		context.Background(),
 		big.NewFloat(0),
 		Eth,
-		NewExternalAddress(EthereumHolesky, "1"),
+		address,
+		option,
+	)
+	s.NoError(err)
+}
+
+func (s *StakingOperationSuite) TestStakingOperation_BuildUnstakeOperation_WithConsensusLayerExits() {
+	mc := &mockController{
+		stakeAPI:  mocks.NewStakeAPI(s.T()),
+		assetsAPI: mocks.NewAssetsAPI(s.T()),
+	}
+
+	mc.assetsAPI.On("GetAsset", mock.Anything, mock.Anything, mock.Anything).
+		Return(api.ApiGetAssetRequest{ApiService: mc.assetsAPI})
+
+	decimals := int32(5)
+	asset := &api.Asset{
+		NetworkId: EthereumHolesky,
+		AssetId:   "1",
+		Decimals:  &decimals,
+	}
+	mc.assetsAPI.On("GetAssetExecute", mock.Anything, mock.Anything, mock.Anything).
+		Return(asset, &http.Response{StatusCode: http.StatusOK}, nil)
+
+	mc.stakeAPI.On("BuildStakingOperation", mock.Anything).
+		Return(api.ApiBuildStakingOperationRequest{ApiService: mc.stakeAPI})
+
+	op := &api.StakingOperation{Id: "1"}
+	mc.stakeAPI.On("BuildStakingOperationExecute", mock.Anything).
+		Return(op, &http.Response{StatusCode: http.StatusOK}, nil)
+
+	c := &Client{
+		client: &api.APIClient{
+			StakeAPI:  mc.stakeAPI,
+			AssetsAPI: mc.assetsAPI,
+		},
+	}
+
+	address := NewExternalAddress(EthereumHolesky, "1")
+
+	builder := NewConsensusLayerExitOptionBuilder()
+	builder.AddValidator("0x123")
+	builder.AddValidator("0x124")
+	builder.AddValidator("0x124")
+	builder.AddValidator("0x125")
+	builder.AddValidator("0x125")
+
+	option := WithConsensusLayerExit(builder)
+
+	req := client.BuildStakingOperationRequest{
+		AddressId: address.ID(),
+		Options: map[string]string{
+			"mode":   StakingOperationModeDefault,
+			"amount": "some-amount",
+		},
+	}
+	option(&req)
+	s.Equal("some-amount", req.Options["amount"])
+	s.Equal("0x123,0x124,0x125", req.Options["validator_pub_keys"])
+
+	_, err := c.BuildUnstakeOperation(
+		context.Background(),
+		big.NewFloat(0),
+		Eth,
+		address,
 		option,
 	)
 	s.NoError(err)

@@ -1,5 +1,12 @@
 # Coinbase Go SDK Changelog
 
+## [0.0.23] - 2025-04-15
+
+### Added
+
+- Add support for both execution and consensus layer based unstaking.
+- Add user facing examples for all new unstaking scenarios.
+
 ## [0.0.22] - 2025-03-27
 
 ### Added

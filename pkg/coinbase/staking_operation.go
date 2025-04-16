@@ -7,6 +7,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"math/big"
+	"strings"
 	"time"
 
 	"github.com/coinbase/coinbase-sdk-go/gen/client"
@@ -21,6 +22,16 @@ type StakingOperationOption func(*client.BuildStakingOperationRequest)
 // the staking operation (i.e. `default`, `partial`, or `native`)
 func WithStakingOperationMode(mode string) StakingOperationOption {
 	return WithStakingOperationOption("mode", mode)
+}
+
+// WithNativeStakingOperationMode allows for the setting of the staking operation mode to "native".
+func WithNativeStakingOperationMode() StakingOperationOption {
+	return WithStakingOperationMode(StakingOperationModeNative)
+}
+
+// WithPartialStakingOperationMode allows for the setting of the staking operation mode to "partial".
+func WithPartialStakingOperationMode() StakingOperationOption {
+	return WithStakingOperationMode(StakingOperationModePartial)
 }
 
 // WithWithdrawalCredentialType allows for the setting of the withdrawal credential type.
@@ -38,9 +49,57 @@ func With0x02WithdrawalCredentialType() StakingOperationOption {
 	return WithWithdrawalCredentialType("0x02")
 }
 
+// WithUnstakeType allows for the setting of the unstake type.
+func WithUnstakeType(unstakeType string) StakingOperationOption {
+	return WithStakingOperationOption("unstake_type", unstakeType)
+}
+
+// WithUnstakeTypeConsensus allows for the setting of the unstake type to "consensus".
+func WithUnstakeTypeConsensus() StakingOperationOption {
+	return WithUnstakeType("consensus")
+}
+
+// WithUnstakeTypeExecution allows for the setting of the unstake type to "execution".
+func WithUnstakeTypeExecution() StakingOperationOption {
+	return WithUnstakeType("execution")
+}
+
 // WithIntegratorContractAddress allows for the setting of the integrator contract address for Shared ETH staking.
 func WithIntegratorContractAddress(integratorContractAddress string) StakingOperationOption {
 	return WithStakingOperationOption("integrator_contract_address", integratorContractAddress)
+}
+
+// WithImmediateUnstake allows for the setting of the immediate unstake option which results in immediately exiting the Ethereum validator.
+// Don't use this option if you want to generate pre-signed exit messages only.
+func WithImmediateUnstake() StakingOperationOption {
+	return WithStakingOperationOption("immediate", "true")
+}
+
+type ConsensusLayerExitOptionBuilder struct {
+	validatorPubKeys []string
+}
+
+func NewConsensusLayerExitOptionBuilder() *ConsensusLayerExitOptionBuilder {
+	return &ConsensusLayerExitOptionBuilder{
+		validatorPubKeys: make([]string, 0),
+	}
+}
+
+func (c *ConsensusLayerExitOptionBuilder) AddValidator(publicKey string) {
+	for _, existingKey := range c.validatorPubKeys {
+		if existingKey == publicKey {
+			return // Skip adding duplicate public keys
+		}
+	}
+
+	c.validatorPubKeys = append(c.validatorPubKeys, publicKey)
+}
+
+func WithConsensusLayerExit(builder *ConsensusLayerExitOptionBuilder) StakingOperationOption {
+	return func(op *client.BuildStakingOperationRequest) {
+		op.Options["unstake_type"] = "consensus"
+		op.Options["validator_pub_keys"] = strings.Join(builder.validatorPubKeys, ",")
+	}
 }
 
 // ExecutionLayerWithdrawalsOptionBuilder builds the options for Native ETH execution layer validator withdrawals as defined in https://eips.ethereum.org/EIPS/eip-7002.
@@ -91,10 +150,11 @@ func (b *ExecutionLayerWithdrawalsOptionBuilder) AddValidatorWithdrawal(publicKe
 // Selected validators must have been upgraded to withdrawal credentials of type "0x02".
 func WithExecutionLayerWithdrawals(builder *ExecutionLayerWithdrawalsOptionBuilder) StakingOperationOption {
 	return func(op *client.BuildStakingOperationRequest) {
-		op.Options["withdrawal_credential_type"] = "0x02"
+		op.Options["unstake_type"] = "execution"
 		op.Options["validator_unstake_amounts"] = builder.buffer
 
-		// Top-level "amount" is excluded for execution layer withdrawals
+		// Top-level "amount" is excluded for execution layer withdrawals until we support amount based picking
+		// up of validators to unstake for execution layer withdrawals.
 		delete(op.Options, "amount")
 	}
 }
