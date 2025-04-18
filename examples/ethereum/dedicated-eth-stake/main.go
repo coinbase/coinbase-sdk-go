@@ -6,16 +6,10 @@ import (
 	"math/big"
 	"os"
 
-	"github.com/coinbase/coinbase-sdk-go/gen/client"
 	"github.com/coinbase/coinbase-sdk-go/pkg/coinbase"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
-)
-
-var (
-	networkID = client.NETWORKIDENTIFIER_ETHEREUM_HOODI
-	assetID   = coinbase.Eth
 )
 
 /*
@@ -34,9 +28,9 @@ func main() {
 		log.Fatalf("error creating coinbase client: %v", err)
 	}
 
-	address := coinbase.NewExternalAddress(string(networkID), os.Args[2])
+	address := coinbase.NewExternalAddress(coinbase.EthereumHoodi, os.Args[2])
 
-	stakeableBalance, err := client.GetStakeableBalance(ctx, assetID, address, coinbase.WithNativeStakingBalanceMode())
+	stakeableBalance, err := client.GetStakeableBalance(ctx, coinbase.Eth, address, coinbase.WithNativeStakingBalanceMode())
 	if err != nil {
 		log.Fatalf("error getting stakeable balance: %v", err)
 	}
@@ -52,7 +46,7 @@ func main() {
 	stakeOperation, err := client.BuildStakeOperation(
 		ctx,
 		big.NewFloat(64),
-		assetID,
+		coinbase.Eth,
 		address,
 		options...,
 	)
@@ -101,7 +95,7 @@ func main() {
 		log.Printf("Broadcasted transaction hash: %s", rawTx.Hash().Hex())
 	}
 
-	listMyValidators(ctx, client, string(networkID), assetID, coinbase.ValidatorStatusProvisioned)
+	listMyValidators(ctx, client, coinbase.EthereumHoodi, coinbase.Eth, coinbase.ValidatorStatusProvisioned)
 }
 
 func listMyValidators(ctx context.Context, client *coinbase.Client, networkID string, assetID string, status coinbase.ValidatorStatus) {
