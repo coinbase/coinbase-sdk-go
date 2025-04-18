@@ -6,13 +6,7 @@ import (
 	"math/big"
 	"os"
 
-	"github.com/coinbase/coinbase-sdk-go/gen/client"
 	"github.com/coinbase/coinbase-sdk-go/pkg/coinbase"
-)
-
-var (
-	networkID = client.NETWORKIDENTIFIER_ETHEREUM_HOODI
-	assetID   = coinbase.Eth
 )
 
 /*
@@ -31,9 +25,9 @@ func main() {
 		log.Fatalf("error creating coinbase client: %v", err)
 	}
 
-	address := coinbase.NewExternalAddress(string(networkID), os.Args[2])
+	address := coinbase.NewExternalAddress(coinbase.EthereumHoodi, os.Args[2])
 
-	unstakeableBalance, err := client.GetUnstakeableBalance(ctx, assetID, address, coinbase.WithNativeStakingBalanceMode())
+	unstakeableBalance, err := client.GetUnstakeableBalance(ctx, coinbase.Eth, address, coinbase.WithNativeStakingBalanceMode())
 	if err != nil {
 		log.Fatalf("error getting unstakeableBalance balance: %v", err)
 	}
@@ -53,7 +47,7 @@ func main() {
 	unstakeOperation, err := client.BuildUnstakeOperation(
 		ctx,
 		big.NewFloat(64),
-		assetID,
+		coinbase.Eth,
 		address,
 		options...,
 	)

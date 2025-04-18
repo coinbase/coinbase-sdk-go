@@ -1,5 +1,11 @@
 # Coinbase Go SDK Changelog
 
+## [0.0.24] - 2025-04-18
+
+### Added
+
+- Add network constant for `Hoodi`.
+
 ## [0.0.23] - 2025-04-15
 
 ### Added

@@ -6,16 +6,10 @@ import (
 	"math/big"
 	"os"
 
-	"github.com/coinbase/coinbase-sdk-go/gen/client"
 	"github.com/coinbase/coinbase-sdk-go/pkg/coinbase"
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/ethclient"
-)
-
-var (
-	networkID = client.NETWORKIDENTIFIER_ETHEREUM_HOODI
-	assetID   = coinbase.Eth
 )
 
 /*
@@ -34,9 +28,9 @@ func main() {
 		log.Fatalf("error creating coinbase client: %v", err)
 	}
 
-	withdrawalAddress := coinbase.NewExternalAddress(string(networkID), os.Args[2])
+	withdrawalAddress := coinbase.NewExternalAddress(coinbase.EthereumHoodi, os.Args[2])
 
-	unstakeableBalance, err := client.GetUnstakeableBalance(ctx, assetID, withdrawalAddress, coinbase.WithNativeStakingBalanceMode())
+	unstakeableBalance, err := client.GetUnstakeableBalance(ctx, coinbase.Eth, withdrawalAddress, coinbase.WithNativeStakingBalanceMode())
 	if err != nil {
 		log.Fatalf("error getting unstakeableBalance balance: %v", err)
 	}
@@ -61,7 +55,7 @@ func main() {
 	unstakeOperation, err := client.BuildUnstakeOperation(
 		ctx,
 		big.NewFloat(0), // Amount here doesn't matter.
-		assetID,
+		coinbase.Eth,
 		withdrawalAddress,
 		options...,
 	)
