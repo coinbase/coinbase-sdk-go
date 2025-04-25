@@ -75,6 +75,16 @@ func WithImmediateUnstake() StakingOperationOption {
 	return WithStakingOperationOption("immediate", "true")
 }
 
+// WithFeeRecipientAddress allows for the setting of the fee recipient address.
+func WithFeeRecipientAddress(feeRecipientAddress string) StakingOperationOption {
+	return WithStakingOperationOption("fee_recipient_address", feeRecipientAddress)
+}
+
+// WithRewardSplitterPlanID allows for the setting of the reward splitter plan ID.
+func WithRewardSplitterPlanID(rewardSplitterPlanID string) StakingOperationOption {
+	return WithStakingOperationOption("reward_splitter_plan_id", rewardSplitterPlanID)
+}
+
 type ConsensusLayerExitOptionBuilder struct {
 	validatorPubKeys []string
 }
