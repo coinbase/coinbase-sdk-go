@@ -1,5 +1,11 @@
 # Coinbase Go SDK Changelog
 
+## [0.0.25] - 2025-04-25
+
+### Added
+
+- Add helper staking operation option functions for onchain billing such as `WithFeeRecipientAddress` and `WithRewardSplitterPlanID`.
+
 ## [0.0.24] - 2025-04-18
 
 ### Added
