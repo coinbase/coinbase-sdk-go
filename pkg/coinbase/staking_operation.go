@@ -85,6 +85,16 @@ func WithRewardSplitterPlanID(rewardSplitterPlanID string) StakingOperationOptio
 	return WithStakingOperationOption("reward_splitter_plan_id", rewardSplitterPlanID)
 }
 
+// WithSourceValidatorPublicKey allows for the setting of the source validator public key.
+func WithSourceValidatorPublicKey(sourceValidatorPublicKey string) StakingOperationOption {
+	return WithStakingOperationOption("source_validator_pubkey", sourceValidatorPublicKey)
+}
+
+// WithTargetValidatorPublicKey allows for the setting of the target validator public key.
+func WithTargetValidatorPublicKey(targetValidatorPublicKey string) StakingOperationOption {
+	return WithStakingOperationOption("target_validator_pubkey", targetValidatorPublicKey)
+}
+
 type ConsensusLayerExitOptionBuilder struct {
 	validatorPubKeys []string
 }
@@ -222,9 +232,12 @@ func (c *Client) BuildStakingOperation(
 		AddressId: address.ID(),
 		Action:    action,
 		Options: map[string]string{
-			"mode":   StakingOperationModeDefault,
-			"amount": asset.ToAtomicAmount(amount).String(),
+			"mode": StakingOperationModeDefault,
 		},
+	}
+
+	if amount != nil {
+		req.Options["amount"] = asset.ToAtomicAmount(amount).String()
 	}
 
 	for _, f := range o {
@@ -273,6 +286,17 @@ func (c *Client) BuildClaimStakeOperation(
 	o ...StakingOperationOption,
 ) (*StakingOperation, error) {
 	return c.BuildStakingOperation(ctx, address, assetID, "claim_stake", amount, o...)
+}
+
+// BuildValidatorConsolidationOperation will build an ephemeral staking operation using the consolidate action
+// to help consolidate validators post Pectra.
+func (c *Client) BuildValidatorConsolidationOperation(
+	ctx context.Context,
+	address *Address,
+	o ...StakingOperationOption,
+) (*StakingOperation, error) {
+	o = append(o, WithNativeStakingOperationMode())
+	return c.BuildStakingOperation(ctx, address, Eth, "consolidate", nil, o...)
 }
 
 // StakingOperation represents a staking operation for

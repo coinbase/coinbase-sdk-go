@@ -265,6 +265,54 @@ func (s *StakingOperationSuite) TestStakingOperation_BuildUnstakeOperation_WithC
 	s.NoError(err)
 }
 
+func (s *StakingOperationSuite) TestBuildValidatorConsolidationOperation_Success() {
+	mc := &mockController{
+		stakeAPI:  mocks.NewStakeAPI(s.T()),
+		assetsAPI: mocks.NewAssetsAPI(s.T()),
+	}
+
+	mc.assetsAPI.On("GetAsset", mock.Anything, mock.Anything, mock.Anything).
+		Return(api.ApiGetAssetRequest{ApiService: mc.assetsAPI})
+
+	decimals := int32(5)
+	asset := &api.Asset{
+		NetworkId: EthereumHolesky,
+		AssetId:   "1",
+		Decimals:  &decimals,
+	}
+	mc.assetsAPI.On("GetAssetExecute", mock.Anything, mock.Anything, mock.Anything).
+		Return(asset, &http.Response{StatusCode: http.StatusOK}, nil)
+
+	mc.stakeAPI.On("BuildStakingOperation", mock.Anything).
+		Return(api.ApiBuildStakingOperationRequest{ApiService: mc.stakeAPI})
+
+	op := &api.StakingOperation{Id: "1"}
+	
+	mc.stakeAPI.On("BuildStakingOperationExecute", mock.Anything).
+		Return(op, &http.Response{StatusCode: http.StatusOK}, nil)
+
+	c := &Client{
+		client: &api.APIClient{
+			StakeAPI:  mc.stakeAPI,
+			AssetsAPI: mc.assetsAPI,
+		},
+	}
+
+	address := NewExternalAddress(EthereumHolesky, "1")
+
+	options := []StakingOperationOption{
+		WithSourceValidatorPublicKey("0x123"),
+		WithTargetValidatorPublicKey("0x456"),
+	}
+
+	_, err := c.BuildValidatorConsolidationOperation(
+		context.Background(),
+		address,
+		options...,
+	)
+	s.NoError(err)
+}
+
 func mockStakingOperation(t *testing.T, status string) (*StakingOperation, error) {
 	t.Helper()
 	return newStakingOperationFromModel(&api.StakingOperation{
