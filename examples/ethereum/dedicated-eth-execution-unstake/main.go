@@ -13,7 +13,7 @@ import (
 )
 
 /*
- * This example code does a execution layer unstake on the Hoodi network via Dedicated ETH Staking.
+ * This example code does an execution layer orchestrated unstaking of an ethereum validator on the Hoodi network.
  * Run the code with 'go run examples/ethereum/dedicated-eth-execution-unstake/main.go <api_key_file_path> <withdrawal_address> <private_key> <rpc_url>'
  */
 

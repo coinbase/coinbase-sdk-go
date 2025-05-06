@@ -1,5 +1,11 @@
 # Coinbase Go SDK Changelog
 
+## [0.0.26] - 2025-05-06
+
+### Added
+
+- Add support for execution layer consolidations post Pectra.
+
 ## [0.0.25] - 2025-04-25
 
 ### Added
