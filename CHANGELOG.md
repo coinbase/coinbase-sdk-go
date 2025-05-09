@@ -1,5 +1,11 @@
 # Coinbase Go SDK Changelog
 
+## [0.0.27] - 2025-05-09
+
+### Added
+
+- Add support for validator top-ups.
+
 ## [0.0.26] - 2025-05-06
 
 ### Added

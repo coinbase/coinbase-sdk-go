@@ -95,6 +95,11 @@ func WithTargetValidatorPublicKey(targetValidatorPublicKey string) StakingOperat
 	return WithStakingOperationOption("target_validator_pubkey", targetValidatorPublicKey)
 }
 
+// WithTopUpValidatorPublicKey allows for the setting of the top up validator public key.
+func WithTopUpValidatorPublicKey(validatorPublicKey string) StakingOperationOption {
+	return WithStakingOperationOption("top_up_validator_pubkey", validatorPublicKey)
+}
+
 type ConsensusLayerExitOptionBuilder struct {
 	validatorPubKeys []string
 }
