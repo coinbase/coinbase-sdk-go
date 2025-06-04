@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"log"
 	"os"
 	"time"
@@ -29,7 +30,7 @@ func main() {
 
 	address := coinbase.NewExternalAddress(
 		coinbase.EthereumMainnet,
-		os.Args[1],
+		os.Args[2],
 	)
 
 	balances, err := client.ListHistoricalStakingBalances(
@@ -44,6 +45,6 @@ func main() {
 	}
 
 	for _, balance := range balances {
-		println(balance)
+		fmt.Printf("Bonded stake: %s, Unbonded balance: %s\n", balance.BondedStake().Amount().String(), balance.UnbondedBalance().Amount().String())
 	}
 }

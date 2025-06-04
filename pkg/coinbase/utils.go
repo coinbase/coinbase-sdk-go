@@ -18,7 +18,6 @@ const (
 	StakingOperationModeNative  = "native"
 
 	EthereumHoodi   = string(client.NETWORKIDENTIFIER_ETHEREUM_HOODI)
-	EthereumHolesky = string(client.NETWORKIDENTIFIER_ETHEREUM_HOLESKY)
 	EthereumMainnet = string(client.NETWORKIDENTIFIER_ETHEREUM_MAINNET)
 
 	SolanaDevnet  = string(client.NETWORKIDENTIFIER_SOLANA_DEVNET)

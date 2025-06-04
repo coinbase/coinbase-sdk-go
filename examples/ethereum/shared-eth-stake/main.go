@@ -13,7 +13,7 @@ import (
 )
 
 /*
- * This example code stakes ETH on the Holesky network via Shared ETH Staking.
+ * This example code stakes ETH on the Hoodi network via Shared ETH Staking.
  * Run the code with 'go run examples/ethereum/shared-eth-stake/main.go <api_key_file_path> <wallet_address> <wallet_private_key>'
  */
 
@@ -28,7 +28,7 @@ func main() {
 	}
 
 	address := coinbase.NewExternalAddress(
-		coinbase.EthereumHolesky,
+		coinbase.EthereumHoodi,
 		os.Args[2],
 	)
 

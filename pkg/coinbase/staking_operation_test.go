@@ -143,7 +143,7 @@ func (s *StakingOperationSuite) TestStakingOperation_BuildUnstakeOperation_WithE
 
 	decimals := int32(5)
 	asset := &api.Asset{
-		NetworkId: EthereumHolesky,
+		NetworkId: EthereumHoodi,
 		AssetId:   "1",
 		Decimals:  &decimals,
 	}
@@ -164,7 +164,7 @@ func (s *StakingOperationSuite) TestStakingOperation_BuildUnstakeOperation_WithE
 		},
 	}
 
-	address := NewExternalAddress(EthereumHolesky, "1")
+	address := NewExternalAddress(EthereumHoodi, "1")
 
 	builder, err := NewExecutionLayerWithdrawalsOptionBuilder(
 		context.Background(),
@@ -212,7 +212,7 @@ func (s *StakingOperationSuite) TestStakingOperation_BuildUnstakeOperation_WithC
 
 	decimals := int32(5)
 	asset := &api.Asset{
-		NetworkId: EthereumHolesky,
+		NetworkId: EthereumHoodi,
 		AssetId:   "1",
 		Decimals:  &decimals,
 	}
@@ -233,7 +233,7 @@ func (s *StakingOperationSuite) TestStakingOperation_BuildUnstakeOperation_WithC
 		},
 	}
 
-	address := NewExternalAddress(EthereumHolesky, "1")
+	address := NewExternalAddress(EthereumHoodi, "1")
 
 	builder := NewConsensusLayerExitOptionBuilder()
 	builder.AddValidator("0x123")
@@ -276,7 +276,7 @@ func (s *StakingOperationSuite) TestBuildValidatorConsolidationOperation_Success
 
 	decimals := int32(5)
 	asset := &api.Asset{
-		NetworkId: EthereumHolesky,
+		NetworkId: EthereumHoodi,
 		AssetId:   "1",
 		Decimals:  &decimals,
 	}
@@ -287,7 +287,7 @@ func (s *StakingOperationSuite) TestBuildValidatorConsolidationOperation_Success
 		Return(api.ApiBuildStakingOperationRequest{ApiService: mc.stakeAPI})
 
 	op := &api.StakingOperation{Id: "1"}
-	
+
 	mc.stakeAPI.On("BuildStakingOperationExecute", mock.Anything).
 		Return(op, &http.Response{StatusCode: http.StatusOK}, nil)
 
@@ -298,7 +298,7 @@ func (s *StakingOperationSuite) TestBuildValidatorConsolidationOperation_Success
 		},
 	}
 
-	address := NewExternalAddress(EthereumHolesky, "1")
+	address := NewExternalAddress(EthereumHoodi, "1")
 
 	options := []StakingOperationOption{
 		WithSourceValidatorPublicKey("0x123"),
@@ -528,7 +528,7 @@ func (s *StakingOperationSuite) TestSign_SignTransactionFails() {
 
 func (s *StakingOperationSuite) TestReloadStakingOperation_ExistingTransactionsNotOverwritten() {
 	var (
-		networkID               = EthereumHolesky
+		networkID               = EthereumHoodi
 		addressID               = "0x14a34"
 		stakingOperationID      = "staking-operation-id"
 		stakingOperationStatus  = "pending"
@@ -592,7 +592,7 @@ func (s *StakingOperationSuite) TestReloadStakingOperation_ExistingTransactionsN
 
 func (s *StakingOperationSuite) TestReloadStakingOperation_ErrorFormatting() {
 	var (
-		networkID              = EthereumHolesky
+		networkID              = EthereumHoodi
 		addressID              = "0x14a34"
 		stakingOperationID     = "staking-operation-id"
 		stakingOperationStatus = "pending"
@@ -631,7 +631,7 @@ func (s *StakingOperationSuite) TestReloadStakingOperation_ErrorFormatting() {
 
 func (s *StakingOperationSuite) TestFetchStakingOperation_Success() {
 	var (
-		networkID              = EthereumHolesky
+		networkID              = EthereumHoodi
 		addressID              = "0x14a34"
 		stakingOperationID     = "staking-operation-id"
 		stakingOperationStatus = "pending"
@@ -675,7 +675,7 @@ func (s *StakingOperationSuite) TestFetchStakingOperation_Success() {
 
 func (s *StakingOperationSuite) TestFetchStakingOperation_Error() {
 	var (
-		networkID          = EthereumHolesky
+		networkID          = EthereumHoodi
 		addressID          = "0x14a34"
 		stakingOperationID = "staking-operation-id"
 		stakingAPIMock     = mocks.NewStakeAPI(s.T())
