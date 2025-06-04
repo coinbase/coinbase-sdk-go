@@ -22,8 +22,8 @@ type NetworkIdentifier string
 const (
 	NETWORKIDENTIFIER_BASE_SEPOLIA NetworkIdentifier = "base-sepolia"
 	NETWORKIDENTIFIER_BASE_MAINNET NetworkIdentifier = "base-mainnet"
-	NETWORKIDENTIFIER_ETHEREUM_HOLESKY NetworkIdentifier = "ethereum-holesky"
 	NETWORKIDENTIFIER_ETHEREUM_HOODI NetworkIdentifier = "ethereum-hoodi"
+	NETWORKIDENTIFIER_ETHEREUM_HOODI2 NetworkIdentifier = "ethereum-hoodi"
 	NETWORKIDENTIFIER_ETHEREUM_SEPOLIA NetworkIdentifier = "ethereum-sepolia"
 	NETWORKIDENTIFIER_ETHEREUM_MAINNET NetworkIdentifier = "ethereum-mainnet"
 	NETWORKIDENTIFIER_POLYGON_MAINNET NetworkIdentifier = "polygon-mainnet"
@@ -40,7 +40,7 @@ const (
 var AllowedNetworkIdentifierEnumValues = []NetworkIdentifier{
 	"base-sepolia",
 	"base-mainnet",
-	"ethereum-holesky",
+	"ethereum-hoodi",
 	"ethereum-hoodi",
 	"ethereum-sepolia",
 	"ethereum-mainnet",

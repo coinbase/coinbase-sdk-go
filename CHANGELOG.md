@@ -1,5 +1,11 @@
 # Coinbase Go SDK Changelog
 
+## [0.0.28] - 2025-06-04
+
+### Removed
+
+- Removed support for testnet Holesky.
+
 ## [0.0.27] - 2025-05-09
 
 ### Added

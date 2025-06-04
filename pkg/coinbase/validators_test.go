@@ -134,7 +134,7 @@ func (s *ValidatorSuite) TestGetValidator_Failure() {
 func (s *ValidatorSuite) TestGetters() {
 	validator := NewValidator(api.Validator{
 		ValidatorId: "validator-1",
-		NetworkId:   EthereumHolesky,
+		NetworkId:   EthereumHoodi,
 		AssetId:     Eth,
 		Status:      api.VALIDATORSTATUS_ACTIVE,
 		Details: &api.ValidatorDetails{
@@ -149,14 +149,14 @@ func (s *ValidatorSuite) TestGetters() {
 				Balance: api.Balance{
 					Amount: "100",
 					Asset: api.Asset{
-						NetworkId: EthereumHolesky,
+						NetworkId: EthereumHoodi,
 						AssetId:   Eth,
 					},
 				},
 				EffectiveBalance: api.Balance{
 					Amount: "200",
 					Asset: api.Asset{
-						NetworkId: EthereumHolesky,
+						NetworkId: EthereumHoodi,
 						AssetId:   Eth,
 					},
 				},
@@ -165,7 +165,7 @@ func (s *ValidatorSuite) TestGetters() {
 	})
 
 	s.Assert().Equal("validator-1", validator.ID())
-	s.Assert().Equal(EthereumHolesky, validator.NetworkID())
+	s.Assert().Equal(EthereumHoodi, validator.NetworkID())
 	s.Assert().Equal(Eth, validator.AssetID())
 	s.Assert().Equal(api.VALIDATORSTATUS_ACTIVE, validator.Status())
 	s.Assert().Equal("0", validator.Index())
@@ -176,10 +176,10 @@ func (s *ValidatorSuite) TestGetters() {
 	s.Assert().Equal("exit-epoch-2", validator.ExitEpoch())
 	s.Assert().Equal("withdrawable-epoch-3", validator.WithdrawableEpoch())
 	s.Assert().Equal("100", validator.Balance().Amount)
-	s.Assert().Equal(EthereumHolesky, validator.Balance().Asset.NetworkId)
+	s.Assert().Equal(EthereumHoodi, validator.Balance().Asset.NetworkId)
 	s.Assert().Equal(Eth, validator.Balance().Asset.AssetId)
 	s.Assert().Equal("200", validator.EffectiveBalance().Amount)
-	s.Assert().Equal(EthereumHolesky, validator.EffectiveBalance().Asset.NetworkId)
+	s.Assert().Equal(EthereumHoodi, validator.EffectiveBalance().Asset.NetworkId)
 	s.Assert().Equal(Eth, validator.EffectiveBalance().Asset.AssetId)
 }
 

@@ -73,7 +73,7 @@ func main() {
 
 	// Broadcast each of the signed transactions to the network.
 	for index, transaction := range topUpOperation.Transactions() {
-		log.Printf("Deposit tx %d: %s\n", index+1, transaction.UnsignedPayload())
+		log.Printf("Top up tx %d: %s\n", index+1, transaction.SignedPayload())
 
 		rawTx, ok := transaction.Raw().(*types.Transaction)
 		if !ok {
